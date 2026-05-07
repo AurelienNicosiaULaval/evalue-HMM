@@ -20,7 +20,7 @@ Les sorties doivent être écrites dans :
 
 | Script | Scénario |
 |---|---|
-| `01_null_fixed_generator.R` | Calibration sous HMM nul fixé |
+| `01_null_fixed_generator.R` | Calibration sous HMM nul fixé, implémenté |
 | `02_train_validation_estimated.R` | Validation train/validation avec paramètres estimés |
 | `03_underfit_states.R` | Nombre d'états insuffisant |
 | `04_angle_misspecification.R` | Distribution angulaire mal spécifiée |

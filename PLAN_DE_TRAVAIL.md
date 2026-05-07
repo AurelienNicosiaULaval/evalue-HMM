@@ -42,7 +42,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 |---|---|---|---|
 | 0 | Structurer le dépôt | Arborescence, README, plan, article principal | Dépôt GitHub privé prêt |
 | 1 | Stabiliser la théorie | Article principal, filtrage, e-process, localisation, features, blockwise | Version théorique actuelle complétée |
-| 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype minimal vérifié |
+| 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype minimal S1 vérifié |
 | 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Fonctions diagnostiques modulaires |
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mélange, blockwise, cross-validation | Tables et figures de simulation |
 | 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Figures et interprétation écologique |
@@ -66,7 +66,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | ID | Tâche | Sortie |
 |---|---|---|
 | C1 | Implémenter des utilitaires numériques stables : `log_sum_exp()`, normalisation log, vérification de probabilités | Utilitaires testés |
-| C2 | Implémenter la simulation HMM : états, longueurs, angles, covariables optionnelles, individus | `simulate_hmm_movement()` |
+| C2 | Implémenter la simulation HMM : états, longueurs, angles, covariables optionnelles, individus | `simulate_hmm_movement()` première version |
 | C3 | Implémenter le forward filter sur l'échelle log et les densités prédictives observables | `hmm_forward_filter()`, `hmm_predictive_log_density()` |
 | C4 | Implémenter les e-process : incréments, cumulés, seuil, temps de franchissement, résumé | `compute_eprocess()` |
 | C5 | Implémenter les graphiques standards : e-process, incréments, seuil, contributions par individu et période | Fonctions de visualisation |
@@ -84,7 +84,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 | ID | Scénario | Question | Sorties minimales |
 |---|---|---|---|
-| S1 | Calibration sous null fixed-generator | Le taux de franchissement est-il contrôlé sous le HMM nul fixé ? | Faux signal, `sup_t log E`, courbes typiques |
+| S1 | Calibration sous null fixed-generator | Le taux de franchissement est-il contrôlé sous le HMM nul fixé ? | Implémenté : faux signal, `sup_t log E`, courbes typiques |
 | S2 | Validation train/validation avec paramètres estimés | Le comportement reste-t-il raisonnable conditionnellement au train ? | Comparaison paramètres connus vs estimés |
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Puissance, temps de détection, localisation |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire réagit-il aux défauts circulaires ? | Signal angulaire, spécificité des autres diagnostics |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est la Phase 2 : construire le noyau R minimal avec simulation HMM, filtrage observable, calcul de `log_p0`, calcul de `log_q`, e-process, seuils et figures de calibration sous le nul.
+La prochaine étape scientifique est la Phase 3 : commencer les diagnostics R modulaires avec une interface commune, puis implémenter le diagnostic `K` contre `K+1`.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

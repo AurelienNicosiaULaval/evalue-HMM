@@ -86,6 +86,8 @@ Critère de réussite :
 
 ## Phase 2 : noyau R minimal
 
+Statut : première version complétée avec S1.
+
 Objectif : construire une preuve de concept computationnelle fiable avant d'ajouter les diagnostics avancés.
 
 Tâches :
@@ -106,8 +108,9 @@ Livrables :
 - `hmm_forward_filter()` vérifié sur l'échelle log.
 - `hmm_predictive_log_density()` vérifié.
 - `compute_eprocess()` vérifié.
-- Script minimal de calibration sous le nul.
-- Figure prototype de `log E_{1:t}`.
+- `simulations/01_null_fixed_generator.R`.
+- Tables locales `s1_null_fixed_generator_*.csv`.
+- Figures locales `s1_null_fixed_generator_*.png`.
 
 Critère de réussite :
 
@@ -171,7 +174,7 @@ Scénarios prioritaires :
 
 | ID | Scénario | Question | Résultat attendu |
 |---|---|---|---|
-| S1 | Null fixed-generator | L'e-process est-il calibré sous HMM nul fixé ? | Faux signal compatible avec `alpha` |
+| S1 | Null fixed-generator | L'e-process est-il calibré sous HMM nul fixé ? | Implémenté, faux signal compatible avec `alpha` |
 | S2 | Train/validation avec paramètres estimés | La calibration reste-t-elle raisonnable conditionnellement au train ? | Différence documentée entre paramètres connus et estimés |
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Croissance de `log E` et localisation du défaut |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire détecte-t-il un défaut circulaire ? | Signal surtout sur le diagnostic angulaire |
@@ -337,4 +340,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Commencer la Phase 2 en construisant le noyau R minimal : simulation HMM, filtrage observable, `log_p0`, `log_q`, e-process, seuils, graphiques et calibration sous le nul.
+Commencer la Phase 3 en définissant l'interface commune de diagnostic, puis implémenter le diagnostic `K` contre `K+1`.

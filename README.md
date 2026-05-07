@@ -12,6 +12,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
 - The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
+- Le noyau R minimal de Phase 2 est amorcé avec `R/simulate_hmm_movement.R` et `simulations/01_null_fixed_generator.R`.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
@@ -54,6 +55,7 @@ Les fonctions R de base peuvent être chargées ainsi :
 source("R/eprocess.R")
 source("R/hmm_forward_filter.R")
 source("R/predictive_density_hmm.R")
+source("R/simulate_hmm_movement.R")
 ```
 
 Exemple minimal pour l'e-process :
@@ -62,6 +64,12 @@ Exemple minimal pour l'e-process :
 log_p0 <- dnorm(c(-0.2, 0.1, 0.5), mean = 0, sd = 1, log = TRUE)
 log_p1 <- dnorm(c(-0.2, 0.1, 0.5), mean = 0.3, sd = 1, log = TRUE)
 compute_eprocess(log_p0 = log_p0, log_p1 = log_p1, alpha = 0.05)
+```
+
+Pour lancer la première simulation de calibration :
+
+```bash
+Rscript simulations/01_null_fixed_generator.R
 ```
 
 ## Données
