@@ -71,7 +71,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | C4 | Implémenter les e-process : incréments, cumulés, seuil, temps de franchissement, résumé | `compute_eprocess()` |
 | C5 | Implémenter les graphiques standards : e-process, incréments, seuil, contributions par individu et période | Fonctions de visualisation |
 | C6 | Implémenter une interface commune de diagnostic retournant `log_p0`, `log_q`, `log_e`, `log_E`, `weights`, `metadata` | `make_predictive_diagnostic()` première version |
-| C7 | Implémenter les diagnostics full-density : `K+1`, angle flexible, step-angle joint, durée | `diagnostic_extra_state()` première version |
+| C7 | Implémenter les diagnostics full-density : `K+1`, angle flexible, step-angle joint, durée | `diagnostic_extra_state()` et `diagnostic_angle()` premières versions |
 | C8 | Implémenter les diagnostics feature-level : Rosenblatt, copule sur `[0,1]^2`, résidus circulaires | Fonctions feature-level |
 | C9 | Implémenter les diagnostics blockwise : blocs temporels, features de déplacement, retour, résidence, barrière | Fonctions blockwise |
 | C10 | Implémenter les mélanges et switching prédictibles entre diagnostics | Fonctions `diagnostic_mixture()` et `diagnostic_switch()` |
@@ -87,7 +87,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | S1 | Calibration sous null fixed-generator | Le taux de franchissement est-il contrôlé sous le HMM nul fixé ? | Implémenté : faux signal, `sup_t log E`, courbes typiques |
 | S2 | Validation train/validation avec paramètres estimés | Le comportement reste-t-il raisonnable conditionnellement au train ? | Comparaison paramètres connus vs estimés |
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté : puissance et temps de détection |
-| S4 | Angles mal spécifiés | Le diagnostic angulaire réagit-il aux défauts circulaires ? | Signal angulaire, spécificité des autres diagnostics |
+| S4 | Angles mal spécifiés | Le diagnostic angulaire réagit-il aux défauts circulaires ? | Implémenté : signal angulaire fort |
 | S5 | Dépendance résiduelle step-angle | Les diagnostics Rosenblatt/copule détectent-ils la dépendance invisible aux marges ? | E-process feature-level et full-density |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée, comparaison HMM/HSMM simplifiée |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut par temps, individu, habitat ou état filtré ? | Courbes globales et localisées |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de poursuivre la Phase 3 avec le diagnostic angulaire, puis le diagnostic feature-level de dépendance step-angle.
+La prochaine étape scientifique est de poursuivre la Phase 3 avec le diagnostic feature-level de dépendance step-angle.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

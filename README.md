@@ -59,6 +59,7 @@ source("R/predictive_density_hmm.R")
 source("R/simulate_hmm_movement.R")
 source("R/diagnostic_interface.R")
 source("R/diagnostics_states.R")
+source("R/diagnostics_angles.R")
 ```
 
 Exemple minimal pour l'e-process :
@@ -79,6 +80,12 @@ Pour lancer le premier diagnostic `K` contre `K+1` :
 
 ```bash
 Rscript simulations/03_underfit_states.R
+```
+
+Pour lancer le diagnostic angulaire :
+
+```bash
+Rscript simulations/04_angle_misspecification.R
 ```
 
 ## Données
