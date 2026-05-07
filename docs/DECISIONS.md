@@ -25,6 +25,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D017 | 2026-05-07 | Le premier scénario train/validation estimé utilise un estimateur oracle-state sur données simulées | Isoler la logique conditionnelle train/validation avant d'introduire un ajusteur HMM général |
 | D018 | 2026-05-07 | La validation par individus utilise une moyenne pondérée des e-values finales comme résumé global par défaut | Suivre la proposition cross-fitted du manuscrit et éviter de transformer un scan multi-individus en garantie globale |
 | D019 | 2026-05-07 | Le diagnostic long-horizon utilise la rectitude des blocs avec lois de feature ajustées sur simulations indépendantes | Cibler un défaut de comportement génératif agrégé tout en gardant un diagnostic interprétable pour le manuscrit |
+| D020 | 2026-05-07 | L'enveloppe composite est implémentée sur une famille finie de HMM nuls et reste un scénario optionnel | Montrer la validité uniforme et son coût de conservatisme sans surcharger le papier principal |
 
 ## Décisions ouvertes
 

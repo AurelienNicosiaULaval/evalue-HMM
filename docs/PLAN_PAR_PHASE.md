@@ -193,7 +193,7 @@ Scénarios prioritaires :
 | S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Implémenté, faux signal gonflé sous nul |
 | S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Implémenté, signal blockwise via rectitude des blocs |
 | S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Implémenté, moyenne finale sûre et scan individuel exploratoire |
-| S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Résultat optionnel ou supplément |
+| S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Implémenté comme scénario optionnel ou supplément |
 
 Mesures à rapporter :
 
@@ -348,4 +348,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Décider si S12 doit rester optionnel ou être inclus comme supplément. Si S12 est reporté, passer à l'intégration des résultats de simulation dans le manuscrit.
+Intégrer les résultats S1 à S12 dans le manuscrit, puis décider quels scénarios appartiennent au texte principal ou au supplément.

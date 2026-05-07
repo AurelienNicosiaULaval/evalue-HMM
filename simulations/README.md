@@ -31,7 +31,7 @@ Les sorties doivent être écrites dans :
 | `09_parallel_product_warning.R` | Démonstration que le produit parallèle naïf n'est pas valide par défaut, implémenté |
 | `10_blockwise_long_horizon.R` | Diagnostics blockwise à long horizon, implémenté |
 | `11_individual_validation_crossfit.R` | Validation par individus et moyenne cross-fitted, implémenté |
-| `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, optionnelle |
+| `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, implémenté comme scénario optionnel |
 | `run_all_simulations.R` | Exécution séquentielle des scripts implémentés |
 
-Les scénarios S1 à S11 sont implémentés. S12 est optionnel et peut servir de supplément ou d'extension selon l'espace disponible.
+Les scénarios S1 à S12 sont implémentés. S12 reste méthodologiquement optionnel et peut servir de supplément ou d'extension selon l'espace disponible.
