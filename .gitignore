@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+
+# R session files
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+
+# renv local files
+renv/library/
+renv/staging/
+renv/python/
+
+# Raw and processed data are ignored by default to avoid committing sensitive data.
+application/data_raw/*
+!application/data_raw/.gitkeep
+!application/data_raw/README.md
+application/data_processed/*
+!application/data_processed/.gitkeep
+!application/data_processed/README.md
+
+# Generated results
+results/simulation_tables/*
+!results/simulation_tables/.gitkeep
+results/simulation_figures/*
+!results/simulation_figures/.gitkeep
+results/application_figures/*
+!results/application_figures/.gitkeep
+manuscript_outputs/*
+!manuscript_outputs/.gitkeep
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
+# Quarto outputs
+/.quarto/
+*_files/
+*.html
