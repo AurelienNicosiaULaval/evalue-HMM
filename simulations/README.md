@@ -24,7 +24,7 @@ Les sorties doivent être écrites dans :
 | `02_train_validation_estimated.R` | Validation train/validation avec paramètres estimés |
 | `03_underfit_states.R` | Nombre d'états insuffisant, implémenté |
 | `04_angle_misspecification.R` | Distribution angulaire mal spécifiée, implémenté |
-| `05_step_angle_dependence.R` | Dépendance résiduelle longueur-angle via Rosenblatt ou copule |
+| `05_step_angle_dependence.R` | Dépendance résiduelle longueur-angle via Rosenblatt ou copule, implémenté |
 | `06_duration_or_blockwise.R` | Durées non géométriques ou diagnostic de bloc |
 | `07_localized_failure.R` | Échec localisé et pondérations prédictibles |
 | `08_mixture_switching.R` | Mélanges et switching prédictibles |

@@ -120,7 +120,7 @@ Critère de réussite :
 
 ## Phase 3 : diagnostics R modulaires
 
-Statut : amorcée avec l'interface commune, le diagnostic `K` contre `K+1` et le diagnostic angulaire.
+Statut : amorcée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire et step-angle feature-level.
 
 Objectif : développer les diagnostics correspondant au catalogue du papier.
 
@@ -159,6 +159,7 @@ Livrables :
 - `R/diagnostic_interface.R`.
 - `R/diagnostics_states.R` avec `diagnostic_extra_state()`.
 - `R/diagnostics_angles.R` avec `diagnostic_angle()`.
+- `R/diagnostics_copula.R` avec `diagnostic_step_angle_dependence()`.
 - Documentation courte de chaque diagnostic.
 - Exemples reproductibles sur données simulées.
 - Tests unitaires ou smoke tests.
@@ -182,7 +183,7 @@ Scénarios prioritaires :
 | S2 | Train/validation avec paramètres estimés | La calibration reste-t-elle raisonnable conditionnellement au train ? | Différence documentée entre paramètres connus et estimés |
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté, croissance forte de `log E` |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire détecte-t-il un défaut circulaire ? | Implémenté, signal angulaire fort |
-| S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Signal feature-level clair |
+| S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Implémenté, signal feature-level clair |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée ou de bloc |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut ? | Signal plus net dans la période ou l'état ciblé |
 | S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Mixture calibrée, switching interprétable |
@@ -344,4 +345,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Poursuivre la Phase 3 avec le diagnostic feature-level de dépendance step-angle.
+Poursuivre la Phase 3 avec la localisation pondérée, puis le diagnostic durée ou blockwise.

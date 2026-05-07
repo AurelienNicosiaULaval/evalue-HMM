@@ -17,6 +17,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D009 | 2026-05-07 | La Phase 2 commence par un HMM simulé avec longueurs Gamma et angles wrapped-normal | Obtenir un noyau R sans dépendances externes avant d'ajouter les diagnostics avancés |
 | D010 | 2026-05-07 | Le premier diagnostic full-density implémenté est `K` contre `K+1` avec paramètres fixés | Tester l'interface commune sur un scénario de puissance simple avant d'ajouter des diagnostics plus complexes |
 | D011 | 2026-05-07 | Le diagnostic angulaire est d'abord implémenté comme ratio full-density avec structure HMM fixe | Tester la détection d'une mauvaise spécification circulaire avant les diagnostics feature-level |
+| D012 | 2026-05-07 | Le diagnostic step-angle est implémenté comme e-process feature-level Rosenblatt avec copule gaussienne | Tester la détection d'une dépendance résiduelle invisible aux marges sans changer le HMM nul |
 
 ## Décisions ouvertes
 

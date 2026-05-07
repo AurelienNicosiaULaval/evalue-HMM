@@ -75,6 +75,27 @@ d_wrapped_normal <- function(theta, mean, sd, log = FALSE, n_terms = 5L) {
   density
 }
 
+p_wrapped_normal <- function(theta, mean, sd, n_terms = 8L) {
+  if (sd <= 0) {
+    stop("`sd` must be positive.", call. = FALSE)
+  }
+  if (n_terms < 1L) {
+    stop("`n_terms` must be at least 1.", call. = FALSE)
+  }
+
+  theta <- wrap_angle(theta)
+  shifts <- seq.int(-n_terms, n_terms)
+  cdf_matrix <- vapply(
+    shifts,
+    function(k) {
+      stats::pnorm(theta + 2 * pi * k, mean = mean, sd = sd) -
+        stats::pnorm(-pi + 2 * pi * k, mean = mean, sd = sd)
+    },
+    numeric(length(theta))
+  )
+  pmin(pmax(rowSums(cdf_matrix), 0), 1)
+}
+
 simulate_hmm_movement <- function(n_times, parameters, n_individuals = 1L) {
   if (!is.numeric(n_times) || length(n_times) != 1L || n_times < 1L) {
     stop("`n_times` must be a positive integer.", call. = FALSE)
@@ -118,6 +139,79 @@ simulate_hmm_movement <- function(n_times, parameters, n_individuals = 1L) {
           mean = parameters$angle_mean[state],
           sd = parameters$angle_sd[state]
         )
+      }
+    }
+
+    output[[individual_index]] <- data.frame(
+      individual_id = individual_index,
+      time = seq_len(n_times),
+      state = states,
+      step_length = step_length,
+      turning_angle = turning_angle,
+      stringsAsFactors = FALSE
+    )
+  }
+
+  do.call(rbind, output)
+}
+
+simulate_hmm_movement_copula <- function(n_times, parameters, rho_by_state, n_individuals = 1L) {
+  if (!is.numeric(n_times) || length(n_times) != 1L || n_times < 1L) {
+    stop("`n_times` must be a positive integer.", call. = FALSE)
+  }
+  if (!is.numeric(n_individuals) || length(n_individuals) != 1L || n_individuals < 1L) {
+    stop("`n_individuals` must be a positive integer.", call. = FALSE)
+  }
+
+  n_times <- as.integer(n_times)
+  n_individuals <- as.integer(n_individuals)
+  n_states <- length(parameters$initial_probs)
+
+  if (length(rho_by_state) != n_states) {
+    stop("`rho_by_state` must contain one correlation per state.", call. = FALSE)
+  }
+  if (any(!is.finite(rho_by_state)) || any(abs(rho_by_state) >= 1)) {
+    stop("Each element of `rho_by_state` must lie in (-1, 1).", call. = FALSE)
+  }
+
+  output <- vector("list", n_individuals)
+
+  for (individual_index in seq_len(n_individuals)) {
+    states <- integer(n_times)
+    step_length <- numeric(n_times)
+    turning_angle <- numeric(n_times)
+
+    states[1] <- sample.int(n_states, size = 1L, prob = parameters$initial_probs)
+    if (n_times > 1L) {
+      for (time_index in 2:n_times) {
+        states[time_index] <- sample.int(
+          n_states,
+          size = 1L,
+          prob = parameters$transition_matrix[states[time_index - 1L], ]
+        )
+      }
+    }
+
+    for (state in seq_len(n_states)) {
+      state_index <- states == state
+      n_state <- sum(state_index)
+      if (n_state > 0L) {
+        z_step <- stats::rnorm(n_state)
+        z_angle <- rho_by_state[state] * z_step +
+          sqrt(1 - rho_by_state[state]^2) * stats::rnorm(n_state)
+        u_step <- stats::pnorm(z_step)
+        u_angle <- stats::pnorm(z_angle)
+
+        step_length[state_index] <- stats::qgamma(
+          u_step,
+          shape = parameters$step_shape[state],
+          rate = parameters$step_rate[state]
+        )
+        turning_angle[state_index] <- wrap_angle(stats::qnorm(
+          u_angle,
+          mean = parameters$angle_mean[state],
+          sd = parameters$angle_sd[state]
+        ))
       }
     }
 
