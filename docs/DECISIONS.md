@@ -27,12 +27,13 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D019 | 2026-05-07 | Le diagnostic long-horizon utilise la rectitude des blocs avec lois de feature ajustées sur simulations indépendantes | Cibler un défaut de comportement génératif agrégé tout en gardant un diagnostic interprétable pour le manuscrit |
 | D020 | 2026-05-07 | L'enveloppe composite est implémentée sur une famille finie de HMM nuls et reste un scénario optionnel | Montrer la validité uniforme et son coût de conservatisme sans surcharger le papier principal |
 | D021 | 2026-05-07 | Les scénarios S1, S3, S4, S5, S6, S7 et S8 sont retenus pour l'article principal ; S2, S9, S10, S11 et S12 vont au supplément | Garder une narration principale centrée sur calibration, diagnostics ciblés, localisation et combinaison prédictible, tout en documentant les extensions |
+| D022 | 2026-05-07 | La première application réelle utilise `moveHMM::elk_data`, avec `elk-115` comme individu de validation et les autres individus pour l'entraînement | Utiliser un jeu de données public, reproductible, inclus dans un package CRAN et directement compatible avec les HMM longueur-angle |
 
 ## Décisions ouvertes
 
 | ID | Question | Options actuelles | Statut |
 |---|---|---|---|
-| O001 | Jeu de données réel | moveHMM, momentuHMM, données publiques Movebank si licence compatible, données de projet si partageables | À décider |
+| O001 | Jeu de données réel | `moveHMM::elk_data` pour la première application ; autres jeux possibles en sensibilité | Décidé pour la première version |
 | O002 | Forme du diagnostic longueur-angle | Copule simple, modèle paramétrique conditionnel, alternative non paramétrique contrôlée | À décider |
 | O003 | Organisation logicielle | Scripts R, mini-package interne, package R complet | À décider |
 | O004 | Revue cible | JABES, Methods in Ecology and Evolution, Biometrics | À décider |

@@ -21,8 +21,8 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le scénario S9 démontre pourquoi le produit parallèle naïf n'est pas utilisé comme procédure valide.
 - Le scénario S11 implémente la validation par individus avec moyenne cross-fitted finale et signale le scan multi-individus comme exploratoire.
 - Le scénario S12 implémente une enveloppe composite conservatrice sur une famille finie de HMM nuls.
+- L'application réelle utilise maintenant `moveHMM::elk_data` avec validation sur l'individu `elk-115`.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
-- Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
 ## Structure du dépôt
 
@@ -155,6 +155,12 @@ Pour lancer l'enveloppe composite conservatrice :
 
 ```bash
 Rscript simulations/12_composite_envelope_optional.R
+```
+
+Pour lancer l'application réelle :
+
+```bash
+Rscript application/run_application.R
 ```
 
 ## Données

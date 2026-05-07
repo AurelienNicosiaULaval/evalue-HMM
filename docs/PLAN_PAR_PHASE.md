@@ -233,18 +233,20 @@ Critère de réussite :
 
 Objectif : démontrer l'utilité du cadre sur un jeu de données de mouvement réel, public et reproductible.
 
+Statut : première chaîne reproductible amorcée avec `moveHMM::elk_data`. L'individu `elk-115` est tenu hors entraînement, les autres individus servent à ajuster les HMM `K = 2, 3, 4`, et le modèle nul est sélectionné par BIC.
+
 Tâches :
 
-- Identifier des jeux de données candidats dans les écosystèmes `moveHMM` et `momentuHMM`.
-- Documenter la source, la licence, les variables disponibles, le nombre d'individus et la qualité temporelle.
-- Choisir un dataset simple plutôt qu'une application trop complexe.
-- Définir un split train/validation, préférablement par individus si plusieurs individus sont disponibles.
-- Prétraiter les trajectoires.
-- Construire longueurs de pas, angles de virage, identifiants, périodes et covariables prédictibles.
-- Ajuster le HMM nul et les alternatives sur train seulement.
-- Calculer `log_p0` par filtrage observable sur validation.
-- Calculer un menu de diagnostics : `K+1`, angle, step-angle, durée ou blockwise selon la pertinence du dataset.
-- Calculer les versions localisées : individu, période, habitat si disponible, état filtré.
+- Identifier des jeux de données candidats dans les écosystèmes `moveHMM` et `momentuHMM`. Complété pour la première version.
+- Documenter la source, la licence, les variables disponibles, le nombre d'individus et la qualité temporelle. Amorçé dans les tables d'application.
+- Choisir un dataset simple plutôt qu'une application trop complexe. Complété : `moveHMM::elk_data`.
+- Définir un split train/validation, préférablement par individus si plusieurs individus sont disponibles. Complété : `elk-115` en validation.
+- Prétraiter les trajectoires. Complété : `application/01_preprocess.R`.
+- Construire longueurs de pas, angles de virage, identifiants, périodes et covariables prédictibles. Complété.
+- Ajuster le HMM nul et les alternatives sur train seulement. Complété : `application/02_fit_hmm.R`.
+- Calculer `log_p0` par filtrage observable sur validation. Complété : `application/03_compute_eprocess.R`.
+- Calculer un menu de diagnostics : `K+1`, angle, step-angle, durée ou blockwise selon la pertinence du dataset. Amorçé : `K+1`, angle, mixture et localisation.
+- Calculer les versions localisées : individu, période, habitat si disponible, état filtré. Amorçé : état filtré à longue distance.
 - Comparer diagnostics individuels, mixture pondérée et switching seulement si la règle est prédictible.
 - Produire les figures d'application.
 - Rédiger l'interprétation écologique sans surinterpréter les états décodés.
@@ -350,9 +352,9 @@ Critère de réussite :
 - Le produit naïf de diagnostics parallèles n'est pas une procédure valide par défaut.
 - Le code reste sous forme de scripts R pour la première version.
 - La transformation en package R est une décision ultérieure.
-- Le jeu de données réel n'est pas encore identifié. Je ne sais pas.
-- Si aucun jeu de données idéal n'est trouvé, utiliser un jeu public simple et reproductible plutôt qu'une application trop complexe.
+- Le premier jeu de données réel est `moveHMM::elk_data`.
+- Des jeux de données additionnels pourront être utilisés plus tard comme analyses de sensibilité.
 
 ## Prochaine action concrète
 
-Préparer l'application réelle : identifier un jeu de données public, vérifier sa licence et sa structure, puis définir le protocole train/validation.
+Intégrer l'application elk dans le manuscrit : protocole, sélection du nul `K = 3`, diagnostics sur `elk-115`, figures et interprétation écologique prudente.

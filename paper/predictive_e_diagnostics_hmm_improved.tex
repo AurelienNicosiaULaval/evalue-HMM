@@ -809,6 +809,51 @@ Table \ref{tab:main_simulations} gives the main numerical summary. Under the cor
 
 These simulations are not intended to exhaustively compare HMM estimators or movement models. Their purpose is narrower: to verify that the proposed e-diagnostic objects can be computed reproducibly, that the null behaviour is compatible with the theory in controlled settings and that each diagnostic responds to the failure it is designed to target. The supplementary scenarios document additional safeguards and extensions that are useful for implementation but would broaden the main article beyond its central message.
 
+\section{Elk movement application}
+\label{sec:application}
+
+As a first real-data illustration, we used the elk movement data distributed as \texttt{elk\_data} in the R package \texttt{moveHMM} \citep{michelot_2016_movehmm}. The data are associated with the elk movement study of \citet{morales_2004_relocation}. The dataset contains four individuals and 735 locations with projected coordinates and distance to water. We used \texttt{moveHMM::prepData} to compute step lengths and turning angles. The individual \texttt{elk-115} was held out for validation, leaving the remaining three individuals for training. The validation individual contributes 192 complete step-angle observations.
+
+We fitted HMMs with $K=2,3,4$ states on the training individuals only, using Gamma step lengths and von Mises turning angles with no transition covariates. Table \ref{tab:elk_model_selection} reports the model-selection summary. The three-state model has the smallest BIC and was used as the fitted null generator. The four-state model has a lower AIC but a larger BIC, so it was reserved as a $K+1$ diagnostic alternative rather than adopted as the main fitted null.
+
+\begin{table}[t]
+\centering
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+States & Negative log-likelihood & Parameters & AIC & BIC \\
+\midrule
+2 & 5190.649 & 13 & 10407.298 & 10462.919 \\
+3 & 4994.368 & 23 & 10034.736 & 10133.142 \\
+4 & 4976.707 & 35 & 10023.414 & 10173.162 \\
+\bottomrule
+\end{tabular}
+\caption{HMM fits for the elk application. The three-state model is selected by BIC and used as the fitted null generator.}
+\label{tab:elk_model_selection}
+\end{table}
+
+We then evaluated four diagnostics on the held-out individual: a full-density $K+1$ diagnostic comparing the $K=3$ null with the $K=4$ alternative, a diffuse-angle diagnostic obtained by halving the fitted angular concentrations, a fixed mixture of these two diagnostic densities and a state-localized version of the $K+1$ diagnostic using the filtered predictive probability of the long-step state. Table \ref{tab:elk_diagnostics} summarizes the resulting e-processes.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.36\linewidth}rrrr@{}}
+\toprule
+Diagnostic & Signal & Crossing time & Max log e & Final log e \\
+\midrule
+$K=3$ versus $K=4$ & Yes & 16 & 5.459 & 5.413 \\
+Diffuse-angle alternative & No & NA & 2.811 & 0.154 \\
+Fixed mixture & Yes & 22 & 11.089 & 10.981 \\
+Long-step-state localized $K+1$ & Yes & 123 & 5.618 & 5.605 \\
+\bottomrule
+\end{tabular}
+\caption{Predictive e-diagnostics for the held-out elk individual. The threshold for $\alpha=0.05$ is $\log(20)=2.996$.}
+\label{tab:elk_diagnostics}
+\end{table}
+
+The $K+1$ diagnostic crosses the $\alpha=0.05$ threshold early in the validation trajectory, suggesting that the richer state structure predicts this held-out animal better than the BIC-selected three-state generator. The diffuse-angle diagnostic alone does not cross the threshold, although its maximum log e-value is close to the threshold. The fixed mixture crosses because it allocates part of its predictive mass to the successful state-number diagnostic. The state-localized diagnostic also crosses, but later, indicating that evidence is partly associated with times at which the fitted null predicts the long-step state.
+
+This application should be interpreted as exploratory. The dataset is small, the split uses one held-out individual and the diagnostic menu was chosen as a first proof of concept. The result is therefore a predictive model criticism of the fitted generator for \texttt{elk-115}, not a definitive ecological claim about the number or meaning of behavioural states. The example nevertheless illustrates the intended workflow: fix the training information, evaluate observable predictive densities on held-out data, monitor e-processes and report both global and localized evidence.
+
 \section{Discussion}
 \label{sec:discussion}
 
@@ -818,7 +863,7 @@ The framework adds several elements that are specific to movement HMMs. First, i
 
 The main limitation is the treatment of fitted parameters. The exact guarantee is cleanest when the fitted null and diagnostic alternatives are fixed before validation. This is a strength for a first methodological article because the null statement is transparent: conditional on training, does the fitted HMM generate the validation trajectory credibly? Same-sample exploratory workflows are still useful but require caution. The supplementary simulations therefore treat oracle-state parameter estimation, validation by individuals and composite-null envelopes as sensitivity analyses or extensions rather than as the main empirical evidence.
 
-The next applied step is a real-data validation example. That application should emphasize not only whether a threshold is crossed, but also when, where and under which predicted behavioural state the evidence accumulates. It should also report which diagnostics were pre-specified before validation and which were chosen exploratorily.
+The real-data example illustrates both the promise and the caution required in practice. Predictive e-diagnostics can reveal that a fitted generator performs poorly for a held-out animal, and localized versions help identify the part of the fitted behavioural structure associated with the signal. At the same time, ecological interpretation requires additional work: the diagnostic menu, train/validation split and model-selection rule should be pre-specified for confirmatory use, and the results should be replicated across datasets or validation splits before drawing strong biological conclusions.
 
 \section*{Acknowledgements}
 To be completed.

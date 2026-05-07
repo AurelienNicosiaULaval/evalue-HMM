@@ -25,6 +25,8 @@ results/simulation_tables/*
 !results/simulation_tables/.gitkeep
 results/simulation_figures/*
 !results/simulation_figures/.gitkeep
+results/application_tables/*
+!results/application_tables/.gitkeep
 results/application_figures/*
 !results/application_figures/.gitkeep
 manuscript_outputs/*

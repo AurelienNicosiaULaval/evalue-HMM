@@ -21,7 +21,7 @@ Le premier article doit rester ciblé sur des HMM multi-états simples avec obse
 - Les états décodés peuvent servir à l'interprétation descriptive, mais pas à établir la validité.
 - Les alternatives diagnostiques sont choisies avant validation, ou sélectionnées de manière prédictible avec l'information disponible avant `Y_t`.
 - Les diagnostics parallèles sur les mêmes observations sont rapportés séparément ou combinés par mélange pondéré. Leur produit n'est pas valide par défaut.
-- Le jeu de données réel n'est pas encore identifié. Je ne sais pas.
+- Le premier jeu de données réel est `moveHMM::elk_data`, avec validation sur l'individu `elk-115`.
 
 ## 3. Livrables principaux
 
@@ -31,7 +31,7 @@ Le premier article doit rester ciblé sur des HMM multi-états simples avec obse
 | Prototype R | Simulation HMM, filtrage observable, e-process prédictif | Exemple reproductible sous modèle simulé |
 | Diagnostics R | État manquant, angles, step-angle, durée, localisation, mélange, blockwise | Interface commune et résultats interprétables |
 | Simulations | Scénarios alignés sur les théorèmes du papier | Tables et figures générées de façon reproductible |
-| Application réelle | Analyse d'un jeu de données de mouvement avec validation séparée | Données documentées, diagnostics prudents |
+| Application réelle | Analyse de `moveHMM::elk_data` avec validation séparée | Données documentées, diagnostics prudents |
 | Dépôt reproductible | Code, plans, article, scripts et sorties régénérables | Nouvelle installation capable de reproduire les sorties principales |
 
 ## 4. Phases du projet
@@ -107,15 +107,15 @@ Découpage retenu pour le manuscrit :
 
 | ID | Tâche | Sortie |
 |---|---|---|
-| A1 | Identifier des jeux de données publics candidats, idéalement via `moveHMM` ou `momentuHMM` | Liste documentée |
-| A2 | Évaluer licence, reproductibilité, qualité temporelle, nombre d'individus, covariables et pertinence écologique | Tableau comparatif |
-| A3 | Définir le split train/validation, préférablement par individus si possible | Protocole d'analyse |
-| A4 | Prétraiter les trajectoires et construire `L_t`, `Theta_t`, identifiants et covariables prédictibles | Données propres |
-| A5 | Ajuster le HMM nul et les alternatives diagnostiques sur train seulement | Objets modèles |
-| A6 | Calculer le filtrage observable et les log densités prédictives sur validation | `log_p0` validé |
-| A7 | Calculer les diagnostics globaux, localisés, feature-level et blockwise pertinents | Résultats par diagnostic |
+| A1 | Identifier des jeux de données publics candidats, idéalement via `moveHMM` ou `momentuHMM` | Complété : `moveHMM::elk_data` retenu |
+| A2 | Évaluer licence, reproductibilité, qualité temporelle, nombre d'individus, covariables et pertinence écologique | Complété : table de sélection |
+| A3 | Définir le split train/validation, préférablement par individus si possible | Complété : `elk-115` en validation |
+| A4 | Prétraiter les trajectoires et construire `L_t`, `Theta_t`, identifiants et covariables prédictibles | Complété : `application/01_preprocess.R` |
+| A5 | Ajuster le HMM nul et les alternatives diagnostiques sur train seulement | Complété : `application/02_fit_hmm.R` |
+| A6 | Calculer le filtrage observable et les log densités prédictives sur validation | Complété : `application/03_compute_eprocess.R` |
+| A7 | Calculer les diagnostics globaux, localisés, feature-level et blockwise pertinents | Amorçé : `K+1`, angle, mixture, localisation par état filtré |
 | A8 | Comparer diagnostics individuels, mélange pondéré et switching si justifié | Table de synthèse |
-| A9 | Produire les figures finales : trajectoire, états filtrés, `log E`, incréments, localisation | Figures article |
+| A9 | Produire les figures finales : trajectoire, états filtrés, `log E`, incréments, localisation | Amorçé : figures application |
 | A10 | Rédiger l'interprétation écologique en distinguant signal prédictif, localisation et hypothèses exploratoires | Section application |
 
 ### Manuscrit
@@ -166,6 +166,6 @@ Découpage retenu pour le manuscrit :
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de préparer l'application réelle : identifier un jeu de données public, définir le split train/validation, puis construire les scripts d'analyse reproductibles.
+La prochaine étape scientifique est d'intégrer l'application elk dans le manuscrit : rédiger le protocole, présenter la sélection `K = 3`, expliquer les diagnostics et interpréter prudemment les signaux sur l'individu `elk-115`.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.
