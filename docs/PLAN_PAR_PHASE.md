@@ -190,7 +190,7 @@ Scénarios prioritaires :
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Implémenté, signal fort sous HSMM et conservateur sous HMM nul |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut ? | Implémenté, signal plus net dans la fenêtre et l'état ciblés |
 | S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Implémenté, mixture calibrée et switching interprétable |
-| S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
+| S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Implémenté, faux signal gonflé sous nul |
 | S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Signal blockwise quand le one-step reste faible |
 | S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Résumé par individu et moyenne sûre |
 | S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Résultat optionnel ou supplément |
@@ -348,4 +348,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Poursuivre la Phase 4 avec le produit parallèle naïf comme démonstration négative, puis la validation train/validation estimée.
+Poursuivre la Phase 4 avec la validation train/validation estimée.

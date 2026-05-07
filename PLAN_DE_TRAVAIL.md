@@ -92,7 +92,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Implémenté : feature blockwise observable, HMM vs HSMM |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut par temps, individu, habitat ou état filtré ? | Implémenté : fenêtre temporelle et état filtré |
 | S8 | Mélange et switching prédictibles | Les mélanges restent-ils calibrés et plus robustes qu'un diagnostic unique ? | Implémenté : diagnostics individuels, mixture, switching |
-| S9 | Produits parallèles non valides | Le produit naïf de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
+| S9 | Produits parallèles non valides | Le produit naïf de diagnostics parallèles gonfle-t-il le faux signal ? | Implémenté : faux signal gonflé sous nul |
 | S10 | Blockwise long-horizon | Les diagnostics de blocs détectent-ils des défauts invisibles à un pas ? | Résultats par bloc et figures de trajectoires |
 | S11 | Validation par individus et cross-fitted average | La moyenne pondérée d'e-values par unités indépendantes est-elle stable ? | Résumé par individu et moyenne cross-fitted |
 | S12 | Enveloppe composite conservatrice | Une enveloppe simple contrôle-t-elle le faux signal sur une famille de HMM ? | Résultats exploratoires, optionnel |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de poursuivre la Phase 4 avec le produit parallèle naïf comme démonstration négative, puis la validation train/validation estimée.
+La prochaine étape scientifique est de poursuivre la Phase 4 avec la validation train/validation estimée.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

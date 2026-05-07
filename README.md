@@ -14,6 +14,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
 - Le noyau R minimal de Phase 2 est amorcé avec `R/simulate_hmm_movement.R` et `simulations/01_null_fixed_generator.R`.
 - La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
+- Le scénario S9 démontre pourquoi le produit parallèle naïf n'est pas utilisé comme procédure valide.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
@@ -114,6 +115,12 @@ Pour lancer les mixtures et switching prédictibles :
 
 ```bash
 Rscript simulations/08_mixture_switching.R
+```
+
+Pour lancer la démonstration négative du produit parallèle naïf :
+
+```bash
+Rscript simulations/09_parallel_product_warning.R
 ```
 
 ## Données

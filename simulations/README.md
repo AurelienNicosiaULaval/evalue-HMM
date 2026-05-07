@@ -28,7 +28,7 @@ Les sorties doivent être écrites dans :
 | `06_duration_or_blockwise.R` | Durées non géométriques via diagnostic de bloc, implémenté |
 | `07_localized_failure.R` | Échec localisé et pondérations prédictibles, implémenté |
 | `08_mixture_switching.R` | Mélanges et switching prédictibles, implémenté |
-| `09_parallel_product_warning.R` | Démonstration que le produit parallèle naïf n'est pas valide par défaut |
+| `09_parallel_product_warning.R` | Démonstration que le produit parallèle naïf n'est pas valide par défaut, implémenté |
 | `10_blockwise_long_horizon.R` | Diagnostics blockwise à long horizon |
 | `11_individual_validation_crossfit.R` | Validation par individus et moyenne cross-fitted |
 | `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, optionnelle |
