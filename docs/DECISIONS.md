@@ -19,6 +19,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D011 | 2026-05-07 | Le diagnostic angulaire est d'abord implémenté comme ratio full-density avec structure HMM fixe | Tester la détection d'une mauvaise spécification circulaire avant les diagnostics feature-level |
 | D012 | 2026-05-07 | Le diagnostic step-angle est implémenté comme e-process feature-level Rosenblatt avec copule gaussienne | Tester la détection d'une dépendance résiduelle invisible aux marges sans changer le HMM nul |
 | D013 | 2026-05-07 | La localisation pondérée est implémentée comme transformation prédictible d'un diagnostic déjà calculé | Réutiliser les diagnostics existants et respecter la garantie `1 + W_t(E_t - 1)` du manuscrit |
+| D014 | 2026-05-07 | Le diagnostic de durée est implémenté comme e-value blockwise sur une feature observable de persistance | Éviter de traiter les durées latentes décodées comme observées et suivre la théorie blockwise du manuscrit |
 
 ## Décisions ouvertes
 

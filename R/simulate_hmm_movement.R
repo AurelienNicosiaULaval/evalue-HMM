@@ -321,6 +321,111 @@ simulate_hmm_movement_local_copula <- function(
   do.call(rbind, output)
 }
 
+sample_hsmm_dwell_time <- function(state, dwell_mean, dwell_size) {
+  if (dwell_mean[state] < 1) {
+    stop("State dwell means must be at least 1.", call. = FALSE)
+  }
+  stats::rnbinom(1L, size = dwell_size[state], mu = dwell_mean[state] - 1) + 1L
+}
+
+sample_next_state_after_dwell <- function(current_state, transition_matrix) {
+  transition_probs <- transition_matrix[current_state, ]
+  transition_probs[current_state] <- 0
+  if (sum(transition_probs) <= 0) {
+    stop("Each state must allow at least one transition to another state.", call. = FALSE)
+  }
+  transition_probs <- transition_probs / sum(transition_probs)
+  sample.int(length(transition_probs), size = 1L, prob = transition_probs)
+}
+
+simulate_hsmm_movement <- function(
+    n_times,
+    parameters,
+    dwell_mean,
+    dwell_size,
+    n_individuals = 1L) {
+  if (!is.numeric(n_times) || length(n_times) != 1L || n_times < 1L) {
+    stop("`n_times` must be a positive integer.", call. = FALSE)
+  }
+  if (!is.numeric(n_individuals) || length(n_individuals) != 1L || n_individuals < 1L) {
+    stop("`n_individuals` must be a positive integer.", call. = FALSE)
+  }
+
+  n_times <- as.integer(n_times)
+  n_individuals <- as.integer(n_individuals)
+  n_states <- length(parameters$initial_probs)
+
+  if (length(dwell_mean) != n_states || length(dwell_size) != n_states) {
+    stop("`dwell_mean` and `dwell_size` must contain one value per state.", call. = FALSE)
+  }
+  if (any(!is.finite(dwell_mean)) || any(!is.finite(dwell_size))) {
+    stop("Dwell parameters must be finite.", call. = FALSE)
+  }
+  if (any(dwell_mean < 1) || any(dwell_size <= 0)) {
+    stop("Dwell means must be at least 1 and dwell sizes must be positive.", call. = FALSE)
+  }
+
+  output <- vector("list", n_individuals)
+
+  for (individual_index in seq_len(n_individuals)) {
+    states <- integer(n_times)
+    step_length <- numeric(n_times)
+    turning_angle <- numeric(n_times)
+
+    current_state <- sample.int(n_states, size = 1L, prob = parameters$initial_probs)
+    remaining_dwell <- sample_hsmm_dwell_time(
+      state = current_state,
+      dwell_mean = dwell_mean,
+      dwell_size = dwell_size
+    )
+
+    for (time_index in seq_len(n_times)) {
+      states[time_index] <- current_state
+      remaining_dwell <- remaining_dwell - 1L
+
+      if (time_index < n_times && remaining_dwell == 0L) {
+        current_state <- sample_next_state_after_dwell(
+          current_state = current_state,
+          transition_matrix = parameters$transition_matrix
+        )
+        remaining_dwell <- sample_hsmm_dwell_time(
+          state = current_state,
+          dwell_mean = dwell_mean,
+          dwell_size = dwell_size
+        )
+      }
+    }
+
+    for (state in seq_len(n_states)) {
+      state_index <- states == state
+      n_state <- sum(state_index)
+      if (n_state > 0L) {
+        step_length[state_index] <- stats::rgamma(
+          n_state,
+          shape = parameters$step_shape[state],
+          rate = parameters$step_rate[state]
+        )
+        turning_angle[state_index] <- simulate_wrapped_normal(
+          n_state,
+          mean = parameters$angle_mean[state],
+          sd = parameters$angle_sd[state]
+        )
+      }
+    }
+
+    output[[individual_index]] <- data.frame(
+      individual_id = individual_index,
+      time = seq_len(n_times),
+      state = states,
+      step_length = step_length,
+      turning_angle = turning_angle,
+      stringsAsFactors = FALSE
+    )
+  }
+
+  do.call(rbind, output)
+}
+
 hmm_movement_log_emission <- function(data, parameters) {
   required_columns <- c("step_length", "turning_angle")
   missing_columns <- setdiff(required_columns, names(data))

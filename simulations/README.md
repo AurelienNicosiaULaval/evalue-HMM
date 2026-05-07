@@ -25,7 +25,7 @@ Les sorties doivent être écrites dans :
 | `03_underfit_states.R` | Nombre d'états insuffisant, implémenté |
 | `04_angle_misspecification.R` | Distribution angulaire mal spécifiée, implémenté |
 | `05_step_angle_dependence.R` | Dépendance résiduelle longueur-angle via Rosenblatt ou copule, implémenté |
-| `06_duration_or_blockwise.R` | Durées non géométriques ou diagnostic de bloc |
+| `06_duration_or_blockwise.R` | Durées non géométriques via diagnostic de bloc, implémenté |
 | `07_localized_failure.R` | Échec localisé et pondérations prédictibles, implémenté |
 | `08_mixture_switching.R` | Mélanges et switching prédictibles |
 | `09_parallel_product_warning.R` | Démonstration que le produit parallèle naïf n'est pas valide par défaut |

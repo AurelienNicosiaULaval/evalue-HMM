@@ -120,7 +120,7 @@ Critère de réussite :
 
 ## Phase 3 : diagnostics R modulaires
 
-Statut : amorcée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire, step-angle feature-level et localisation pondérée.
+Statut : amorcée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire, step-angle feature-level, localisation pondérée et durée blockwise.
 
 Objectif : développer les diagnostics correspondant au catalogue du papier.
 
@@ -161,6 +161,7 @@ Livrables :
 - `R/diagnostics_angles.R` avec `diagnostic_angle()`.
 - `R/diagnostics_copula.R` avec `diagnostic_step_angle_dependence()`.
 - `R/diagnostics_localization.R` avec localisation linéaire, tempering par puissance, fenêtres temporelles et poids d'état filtré.
+- `R/diagnostics_duration.R` avec diagnostic blockwise de durée basé sur un indicateur observable de pas long.
 - Documentation courte de chaque diagnostic.
 - Exemples reproductibles sur données simulées.
 - Tests unitaires ou smoke tests.
@@ -185,7 +186,7 @@ Scénarios prioritaires :
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté, croissance forte de `log E` |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire détecte-t-il un défaut circulaire ? | Implémenté, signal angulaire fort |
 | S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Implémenté, signal feature-level clair |
-| S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée ou de bloc |
+| S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Implémenté, signal fort sous HSMM et conservateur sous HMM nul |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut ? | Implémenté, signal plus net dans la fenêtre et l'état ciblés |
 | S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Mixture calibrée, switching interprétable |
 | S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
@@ -346,4 +347,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Poursuivre la Phase 3 avec le diagnostic durée ou blockwise, puis les mélanges et le switching prédictibles.
+Poursuivre la Phase 3 avec les mélanges et le switching prédictibles.
