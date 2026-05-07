@@ -16,6 +16,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
 - Le scénario S2 compare paramètres connus, paramètres estimés sur train et validation sous générateur ajusté. L'estimation actuelle utilise les états simulés et n'est pas encore un ajusteur HMM général.
 - Le scénario S9 démontre pourquoi le produit parallèle naïf n'est pas utilisé comme procédure valide.
+- Le scénario S11 implémente la validation par individus avec moyenne cross-fitted finale et signale le scan multi-individus comme exploratoire.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
@@ -129,6 +130,12 @@ Pour lancer la démonstration négative du produit parallèle naïf :
 
 ```bash
 Rscript simulations/09_parallel_product_warning.R
+```
+
+Pour lancer la validation par individus et moyenne cross-fitted :
+
+```bash
+Rscript simulations/11_individual_validation_crossfit.R
 ```
 
 ## Données

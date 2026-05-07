@@ -94,7 +94,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | S8 | Mélange et switching prédictibles | Les mélanges restent-ils calibrés et plus robustes qu'un diagnostic unique ? | Implémenté : diagnostics individuels, mixture, switching |
 | S9 | Produits parallèles non valides | Le produit naïf de diagnostics parallèles gonfle-t-il le faux signal ? | Implémenté : faux signal gonflé sous nul |
 | S10 | Blockwise long-horizon | Les diagnostics de blocs détectent-ils des défauts invisibles à un pas ? | Résultats par bloc et figures de trajectoires |
-| S11 | Validation par individus et cross-fitted average | La moyenne pondérée d'e-values par unités indépendantes est-elle stable ? | Résumé par individu et moyenne cross-fitted |
+| S11 | Validation par individus et cross-fitted average | La moyenne pondérée d'e-values par unités indépendantes est-elle stable ? | Implémenté : moyenne finale sûre, scan individuel exploratoire, individu défaillant localisé |
 | S12 | Enveloppe composite conservatrice | Une enveloppe simple contrôle-t-elle le faux signal sur une famille de HMM ? | Résultats exploratoires, optionnel |
 
 ### Application réelle
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de poursuivre la Phase 4 avec S10 ou S11. S11 est prioritaire si l'on veut renforcer directement la validation par individus et le protocole train/validation du papier.
+La prochaine étape scientifique est de finaliser la Phase 4 avec S10. S12 reste optionnel pour le supplément ou une extension si le manuscrit a besoin d'un exemple d'enveloppe composite.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.
