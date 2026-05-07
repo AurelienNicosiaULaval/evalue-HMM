@@ -74,7 +74,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | C7 | Implémenter les diagnostics full-density : `K+1`, angle flexible, step-angle joint, durée | `diagnostic_extra_state()` et `diagnostic_angle()` premières versions |
 | C8 | Implémenter les diagnostics feature-level : Rosenblatt, copule sur `[0,1]^2`, résidus circulaires | `diagnostic_step_angle_dependence()` première version |
 | C9 | Implémenter les diagnostics blockwise : blocs temporels, features de déplacement, retour, résidence, barrière | Amorçé : durée blockwise dans `R/diagnostics_duration.R` |
-| C10 | Implémenter les mélanges et switching prédictibles entre diagnostics | Fonctions `diagnostic_mixture()` et `diagnostic_switch()` |
+| C10 | Implémenter les mélanges et switching prédictibles entre diagnostics | Implémenté : `diagnostic_mixture()` et `diagnostic_switch()` |
 | C11 | Implémenter la localisation pondérée : périodes, habitats, individus, états filtrés, tempering | Implémenté : `R/diagnostics_localization.R` |
 | C12 | Implémenter la validation par individus et les moyennes cross-fitted sûres | Scripts ou fonctions de split |
 | C13 | Écrire les tests unitaires et smoke tests R | Tests reproductibles |
@@ -91,7 +91,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | S5 | Dépendance résiduelle step-angle | Les diagnostics Rosenblatt/copule détectent-ils la dépendance invisible aux marges ? | Implémenté : e-process feature-level |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Implémenté : feature blockwise observable, HMM vs HSMM |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut par temps, individu, habitat ou état filtré ? | Implémenté : fenêtre temporelle et état filtré |
-| S8 | Mélange et switching prédictibles | Les mélanges restent-ils calibrés et plus robustes qu'un diagnostic unique ? | E-process individuels, mixture, switching |
+| S8 | Mélange et switching prédictibles | Les mélanges restent-ils calibrés et plus robustes qu'un diagnostic unique ? | Implémenté : diagnostics individuels, mixture, switching |
 | S9 | Produits parallèles non valides | Le produit naïf de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
 | S10 | Blockwise long-horizon | Les diagnostics de blocs détectent-ils des défauts invisibles à un pas ? | Résultats par bloc et figures de trajectoires |
 | S11 | Validation par individus et cross-fitted average | La moyenne pondérée d'e-values par unités indépendantes est-elle stable ? | Résumé par individu et moyenne cross-fitted |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de poursuivre la Phase 3 avec les mélanges et le switching prédictibles.
+La prochaine étape scientifique est de poursuivre la Phase 4 avec le produit parallèle naïf comme démonstration négative, puis la validation train/validation estimée.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

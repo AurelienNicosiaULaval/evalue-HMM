@@ -120,7 +120,7 @@ Critère de réussite :
 
 ## Phase 3 : diagnostics R modulaires
 
-Statut : amorcée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire, step-angle feature-level, localisation pondérée et durée blockwise.
+Statut : amorcée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
 
 Objectif : développer les diagnostics correspondant au catalogue du papier.
 
@@ -162,6 +162,7 @@ Livrables :
 - `R/diagnostics_copula.R` avec `diagnostic_step_angle_dependence()`.
 - `R/diagnostics_localization.R` avec localisation linéaire, tempering par puissance, fenêtres temporelles et poids d'état filtré.
 - `R/diagnostics_duration.R` avec diagnostic blockwise de durée basé sur un indicateur observable de pas long.
+- `R/diagnostics_combination.R` avec mixture pondérée et switching prédictible.
 - Documentation courte de chaque diagnostic.
 - Exemples reproductibles sur données simulées.
 - Tests unitaires ou smoke tests.
@@ -188,7 +189,7 @@ Scénarios prioritaires :
 | S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Implémenté, signal feature-level clair |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Implémenté, signal fort sous HSMM et conservateur sous HMM nul |
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut ? | Implémenté, signal plus net dans la fenêtre et l'état ciblés |
-| S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Mixture calibrée, switching interprétable |
+| S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Implémenté, mixture calibrée et switching interprétable |
 | S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
 | S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Signal blockwise quand le one-step reste faible |
 | S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Résumé par individu et moyenne sûre |
@@ -347,4 +348,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Poursuivre la Phase 3 avec les mélanges et le switching prédictibles.
+Poursuivre la Phase 4 avec le produit parallèle naïf comme démonstration négative, puis la validation train/validation estimée.
