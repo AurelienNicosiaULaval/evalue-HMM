@@ -12,6 +12,8 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
 - The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
+- Le matériel supplémentaire est dans `paper/supplementary_material.tex`.
+- Découpage actuel des simulations : S1, S3, S4, S5, S6, S7 et S8 dans l'article principal ; S2, S9, S10, S11 et S12 dans le supplément.
 - Le noyau R minimal de Phase 2 inclut simulation, filtrage, densités prédictives, e-process et estimation oracle pour les scénarios contrôlés.
 - La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
 - Le scénario S2 compare paramètres connus, paramètres estimés sur train et validation sous générateur ajusté. L'estimation actuelle utilise les états simulés et n'est pas encore un ajusteur HMM général.
@@ -40,6 +42,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 │   └── application_figures/
 ├── paper/
 │   ├── predictive_e_diagnostics_hmm_improved.tex
+│   ├── supplementary_material.tex
 │   └── figures/
 ├── manuscript_outputs/
 └── docs/

@@ -195,6 +195,13 @@ Scénarios prioritaires :
 | S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Implémenté, moyenne finale sûre et scan individuel exploratoire |
 | S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Implémenté comme scénario optionnel ou supplément |
 
+Découpage retenu :
+
+- Article principal : S1, S3, S4, S5, S6, S7, S8.
+- Matériel supplémentaire : S2, S9, S10, S11, S12.
+- Le fichier principal est `paper/predictive_e_diagnostics_hmm_improved.tex`.
+- Le supplément est `paper/supplementary_material.tex`.
+
 Mesures à rapporter :
 
 - Taux de faux signal pour `alpha = 0.10`, `0.05`, `0.01`.
@@ -266,14 +273,14 @@ Tâches :
 - Ajouter les figures et tables de simulation.
 - Ajouter la section application réelle.
 - Mettre à jour discussion et limites selon les résultats.
-- Décider ce qui va dans le papier principal et ce qui va en supplément.
-- Créer un supplément seulement si nécessaire.
+- Maintenir le découpage principal/supplément déjà décidé.
+- Compléter le supplément si de nouveaux résultats techniques sont ajoutés.
 
 Livrables :
 
 - `paper/predictive_e_diagnostics_hmm_improved.tex` complété.
 - Figures et tables intégrées.
-- Supplément optionnel.
+- Supplément `paper/supplementary_material.tex`.
 - Bibliographie cohérente.
 
 Critère de réussite :
@@ -348,4 +355,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Intégrer les résultats S1 à S12 dans le manuscrit, puis décider quels scénarios appartiennent au texte principal ou au supplément.
+Préparer l'application réelle : identifier un jeu de données public, vérifier sa licence et sa structure, puis définir le protocole train/validation.

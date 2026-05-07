@@ -73,6 +73,8 @@ The main point is not simply to replace likelihood ratios by a new terminology. 
 
 The paper is written as a theoretical setup for a first methodological article. The core guarantees are exact under a fixed train/validation protocol. This means that the null model and diagnostic alternatives are fitted or specified before validation, and the validation sequence is then used only to compute predictive ratios. The same-sample workflow in which the analyst fits the model, chooses diagnostics and evaluates them all on the same observations is not covered by the exact guarantees below unless additional sample splitting, cross-fitting or pre-specified conditioning arguments are used.
 
+The numerical section is deliberately focused. The main article reports the scenarios that support the core methodological message: calibration under a fixed null generator, targeted movement diagnostics, predictable localization and predictable diagnostic combination. Additional sensitivity checks and extensions are reported in the supplementary material.
+
 \paragraph{Main contributions.}
 The paper develops the following theoretical components.
 \begin{enumerate}[label=(C\arabic*)]
@@ -774,6 +776,39 @@ A first implementation should prioritize exact split-sample validity and transpa
 \item Interpret the result comparatively. A large e-process indicates that the diagnostic alternative predicted the validation sequence better than the fitted HMM in a sequentially valid sense; it does not prove that the diagnostic alternative is the true ecological mechanism.
 \end{enumerate}
 
+\section{Simulation study}
+\label{sec:simulations}
+
+The simulations were designed to check whether the theoretical guarantees translate into a reproducible R workflow and whether targeted diagnostic alternatives accumulate evidence under controlled movement-model failures. All scenarios use simulated movement trajectories with step lengths and turning angles, forward filtering for the observable HMM predictive density and cumulative log e-processes monitored against thresholds $\log(1/\alpha)$.
+
+The main article reports seven scenarios. Scenario S1 checks calibration under a correctly specified fixed HMM. Scenarios S3 to S6 evaluate targeted diagnostic power for an insufficient number of states, angular misspecification, residual step-angle dependence and non-geometric duration structure. Scenario S7 studies predictable localization of a temporally and state-localized failure. Scenario S8 evaluates predictable mixtures and switching among diagnostics.
+
+The supplementary material contains five scenarios that are useful but less central to the main narrative. Scenario S2 studies a train/validation workflow with oracle-state parameter estimation and is therefore treated as a sensitivity analysis rather than a main HMM-fitting result. Scenario S9 demonstrates why parallel products of diagnostics are not valid by default. Scenario S10 studies a longer-horizon blockwise straightness diagnostic. Scenario S11 studies validation by individuals and cross-fitted averages. Scenario S12 studies a conservative finite-family composite-null envelope.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.08\linewidth}>{\raggedright\arraybackslash}p{0.31\linewidth}>{\raggedright\arraybackslash}p{0.34\linewidth}>{\raggedleft\arraybackslash}p{0.13\linewidth}@{}}
+\toprule
+Scenario & Target & Main result at $\alpha=0.05$ & Signal rate \\
+\midrule
+S1 & Correct fixed HMM null & False signal remains below the nominal level over 500 replicates & 0.030 \\
+S3 & Missing latent state & A $K+1$ diagnostic accumulates strong evidence against an underfitted $K$-state HMM & 0.997 \\
+S4 & Angular misspecification & The angular diagnostic detects the misspecified circular distribution in every replicate & 1.000 \\
+S5 & Residual step-angle dependence & The copula or residual-dependence diagnostic detects dependence invisible to marginal checks & 1.000 \\
+S6 & Non-geometric duration structure & A blockwise duration diagnostic is conservative under the HMM null and powerful under the HSMM alternative & 0.000; 1.000 \\
+S7 & Localized failure & Predictable time and state localization concentrates the signal relative to the global diagnostic & 0.063; 0.900 \\
+S8 & Predictable mixture and switching & Mixtures and switching remain calibrated under the null and robust under a changing alternative & 0.036; 1.000 \\
+\bottomrule
+\end{tabular}
+\caption{Simulation scenarios retained in the main article. For scenarios with two entries in the signal-rate column, the first value refers to the relevant null or global comparison and the second to the targeted alternative or localized diagnostic.}
+\label{tab:main_simulations}
+\end{table}
+
+Table \ref{tab:main_simulations} gives the main numerical summary. Under the correctly specified null in S1, the crossing rate at $\alpha=0.05$ is $0.030$, consistent with conservative finite-sample behaviour. The targeted alternatives in S3 to S5 have high power in the controlled alternatives, with crossing rates of $0.997$, $1.000$ and $1.000$, respectively. The duration scenario S6 gives no false signals under the HMM null and detects the HSMM-like alternative in every replicate. The localization scenario S7 shows why local increments should be reported: the global diagnostic crosses in $0.063$ of replicates at $\alpha=0.05$, whereas the diagnostic localized to the failure window and predicted state crosses in $0.900$ of replicates. Finally, S8 confirms that predictable mixtures and switching can be used without the severe false-signal inflation associated with non-valid parallel products.
+
+These simulations are not intended to exhaustively compare HMM estimators or movement models. Their purpose is narrower: to verify that the proposed e-diagnostic objects can be computed reproducibly, that the null behaviour is compatible with the theory in controlled settings and that each diagnostic responds to the failure it is designed to target. The supplementary scenarios document additional safeguards and extensions that are useful for implementation but would broaden the main article beyond its central message.
+
 \section{Discussion}
 \label{sec:discussion}
 
@@ -781,9 +816,9 @@ This theoretical framework turns model checking for multi-state movement models 
 
 The framework adds several elements that are specific to movement HMMs. First, it prevents a common conceptual error: e-validity is based on the observable predictive density, not on a density conditional on decoded states. Second, it provides a way to localize model failure using predictable weights, including habitat indicators and filtered state probabilities. Third, it supports diagnostics tailored to movement structure: turning-angle misspecification, residual circular-linear dependence, non-geometric dwell times and long-horizon spatial behaviour. Fourth, it clarifies how several diagnostics can be combined. Predictable switching and mixtures are valid; parallel products on the same validation observations are not valid by default.
 
-The main limitation is the treatment of fitted parameters. The exact guarantee is cleanest when the fitted null and diagnostic alternatives are fixed before validation. This is a strength for a first methodological article because the null statement is transparent: conditional on training, does the fitted HMM generate the validation trajectory credibly? Same-sample exploratory workflows are still useful but require caution. Possible extensions include pre-specified diagnostic menus, cross-fitted averages over independent individuals, sequential sample splitting, composite-null envelopes and simulation-calibrated feature e-values.
+The main limitation is the treatment of fitted parameters. The exact guarantee is cleanest when the fitted null and diagnostic alternatives are fixed before validation. This is a strength for a first methodological article because the null statement is transparent: conditional on training, does the fitted HMM generate the validation trajectory credibly? Same-sample exploratory workflows are still useful but require caution. The supplementary simulations therefore treat oracle-state parameter estimation, validation by individuals and composite-null envelopes as sensitivity analyses or extensions rather than as the main empirical evidence.
 
-The next computational step is to implement a minimal prototype that simulates HMM trajectories, computes observable predictive densities by filtering and verifies the null behaviour of the e-process. Subsequent simulations should target missing states, angular misspecification, residual step-angle dependence, duration misspecification and localized changes in movement behaviour. A real-data application should emphasize not only whether a threshold is crossed, but also when, where and under which predicted behavioural state the evidence accumulates.
+The next applied step is a real-data validation example. That application should emphasize not only whether a threshold is crossed, but also when, where and under which predicted behavioural state the evidence accumulates. It should also report which diagnostics were pre-specified before validation and which were chosen exploratorily.
 
 \section*{Acknowledgements}
 To be completed.

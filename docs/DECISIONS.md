@@ -26,6 +26,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D018 | 2026-05-07 | La validation par individus utilise une moyenne pondérée des e-values finales comme résumé global par défaut | Suivre la proposition cross-fitted du manuscrit et éviter de transformer un scan multi-individus en garantie globale |
 | D019 | 2026-05-07 | Le diagnostic long-horizon utilise la rectitude des blocs avec lois de feature ajustées sur simulations indépendantes | Cibler un défaut de comportement génératif agrégé tout en gardant un diagnostic interprétable pour le manuscrit |
 | D020 | 2026-05-07 | L'enveloppe composite est implémentée sur une famille finie de HMM nuls et reste un scénario optionnel | Montrer la validité uniforme et son coût de conservatisme sans surcharger le papier principal |
+| D021 | 2026-05-07 | Les scénarios S1, S3, S4, S5, S6, S7 et S8 sont retenus pour l'article principal ; S2, S9, S10, S11 et S12 vont au supplément | Garder une narration principale centrée sur calibration, diagnostics ciblés, localisation et combinaison prédictible, tout en documentant les extensions |
 
 ## Décisions ouvertes
 

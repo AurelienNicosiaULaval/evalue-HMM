@@ -34,4 +34,13 @@ Les sorties doivent être écrites dans :
 | `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, implémenté comme scénario optionnel |
 | `run_all_simulations.R` | Exécution séquentielle des scripts implémentés |
 
-Les scénarios S1 à S12 sont implémentés. S12 reste méthodologiquement optionnel et peut servir de supplément ou d'extension selon l'espace disponible.
+Les scénarios S1 à S12 sont implémentés.
+
+## Découpage article principal et supplément
+
+| Placement | Scénarios | Raison |
+|---|---|---|
+| Article principal | S1, S3, S4, S5, S6, S7, S8 | Calibration, diagnostics ciblés, localisation et combinaison prédictible |
+| Supplément | S2, S9, S10, S11, S12 | Sensibilité, avertissement méthodologique et extensions avancées |
+
+Ce découpage est appliqué dans `paper/predictive_e_diagnostics_hmm_improved.tex` et `paper/supplementary_material.tex`.

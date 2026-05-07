@@ -97,6 +97,12 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | S11 | Validation par individus et cross-fitted average | La moyenne pondérée d'e-values par unités indépendantes est-elle stable ? | Implémenté : moyenne finale sûre, scan individuel exploratoire, individu défaillant localisé |
 | S12 | Enveloppe composite conservatrice | Une enveloppe simple contrôle-t-elle le faux signal sur une famille de HMM ? | Implémenté : famille finie de HMM, enveloppe conservatrice, coût de puissance documenté |
 
+Découpage retenu pour le manuscrit :
+
+- Article principal : S1, S3, S4, S5, S6, S7, S8.
+- Matériel supplémentaire : S2, S9, S10, S11, S12.
+- Raison : le texte principal reste centré sur calibration, diagnostics ciblés, localisation et combinaison prédictible ; le supplément documente les analyses de sensibilité, avertissements et extensions avancées.
+
 ### Application réelle
 
 | ID | Tâche | Sortie |
@@ -130,9 +136,9 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | D1 | Le premier papier vise-t-il JABES ou Methods in Ecology and Evolution ? | Choix du style de manuscrit |
 | D2 | Quel jeu de données réel est utilisable et partageable ? | Dataset retenu |
 | D3 | Quelle alternative simple représenter pour le diagnostic step-angle ? | Copule, modèle joint ou feature Rosenblatt |
-| D4 | Quels diagnostics doivent être dans le papier principal plutôt qu'en supplément ? | Portée finale des simulations |
+| D4 | Quels diagnostics doivent être dans le papier principal plutôt qu'en supplément ? | Décidé : S1, S3, S4, S5, S6, S7, S8 au principal ; S2, S9, S10, S11, S12 au supplément |
 | D5 | Le code reste-t-il sous forme de scripts ou devient-il un mini-package R interne ? | Organisation logicielle |
-| D6 | Faut-il inclure l'enveloppe composite dans le premier article ? | Principal, supplément ou reporté |
+| D6 | Faut-il inclure l'enveloppe composite dans le premier article ? | Décidé : supplément |
 
 ## 7. Critères de qualité
 
@@ -160,6 +166,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est d'intégrer les résultats S1 à S12 dans l'article, en décidant quels scénarios restent dans le texte principal et lesquels vont au supplément.
+La prochaine étape scientifique est de préparer l'application réelle : identifier un jeu de données public, définir le split train/validation, puis construire les scripts d'analyse reproductibles.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.
