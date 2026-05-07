@@ -70,7 +70,7 @@ Tâches :
 
 Livrables :
 
-- `paper/theory_note_phase1.tex`
+- `paper/theory_note_phase1.tex`, rédigé en anglais dans un style proche d'un article
 - Note théorique de 6 pages compilée localement dans `manuscript_outputs/theory_note_phase1.pdf`
 - Table de notation
 - Théorème principal et preuve préliminaire

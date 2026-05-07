@@ -11,6 +11,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D003 | 2026-05-07 | Les densités prédictives doivent marginaliser les états latents par filtrage | Ne pas traiter les états décodés comme observés |
 | D004 | 2026-05-07 | Les données brutes et traitées sont ignorées par défaut dans Git | Réduire le risque de publier des données sensibles |
 | D005 | 2026-05-07 | La note de phase 1 formalise d'abord le cas train/test avec modèles fixés avant validation | Obtenir une garantie claire avant d'étendre aux analyses adaptatives ou cross-fitting |
+| D006 | 2026-05-07 | La note de phase 1 est rédigée en anglais dans un format proche d'un article | Faciliter la réutilisation directe dans le manuscrit |
 
 ## Décisions ouvertes
 
