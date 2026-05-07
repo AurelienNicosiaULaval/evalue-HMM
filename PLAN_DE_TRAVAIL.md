@@ -43,7 +43,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | 0 | Structurer le dépôt | Arborescence, README, plan, article principal | Dépôt GitHub privé prêt |
 | 1 | Stabiliser la théorie | Article principal, filtrage, e-process, localisation, features, blockwise | Version théorique actuelle complétée |
 | 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype minimal S1 vérifié |
-| 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Interface commune et diagnostic `K+1` amorcés |
+| 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Interface commune, diagnostics ciblés et localisation amorcés |
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mélange, blockwise, cross-validation | Tables et figures de simulation |
 | 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Figures et interprétation écologique |
 | 6 | Finaliser le manuscrit | Sections simulations et application, figures, tables, discussion | Version article complète |
@@ -75,7 +75,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | C8 | Implémenter les diagnostics feature-level : Rosenblatt, copule sur `[0,1]^2`, résidus circulaires | `diagnostic_step_angle_dependence()` première version |
 | C9 | Implémenter les diagnostics blockwise : blocs temporels, features de déplacement, retour, résidence, barrière | Fonctions blockwise |
 | C10 | Implémenter les mélanges et switching prédictibles entre diagnostics | Fonctions `diagnostic_mixture()` et `diagnostic_switch()` |
-| C11 | Implémenter la localisation pondérée : périodes, habitats, individus, états filtrés, tempering | Fonctions de pondération |
+| C11 | Implémenter la localisation pondérée : périodes, habitats, individus, états filtrés, tempering | Implémenté : `R/diagnostics_localization.R` |
 | C12 | Implémenter la validation par individus et les moyennes cross-fitted sûres | Scripts ou fonctions de split |
 | C13 | Écrire les tests unitaires et smoke tests R | Tests reproductibles |
 | C14 | Documenter les dépendances et les commandes de reproduction | Instructions reproductibles |
@@ -90,7 +90,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | S4 | Angles mal spécifiés | Le diagnostic angulaire réagit-il aux défauts circulaires ? | Implémenté : signal angulaire fort |
 | S5 | Dépendance résiduelle step-angle | Les diagnostics Rosenblatt/copule détectent-ils la dépendance invisible aux marges ? | Implémenté : e-process feature-level |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée, comparaison HMM/HSMM simplifiée |
-| S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut par temps, individu, habitat ou état filtré ? | Courbes globales et localisées |
+| S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut par temps, individu, habitat ou état filtré ? | Implémenté : fenêtre temporelle et état filtré |
 | S8 | Mélange et switching prédictibles | Les mélanges restent-ils calibrés et plus robustes qu'un diagnostic unique ? | E-process individuels, mixture, switching |
 | S9 | Produits parallèles non valides | Le produit naïf de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
 | S10 | Blockwise long-horizon | Les diagnostics de blocs détectent-ils des défauts invisibles à un pas ? | Résultats par bloc et figures de trajectoires |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de poursuivre la Phase 3 avec la localisation pondérée, puis le diagnostic durée ou blockwise.
+La prochaine étape scientifique est de poursuivre la Phase 3 avec le diagnostic durée ou blockwise, puis les mélanges et le switching prédictibles.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

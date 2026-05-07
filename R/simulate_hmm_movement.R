@@ -228,6 +228,99 @@ simulate_hmm_movement_copula <- function(n_times, parameters, rho_by_state, n_in
   do.call(rbind, output)
 }
 
+simulate_hmm_movement_local_copula <- function(
+    n_times,
+    parameters,
+    rho_by_state,
+    active_times,
+    n_individuals = 1L) {
+  if (!is.numeric(n_times) || length(n_times) != 1L || n_times < 1L) {
+    stop("`n_times` must be a positive integer.", call. = FALSE)
+  }
+  if (!is.numeric(n_individuals) || length(n_individuals) != 1L || n_individuals < 1L) {
+    stop("`n_individuals` must be a positive integer.", call. = FALSE)
+  }
+
+  n_times <- as.integer(n_times)
+  n_individuals <- as.integer(n_individuals)
+  n_states <- length(parameters$initial_probs)
+
+  if (length(rho_by_state) != n_states) {
+    stop("`rho_by_state` must contain one correlation per state.", call. = FALSE)
+  }
+  if (any(!is.finite(rho_by_state)) || any(abs(rho_by_state) >= 1)) {
+    stop("Each element of `rho_by_state` must lie in (-1, 1).", call. = FALSE)
+  }
+
+  if (is.logical(active_times)) {
+    if (length(active_times) != n_times) {
+      stop("Logical `active_times` must have length `n_times`.", call. = FALSE)
+    }
+    active_indicator <- active_times
+  } else if (is.numeric(active_times)) {
+    if (any(!is.finite(active_times))) {
+      stop("Numeric `active_times` must contain finite time indices.", call. = FALSE)
+    }
+    active_indicator <- seq_len(n_times) %in% as.integer(active_times)
+  } else {
+    stop("`active_times` must be a logical vector or numeric time indices.", call. = FALSE)
+  }
+
+  output <- vector("list", n_individuals)
+
+  for (individual_index in seq_len(n_individuals)) {
+    states <- integer(n_times)
+    step_length <- numeric(n_times)
+    turning_angle <- numeric(n_times)
+    emission_rho <- numeric(n_times)
+
+    states[1] <- sample.int(n_states, size = 1L, prob = parameters$initial_probs)
+    if (n_times > 1L) {
+      for (time_index in 2:n_times) {
+        states[time_index] <- sample.int(
+          n_states,
+          size = 1L,
+          prob = parameters$transition_matrix[states[time_index - 1L], ]
+        )
+      }
+    }
+
+    for (time_index in seq_len(n_times)) {
+      state <- states[time_index]
+      rho <- if (active_indicator[time_index]) rho_by_state[state] else 0
+      z_step <- stats::rnorm(1L)
+      z_angle <- rho * z_step + sqrt(1 - rho^2) * stats::rnorm(1L)
+      u_step <- stats::pnorm(z_step)
+      u_angle <- stats::pnorm(z_angle)
+
+      step_length[time_index] <- stats::qgamma(
+        u_step,
+        shape = parameters$step_shape[state],
+        rate = parameters$step_rate[state]
+      )
+      turning_angle[time_index] <- wrap_angle(stats::qnorm(
+        u_angle,
+        mean = parameters$angle_mean[state],
+        sd = parameters$angle_sd[state]
+      ))
+      emission_rho[time_index] <- rho
+    }
+
+    output[[individual_index]] <- data.frame(
+      individual_id = individual_index,
+      time = seq_len(n_times),
+      state = states,
+      step_length = step_length,
+      turning_angle = turning_angle,
+      active_copula = active_indicator,
+      emission_rho = emission_rho,
+      stringsAsFactors = FALSE
+    )
+  }
+
+  do.call(rbind, output)
+}
+
 hmm_movement_log_emission <- function(data, parameters) {
   required_columns <- c("step_length", "turning_angle")
   missing_columns <- setdiff(required_columns, names(data))

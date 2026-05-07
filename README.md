@@ -13,7 +13,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
 - The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
 - Le noyau R minimal de Phase 2 est amorcé avec `R/simulate_hmm_movement.R` et `simulations/01_null_fixed_generator.R`.
-- La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire et step-angle feature-level.
+- La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire, step-angle feature-level et localisation pondérée.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
@@ -61,6 +61,7 @@ source("R/diagnostic_interface.R")
 source("R/diagnostics_states.R")
 source("R/diagnostics_angles.R")
 source("R/diagnostics_copula.R")
+source("R/diagnostics_localization.R")
 ```
 
 Exemple minimal pour l'e-process :
@@ -93,6 +94,12 @@ Pour lancer le diagnostic feature-level de dépendance step-angle :
 
 ```bash
 Rscript simulations/05_step_angle_dependence.R
+```
+
+Pour lancer le scénario de localisation pondérée :
+
+```bash
+Rscript simulations/07_localized_failure.R
 ```
 
 ## Données
