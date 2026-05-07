@@ -191,7 +191,7 @@ Scénarios prioritaires :
 | S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut ? | Implémenté, signal plus net dans la fenêtre et l'état ciblés |
 | S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Implémenté, mixture calibrée et switching interprétable |
 | S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Implémenté, faux signal gonflé sous nul |
-| S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Signal blockwise quand le one-step reste faible |
+| S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Implémenté, signal blockwise via rectitude des blocs |
 | S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Implémenté, moyenne finale sûre et scan individuel exploratoire |
 | S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Résultat optionnel ou supplément |
 
@@ -327,7 +327,7 @@ Critère de réussite :
 | Échec localisé | 4 | Les poids prédictibles localisent les segments problématiques |
 | Mixture/switching | 4 | Les combinaisons prédictibles restent calibrées sous le nul |
 | Produit parallèle naïf | 4 | Le faux signal gonflé est démontré comme avertissement méthodologique |
-| Blockwise long-horizon | 4 | Les features de blocs détectent des défauts invisibles à un pas |
+| Blockwise long-horizon | 4 | Implémenté, les features de blocs détectent un défaut de dépendance angulaire long-horizon |
 | Validation par individus | 4, 5 | Implémenté, les résultats par individu et la moyenne cross-fitted sont rapportés |
 | Application réelle | 5 | Les résultats sont reproductibles et interprétés prudemment |
 | Audit final | 7 | Le dépôt permet de reconstruire les sorties principales |
@@ -348,4 +348,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Finaliser la Phase 4 avec S10, puis décider si S12 doit rester optionnel ou être inclus comme supplément.
+Décider si S12 doit rester optionnel ou être inclus comme supplément. Si S12 est reporté, passer à l'intégration des résultats de simulation dans le manuscrit.

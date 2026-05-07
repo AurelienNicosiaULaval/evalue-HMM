@@ -29,9 +29,9 @@ Les sorties doivent être écrites dans :
 | `07_localized_failure.R` | Échec localisé et pondérations prédictibles, implémenté |
 | `08_mixture_switching.R` | Mélanges et switching prédictibles, implémenté |
 | `09_parallel_product_warning.R` | Démonstration que le produit parallèle naïf n'est pas valide par défaut, implémenté |
-| `10_blockwise_long_horizon.R` | Diagnostics blockwise à long horizon |
+| `10_blockwise_long_horizon.R` | Diagnostics blockwise à long horizon, implémenté |
 | `11_individual_validation_crossfit.R` | Validation par individus et moyenne cross-fitted, implémenté |
 | `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, optionnelle |
 | `run_all_simulations.R` | Exécution séquentielle des scripts implémentés |
 
-Les scénarios S1 à S9 et S11 sont implémentés. S10 reste le dernier scénario substantiel prévu. S12 est optionnel et peut servir de supplément ou d'extension selon l'espace disponible.
+Les scénarios S1 à S11 sont implémentés. S12 est optionnel et peut servir de supplément ou d'extension selon l'espace disponible.
