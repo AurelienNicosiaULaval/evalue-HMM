@@ -13,6 +13,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D005 | 2026-05-07 | La note de phase 1 formalise d'abord le cas train/test avec modèles fixés avant validation | Obtenir une garantie claire avant d'étendre aux analyses adaptatives ou cross-fitting |
 | D006 | 2026-05-07 | La note de phase 1 est rédigée en anglais dans un format proche d'un article | Faciliter la réutilisation directe dans le manuscrit |
 | D007 | 2026-05-07 | `predictive_e_diagnostics_hmm_improved.tex` devient l'unique source principale de l'article | Remplacer les anciens brouillons et travailler à partir d'une seule version propre |
+| D008 | 2026-05-07 | Le plan R et simulation suit la version améliorée de l'article : mixtures, switching, localisation, features, blockwise et validation par individus | Aligner les simulations sur les garanties théoriques réellement présentes dans le manuscrit |
 
 ## Décisions ouvertes
 

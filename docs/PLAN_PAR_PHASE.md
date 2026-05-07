@@ -6,20 +6,22 @@ Version : 2026-05-07
 
 ## Résumé
 
-Le projet sera mené en huit phases, de la structuration du dépôt jusqu'à la préparation à la soumission. Le principe directeur est de commencer par un cadre théorique simple et vérifiable, puis de construire progressivement le prototype R, les diagnostics, les simulations, l'application réelle et le manuscrit.
+Le projet sera mené en huit phases, de la structuration du dépôt jusqu'à la préparation à la soumission. La version actuelle de l'article, `paper/predictive_e_diagnostics_hmm_improved.tex`, élargit le plan initial : les simulations et l'analyse R doivent maintenant couvrir non seulement les e-process prédictifs pour HMM, mais aussi les diagnostics prédictibles multiples, les mélanges, le switching, la localisation pondérée, les diagnostics feature-level, les diagnostics blockwise et la validation par unités indépendantes.
+
+Le principe directeur reste le même : commencer par un noyau R simple et vérifiable, puis ajouter les diagnostics dans l'ordre où ils sont nécessaires pour soutenir les claims du papier.
 
 ## Vue d'ensemble des phases
 
 | Phase | Objectif | Tâches principales | Livrables | Critère de réussite |
 |---|---|---|---|---|
-| 0 | Structurer le dépôt | Organiser l'arborescence, README, plan, bibliographie initiale, fichiers de départ | Dépôt GitHub privé prêt | Dépôt propre, versionné, reproductible |
-| 1 | Stabiliser la théorie | Fixer la notation, écrire le théorème principal, clarifier le filtrage, traiter le cas des paramètres estimés | Note théorique de 5 à 8 pages | Notation stable et preuve préliminaire relue |
-| 2 | Construire le prototype R minimal | Simuler un HMM simple, calculer le forward filter, les densités prédictives et l'e-process | Prototype R minimal | Exemple reproductible sous modèle simulé |
-| 3 | Développer les diagnostics | Ajouter les diagnostics : nombre d'états, angles, dépendance longueur-angle, durées | Fonctions diagnostiques ciblées | Chaque diagnostic produit un e-process interprétable |
-| 4 | Réaliser les simulations | Étudier nul correct, état manquant, angles mal spécifiés, dépendance, durées, échec localisé | Scripts, tables, figures | Taux de faux signal, puissance et localisation documentés |
-| 5 | Traiter l'application réelle | Choisir un jeu de données, prétraiter, ajuster HMM K = 2, 3, 4, calculer les diagnostics | Analyse réelle reproductible | Figures et interprétation écologique prudente |
-| 6 | Rédiger le manuscrit | Écrire méthodes, théorie, simulations, application, introduction, discussion, supplément | Version 0.1 du manuscrit | Manuscrit cohérent avec preuves, figures et bibliographie |
-| 7 | Vérifier avant soumission | Audit reproductibilité, relecture statistique, relecture écologique, nettoyage du dépôt | Dépôt et manuscrit prêts | Nouvelle installation capable de reproduire les résultats |
+| 0 | Structurer le dépôt | Organiser l'arborescence, README, plan, article principal | Dépôt GitHub privé prêt | Dépôt propre, versionné, reproductible |
+| 1 | Stabiliser la théorie | Article principal, filtrage, e-process, localisation, features, blockwise | Version théorique actuelle | Le manuscrit compile et fixe les claims théoriques |
+| 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype R minimal | Calibration simple sous le nul |
+| 3 | Développer les diagnostics R | Full-density, feature-level, blockwise, mixtures, switching, localisation | Fonctions diagnostiques modulaires | Interface commune et résultats interprétables |
+| 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mixtures, blockwise, cross-validation | Tables et figures | Résultats alignés avec les théorèmes de l'article |
+| 5 | Traiter l'application réelle | Données, split train/validation, HMM, diagnostics globaux et localisés | Analyse reproductible | Interprétation écologique prudente |
+| 6 | Finaliser le manuscrit | Simulations, application, figures, tables, discussion | Article complet | Claims appuyés par théorie, simulation ou application |
+| 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Dépôt et manuscrit prêts | Nouvelle installation capable de reproduire les sorties |
 
 ## Phase 0 : structuration du dépôt
 
@@ -30,9 +32,9 @@ Objectif : disposer d'un dépôt privé propre, versionné et prêt pour un trav
 Tâches :
 
 - Créer l'arborescence du projet.
-- Conserver le plan initial comme note source.
+- Conserver le plan initial comme note source historique.
 - Rédiger le README du projet.
-- Ajouter la bibliographie initiale.
+- Installer la version principale actuelle de l'article.
 - Créer les dossiers pour le code R, les simulations, l'application réelle, les résultats et le manuscrit.
 - Ignorer les données brutes, les données traitées et les résultats générés par défaut.
 
@@ -41,8 +43,7 @@ Livrables :
 - `README.md`
 - `PLAN_DE_TRAVAIL.md`
 - `docs/PLAN_PAR_PHASE.md`
-- `docs/BIBLIOGRAPHIE_DE_DEPART.md`
-- Bibliographie intégrée dans la version actuelle de l'article
+- `paper/predictive_e_diagnostics_hmm_improved.tex`
 - Arborescence complète du dépôt
 
 Critère de réussite :
@@ -53,134 +54,162 @@ Critère de réussite :
 
 ## Phase 1 : stabilisation théorique
 
-Statut : première version complétée.
+Statut : complétée pour une première version.
 
-Objectif : produire une note théorique courte qui fixe la base statistique du projet.
+Objectif : fixer les garanties théoriques qui guident l'implémentation R et les simulations.
 
-Tâches :
+Composantes théoriques à soutenir par le code :
 
-- Fixer les notations `Y_t`, `S_t`, `p_0`, `p_1`, `E_t`, `E_{1:t}` et `\mathcal F_t`.
-- Définir clairement la trajectoire observée et les états latents.
-- Écrire la densité prédictive observable du HMM avec marginalisation des états latents par filtrage.
-- Énoncer le théorème principal pour le cas train/test avec modèles fixés avant validation.
-- Démontrer que le ratio de densités prédictives est une e-value conditionnelle.
-- Déduire que le produit cumulatif est un e-process.
-- Ajouter la remarque sur les paramètres estimés : validité conditionnelle au jeu d'entraînement, prudence si les mêmes données servent à estimer et diagnostiquer.
-- Clarifier que les états Viterbi peuvent aider l'interprétation, mais ne fondent pas la validité.
+- Densité prédictive observable par filtrage.
+- E-process prédictif sous générateur nul fixé.
+- Contrôle anytime-valid par seuil `1 / alpha`.
+- Choix prédictible des diagnostics.
+- Mélanges et switching prédictibles.
+- Non-validité du produit naïf de diagnostics parallèles.
+- Localisation pondérée par périodes, habitats, individus ou états filtrés.
+- Diagnostics feature-level, incluant Rosenblatt et résidus circulaires-linéaires.
+- Diagnostics blockwise pour comportement génératif à long horizon.
+- Validation conditionnelle après entraînement, validation par individus et moyenne cross-fitted.
+- Enveloppe composite conservatrice, optionnelle pour le premier article.
 
 Livrables :
 
-- `paper/predictive_e_diagnostics_hmm_improved.tex`, version principale actuelle de l'article
+- `paper/predictive_e_diagnostics_hmm_improved.tex`
 - Article compilé localement dans `manuscript_outputs/predictive_e_diagnostics_hmm_improved.pdf`
-- Table de notation
-- Théorème principal et preuve préliminaire
-- Proposition sur la validité par filtrage
-- Paragraphe sur les paramètres estimés
+- Tableau de correspondance à créer entre théorèmes, simulations et fonctions R.
 
 Critère de réussite :
 
-- La notation est stable.
-- La preuve du cas train/test est complète.
-- Les limites des garanties anytime-valid sont explicitement écrites.
+- Le manuscrit compile.
+- Les claims théoriques à vérifier par simulation sont explicitement identifiés.
+- Les limites des garanties exactes sont distinguées des usages exploratoires.
 
-## Phase 2 : prototype R minimal
+## Phase 2 : noyau R minimal
 
-Objectif : obtenir une preuve de concept computationnelle avec paramètres connus.
+Objectif : construire une preuve de concept computationnelle fiable avant d'ajouter les diagnostics avancés.
 
 Tâches :
 
-- Simuler un HMM simple à deux états.
-- Générer des observations de type longueur de pas et angle de virage, ou commencer avec un flux univarié simplifié si nécessaire.
+- Implémenter ou stabiliser `log_sum_exp()` et les fonctions de normalisation log.
+- Simuler un HMM de mouvement à deux états avec longueurs de pas et angles de virage.
+- Permettre plusieurs individus et un split train/validation simple.
 - Calculer les probabilités prédictives par forward filtering.
-- Calculer les log densités prédictives sous `M_0` et `M_1`.
-- Calculer les incréments `log e_t` et les cumulés `log E_{1:t}`.
-- Tracer une première courbe avec le seuil `log(1 / alpha)`.
-- Vérifier le comportement sous le nul avec plusieurs trajectoires simulées.
+- Calculer `log_p0` comme densité prédictive observable marginalisée sur les états.
+- Calculer `log_q` pour une alternative simple fixée avant validation.
+- Calculer `log_e_t`, `log_E_t`, seuil `log(1 / alpha)`, temps de franchissement et indicateur de signal.
+- Tracer une première courbe `log E_{1:t}` avec seuil et incréments locaux.
+- Vérifier sous le nul avec paramètres connus.
 
 Livrables :
 
-- Fonction de simulation HMM minimale.
-- Fonctions `hmm_forward_filter()`, `hmm_predictive_log_density()` et `compute_eprocess()` vérifiées.
-- Script de démonstration reproductible.
+- `simulate_hmm_movement()` ou équivalent.
+- `hmm_forward_filter()` vérifié sur l'échelle log.
+- `hmm_predictive_log_density()` vérifié.
+- `compute_eprocess()` vérifié.
+- Script minimal de calibration sous le nul.
 - Figure prototype de `log E_{1:t}`.
 
 Critère de réussite :
 
 - Une nouvelle session R peut reproduire l'exemple minimal.
 - Les densités prédictives utilisent les probabilités filtrées et non les états décodés.
-- Le franchissement du seuil reste rare sous le nul dans une simulation simple.
+- Le taux de franchissement sous nul est compatible avec `alpha` dans une simulation simple.
 
-## Phase 3 : diagnostics ciblés
+## Phase 3 : diagnostics R modulaires
 
-Objectif : transformer le prototype en cadre diagnostique modulaire.
+Objectif : développer les diagnostics correspondant au catalogue du papier.
+
+Interface commune attendue :
+
+Chaque diagnostic doit retourner au minimum :
+
+- `diagnostic_name`
+- `time`
+- `individual_id`, si disponible
+- `log_p0`
+- `log_q`
+- `log_e_increment`
+- `log_e_cumulative`
+- `threshold`
+- `crossing_time`
+- `signal`
+- `weights`, si diagnostic localisé
+- `metadata`, incluant le split, les paramètres et le type de diagnostic
 
 Ordre recommandé :
 
-1. Diagnostic `K` contre `K+1`.
-2. Diagnostic angulaire.
-3. Diagnostic dépendance longueur-angle.
-4. Diagnostic de durée.
-
-Tâches :
-
-- Définir pour chaque diagnostic un modèle nul, une alternative et une interprétation écologique.
-- Écrire une fonction qui retourne les log densités prédictives sous `M_0` et `M_1`.
-- Retourner systématiquement l'objet e-process, le seuil, le temps de franchissement et un indicateur de signal.
-- Documenter les cas où le diagnostic est confirmatoire et les cas où il est exploratoire.
-- Garder le diagnostic longueur-angle comme contribution méthodologique centrale du premier manuscrit.
+1. Diagnostic full-density `K` contre `K+1`.
+2. Diagnostic full-density ou feature-level pour angles mal spécifiés.
+3. Diagnostic Rosenblatt/copule pour dépendance résiduelle step-angle.
+4. Diagnostic durée via approximation HSMM ou feature blockwise.
+5. Localisation pondérée : temps, individu, habitat, état filtré.
+6. Mélange pondéré de diagnostics.
+7. Switching prédictible entre diagnostics.
+8. Diagnostic blockwise long-horizon.
+9. Moyenne cross-fitted par individus.
+10. Enveloppe composite conservatrice, optionnelle.
 
 Livrables :
 
-- Fonction pour le diagnostic du nombre d'états.
-- Fonction pour le diagnostic angulaire.
-- Fonction pour le diagnostic longueur-angle.
-- Fonction ou prototype pour le diagnostic de durée.
+- Fonctions diagnostiques modulaires dans `R/`.
 - Documentation courte de chaque diagnostic.
+- Exemples reproductibles sur données simulées.
+- Tests unitaires ou smoke tests.
 
 Critère de réussite :
 
 - Chaque diagnostic produit un e-process interprétable.
 - Les sorties ont une structure commune.
 - Les diagnostics ne reposent pas sur les états Viterbi pour la validité.
+- Les produits naïfs de diagnostics parallèles ne sont pas utilisés dans l'analyse principale.
 
 ## Phase 4 : simulations principales
 
-Objectif : évaluer la calibration, la puissance, la spécificité et la localisation des diagnostics.
+Objectif : évaluer calibration, puissance, spécificité, localisation et comportement des combinaisons diagnostiques.
 
-Scénarios :
+Scénarios prioritaires :
 
-| Scénario | Question | Résultat attendu |
-|---|---|---|
-| S1 : nul correct | Le taux de faux signal est-il contrôlé ? | Franchissements compatibles avec `alpha` |
-| S2 : état manquant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Accumulation d'évidence sous modèle sous-ajusté |
-| S3 : angles mal spécifiés | Le diagnostic angulaire est-il spécifique ? | Signal surtout sur le diagnostic angulaire |
-| S4 : dépendance longueur-angle | La dépendance invisible aux marges est-elle détectée ? | Signal clair du diagnostic de dépendance |
-| S5 : durées non géométriques | Le HMM standard échoue-t-il sur les durées ? | Signal du diagnostic de durée |
-| S6 : échec localisé | Les incréments localisent-ils le défaut ? | Incréments élevés après le changement |
+| ID | Scénario | Question | Résultat attendu |
+|---|---|---|---|
+| S1 | Null fixed-generator | L'e-process est-il calibré sous HMM nul fixé ? | Faux signal compatible avec `alpha` |
+| S2 | Train/validation avec paramètres estimés | La calibration reste-t-elle raisonnable conditionnellement au train ? | Différence documentée entre paramètres connus et estimés |
+| S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Croissance de `log E` et localisation du défaut |
+| S4 | Angles mal spécifiés | Le diagnostic angulaire détecte-t-il un défaut circulaire ? | Signal surtout sur le diagnostic angulaire |
+| S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Signal feature-level clair |
+| S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée ou de bloc |
+| S7 | Échec localisé | Les poids prédictibles localisent-ils le défaut ? | Signal plus net dans la période ou l'état ciblé |
+| S8 | Mixture et switching | Les combinaisons prédictibles restent-elles calibrées et robustes ? | Mixture calibrée, switching interprétable |
+| S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Démonstration négative contrôlée |
+| S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Signal blockwise quand le one-step reste faible |
+| S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Résumé par individu et moyenne sûre |
+| S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Résultat optionnel ou supplément |
 
 Mesures à rapporter :
 
-- Taux de faux signal.
-- Puissance.
+- Taux de faux signal pour `alpha = 0.10`, `0.05`, `0.01`.
+- Puissance empirique.
 - Temps moyen de franchissement du seuil.
-- Distribution de `sup_t E_{1:t}` ou de `sup_t log E_{1:t}`.
+- Distribution de `sup_t log E_{1:t}`.
 - Pente moyenne de `log E_{1:t}` sous alternative.
 - Diagnostic dominant.
-- Qualité de localisation de l'échec.
+- Qualité de localisation temporelle, individuelle, habitat ou état filtré.
+- Comparaison diagnostic individuel, mixture et switching.
+- Coût computationnel approximatif.
 
 Livrables :
 
-- Six scripts de simulation.
-- Un script `run_all_simulations.R`.
+- Scripts de simulation alignés sur S1 à S12.
+- `simulations/run_all_simulations.R` mis à jour.
 - Tables dans `results/simulation_tables/`.
 - Figures dans `results/simulation_figures/`.
-- Court rapport de simulation.
+- Court rapport de simulation ou section manuscrit.
 
 Critère de réussite :
 
 - Les simulations sont reproductibles.
-- Chaque scénario génère au minimum une table et une figure.
-- Les résultats soutiennent directement les claims du manuscrit.
+- Les résultats soutiennent directement les claims du papier.
+- Les figures montrent global, localisé et incréments lorsque pertinent.
+- Les scénarios optionnels sont clairement marqués comme supplément ou extension.
 
 ## Phase 5 : application réelle
 
@@ -190,12 +219,15 @@ Tâches :
 
 - Identifier des jeux de données candidats dans les écosystèmes `moveHMM` et `momentuHMM`.
 - Documenter la source, la licence, les variables disponibles, le nombre d'individus et la qualité temporelle.
-- Choisir un jeu simple plutôt qu'une application trop complexe.
+- Choisir un dataset simple plutôt qu'une application trop complexe.
+- Définir un split train/validation, préférablement par individus si plusieurs individus sont disponibles.
 - Prétraiter les trajectoires.
-- Construire les longueurs de pas et angles de virage.
-- Ajuster des HMM avec `K = 2`, `K = 3` et `K = 4`.
-- Choisir un modèle courant `M_0` avec une justification prudente.
-- Calculer les diagnostics développés en Phase 3.
+- Construire longueurs de pas, angles de virage, identifiants, périodes et covariables prédictibles.
+- Ajuster le HMM nul et les alternatives sur train seulement.
+- Calculer `log_p0` par filtrage observable sur validation.
+- Calculer un menu de diagnostics : `K+1`, angle, step-angle, durée ou blockwise selon la pertinence du dataset.
+- Calculer les versions localisées : individu, période, habitat si disponible, état filtré.
+- Comparer diagnostics individuels, mixture pondérée et switching seulement si la règle est prédictible.
 - Produire les figures d'application.
 - Rédiger l'interprétation écologique sans surinterpréter les états décodés.
 
@@ -203,6 +235,7 @@ Livrables :
 
 - Fiche de sélection du jeu de données.
 - Scripts `application/01_preprocess.R` à `application/04_figures_application.R` complétés.
+- Tables de résultats d'application.
 - Figures dans `results/application_figures/`.
 - Section application du manuscrit.
 
@@ -210,38 +243,26 @@ Critère de réussite :
 
 - L'analyse peut être reproduite depuis les scripts.
 - Les données sont légalement utilisables et documentées.
-- L'interprétation distingue clairement diagnostic exploratoire et conclusion confirmatoire.
+- L'interprétation distingue clairement diagnostic prédictif, localisation et hypothèse écologique.
 
-## Phase 6 : rédaction du manuscrit
+## Phase 6 : finalisation du manuscrit
 
-Objectif : produire une version 0.1 complète du manuscrit et du supplément.
-
-Ordre recommandé :
-
-1. Méthodes.
-2. Théorie.
-3. Simulations.
-4. Application.
-5. Introduction.
-6. Discussion.
-7. Résumé.
-8. Supplément.
+Objectif : intégrer les résultats de simulation et d'application dans la version actuelle de l'article.
 
 Tâches :
 
-- Rédiger le cadre HMM et les densités prédictives.
-- Insérer le théorème principal et les propositions.
-- Décrire les diagnostics mouvement-spécifiques.
-- Présenter le design de simulation et les résultats.
-- Présenter l'application réelle.
-- Écrire une discussion proportionnée : portée, limites, paramètres estimés, extensions HMM-SSF et package R futur.
-- Préparer le supplément avec preuves détaillées, détails algorithmiques et résultats additionnels.
+- Ajouter la section simulation avec design, scénarios, métriques et résultats.
+- Ajouter les figures et tables de simulation.
+- Ajouter la section application réelle.
+- Mettre à jour discussion et limites selon les résultats.
+- Décider ce qui va dans le papier principal et ce qui va en supplément.
+- Créer un supplément seulement si nécessaire.
 
 Livrables :
 
 - `paper/predictive_e_diagnostics_hmm_improved.tex` complété.
-- Supplément à créer plus tard seulement si nécessaire.
 - Figures et tables intégrées.
+- Supplément optionnel.
 - Bibliographie cohérente.
 
 Critère de réussite :
@@ -260,6 +281,7 @@ Tâches :
 - Vérifier que les tables et figures du manuscrit sont régénérables.
 - Auditer les dépendances R.
 - Vérifier que les données sensibles ne sont pas suivies par Git.
+- Vérifier que le produit naïf de diagnostics parallèles n'est pas utilisé comme résultat valide.
 - Relire les preuves.
 - Relire les simulations et leurs conclusions.
 - Relire l'interprétation écologique.
@@ -270,7 +292,7 @@ Livrables :
 
 - Rapport d'audit interne.
 - Manuscrit prêt pour soumission.
-- Supplément prêt.
+- Supplément prêt si nécessaire.
 - Dépôt propre et reproductible.
 
 Critère de réussite :
@@ -283,24 +305,31 @@ Critère de réussite :
 
 | Test | Phase | Résultat attendu |
 |---|---|---|
-| Test R minimal | 2 | `compute_eprocess()` retourne les incréments, cumulés, seuil et temps de franchissement |
-| Filtrage HMM | 2 | Les densités prédictives utilisent les probabilités filtrées, pas les états Viterbi |
-| Nul correct | 4 | Le taux de faux signal reste contrôlé pour `alpha = 0.10`, `0.05`, `0.01` |
+| Test R minimal | 2 | `compute_eprocess()` retourne incréments, cumulés, seuil et temps de franchissement |
+| Filtrage HMM | 2 | `log_p0` utilise les probabilités filtrées, pas les états Viterbi |
+| Null fixed-generator | 4 | Le taux de faux signal reste contrôlé pour `alpha = 0.10`, `0.05`, `0.01` |
+| Train/validation estimé | 4 | Le comportement conditionnel au train est documenté |
 | État manquant | 4 | Le diagnostic `K+1` accumule de l'évidence contre le modèle sous-ajusté |
-| Angles mal spécifiés | 4 | Le diagnostic angulaire réagit davantage que les diagnostics marginaux non concernés |
-| Dépendance longueur-angle | 4 | Le diagnostic détecte une dépendance conditionnelle invisible aux marges |
-| Durées non géométriques | 4 | Le diagnostic de durée détecte une mémoire incompatible avec le HMM standard |
-| Échec localisé | 4 | Les incréments `log e_t` identifient la période problématique |
+| Angles mal spécifiés | 4 | Le diagnostic angulaire réagit davantage que les diagnostics non concernés |
+| Dépendance step-angle | 4 | Le diagnostic Rosenblatt/copule détecte une dépendance résiduelle |
+| Durées non géométriques | 4 | Le diagnostic durée ou blockwise détecte une mémoire de durée |
+| Échec localisé | 4 | Les poids prédictibles localisent les segments problématiques |
+| Mixture/switching | 4 | Les combinaisons prédictibles restent calibrées sous le nul |
+| Produit parallèle naïf | 4 | Le faux signal gonflé est démontré comme avertissement méthodologique |
+| Blockwise long-horizon | 4 | Les features de blocs détectent des défauts invisibles à un pas |
+| Validation par individus | 4, 5 | Les résultats par individu et la moyenne cross-fitted sont rapportés |
 | Application réelle | 5 | Les résultats sont reproductibles et interprétés prudemment |
-| Audit final | 7 | Le dépôt permet de reconstruire les résultats principaux |
+| Audit final | 7 | Le dépôt permet de reconstruire les sorties principales |
 
 ## Hypothèses et choix par défaut
 
 - Le premier manuscrit vise un style JABES par défaut.
 - Le projet reste centré sur les HMM simples, pas sur les HMM-SSF complets.
-- La garantie statistique principale est formulée avec séparation train/test ou validation par individus.
+- La garantie statistique principale est formulée avec séparation train/validation ou validation par individus.
 - Les états latents sont intégrés par filtrage dans les densités prédictives.
 - Les états décodés peuvent servir à l'interprétation, mais pas à établir la validité de l'e-process.
+- Les diagnostics parallèles sont rapportés séparément ou combinés par mixture/switching prédictible.
+- Le produit naïf de diagnostics parallèles n'est pas une procédure valide par défaut.
 - Le code reste sous forme de scripts R pour la première version.
 - La transformation en package R est une décision ultérieure.
 - Le jeu de données réel n'est pas encore identifié. Je ne sais pas.
@@ -308,4 +337,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Commencer la Phase 2 en construisant un prototype R minimal qui simule un HMM simple, calcule les densités prédictives par filtrage et produit un premier e-process sous le nul.
+Commencer la Phase 2 en construisant le noyau R minimal : simulation HMM, filtrage observable, `log_p0`, `log_q`, e-process, seuils, graphiques et calibration sous le nul.
