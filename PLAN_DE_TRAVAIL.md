@@ -32,6 +32,8 @@ Le premier article doit rester volontairement ciblé : HMM multi-états simples,
 
 ## 4. Phases du projet
 
+Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
+
 | Phase | Objectif | Tâches principales | Sorties attendues |
 |---|---|---|---|
 | 0 | Structurer le dépôt | Arborescence, README, plan, bibliographie initiale | Dépôt GitHub privé prêt |
@@ -137,3 +139,5 @@ Le premier article doit rester volontairement ciblé : HMM multi-états simples,
 ## 9. Prochaine unité de travail recommandée
 
 La prochaine étape scientifique est la Phase 1 : écrire une note théorique courte avec la notation finale, le théorème principal et la preuve pour le cas où le modèle nul et l'alternative diagnostique sont fixés avant la validation.
+
+Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

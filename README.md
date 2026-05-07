@@ -10,6 +10,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 
 - Le plan initial est conservé dans `plan_travail_predictive_e_diagnostics_hmm.md`.
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
+- Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
@@ -36,6 +37,9 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 │   └── figures/
 ├── manuscript_outputs/
 └── docs/
+    ├── PLAN_PAR_PHASE.md
+    ├── BIBLIOGRAPHIE_DE_DEPART.md
+    └── DECISIONS.md
 ```
 
 ## Démarrage local
