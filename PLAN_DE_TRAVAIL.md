@@ -37,7 +37,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | Phase | Objectif | Tâches principales | Sorties attendues |
 |---|---|---|---|
 | 0 | Structurer le dépôt | Arborescence, README, plan, bibliographie initiale | Dépôt GitHub privé prêt |
-| 1 | Stabiliser la théorie | Notation, théorème principal, validité filtrée, paramètres estimés | Note théorique 5 à 8 pages |
+| 1 | Stabiliser la théorie | Notation, théorème principal, validité filtrée, paramètres estimés | Première note théorique complétée |
 | 2 | Construire le prototype R | HMM simple, forward filter, densité prédictive, e-process | Prototype minimal vérifié |
 | 3 | Développer les diagnostics | Nombre d'états, angles, dépendance longueur-angle, durées | Fonctions diagnostiques ciblées |
 | 4 | Réaliser les simulations | Nul correct, état manquant, angles, dépendance, durées, échec localisé | Tables et figures de simulation |
@@ -138,6 +138,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est la Phase 1 : écrire une note théorique courte avec la notation finale, le théorème principal et la preuve pour le cas où le modèle nul et l'alternative diagnostique sont fixés avant la validation.
+La prochaine étape scientifique est la Phase 2 : construire un prototype R minimal avec simulation HMM simple, calcul de densités prédictives par filtrage et premier e-process sous le nul.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

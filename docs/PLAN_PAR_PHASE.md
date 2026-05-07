@@ -53,7 +53,7 @@ Critère de réussite :
 
 ## Phase 1 : stabilisation théorique
 
-Priorité : immédiate.
+Statut : première version complétée.
 
 Objectif : produire une note théorique courte qui fixe la base statistique du projet.
 
@@ -70,11 +70,12 @@ Tâches :
 
 Livrables :
 
-- Note théorique de 5 à 8 pages.
-- Table de notation.
-- Théorème principal et preuve préliminaire.
-- Proposition sur la validité par filtrage.
-- Paragraphe sur les paramètres estimés.
+- `paper/theory_note_phase1.tex`
+- Note théorique de 6 pages compilée localement dans `manuscript_outputs/theory_note_phase1.pdf`
+- Table de notation
+- Théorème principal et preuve préliminaire
+- Proposition sur la validité par filtrage
+- Paragraphe sur les paramètres estimés
 
 Critère de réussite :
 
@@ -307,4 +308,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Commencer la Phase 1 en rédigeant une note théorique courte qui fixe la notation finale, le théorème principal et la preuve du cas train/test.
+Commencer la Phase 2 en construisant un prototype R minimal qui simule un HMM simple, calcule les densités prédictives par filtrage et produit un premier e-process sous le nul.

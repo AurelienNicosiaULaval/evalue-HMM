@@ -1,0 +1,310 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{natbib}
+
+\newtheorem{theorem}{Théorème}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remarque}
+\newtheorem{definition}{Définition}
+
+\title{Note théorique, phase 1\\Predictive e-diagnostics for multi-state movement models}
+\author{Projet evalue-HMM}
+\date{Version du 2026-05-07}
+
+\begin{document}
+\maketitle
+
+\section{Objectif de la note}
+
+Cette note fixe le cadre théorique minimal du premier article. L'objectif est de formuler la validation d'un modèle de mouvement multi-états comme un problème de prédiction séquentielle. Le modèle nul est un HMM ajusté sur des données d'entraînement, puis évalué sur des données de validation. Les diagnostics sont construits comme des ratios de densités prédictives observables. Ces ratios produisent des e-values conditionnelles et leur produit forme un e-process.
+
+Le point central est le suivant : la validité statistique ne repose pas sur les états décodés. Elle repose sur la densité prédictive observable, obtenue en marginalisant les états latents par filtrage. Les états décodés peuvent être utiles pour l'interprétation écologique après coup, mais ils ne doivent pas être traités comme des observations dans la preuve.
+
+Cette note s'appuie sur la littérature récente sur les e-values et les e-process \citep{vovk_wang_2021_evalues,howard_2020_time_uniform}, ainsi que sur l'usage des HMM pour les données de mouvement animalier \citep{michelot_2016_movehmm,mcclintock_2018_momentuhmm}.
+
+\section{Notation}
+
+On considère une trajectoire observée sur les temps $t = 1, \ldots, T$. L'observation au temps $t$ est
+\begin{equation}
+Y_t = (L_t, \Theta_t),
+\end{equation}
+où $L_t$ est la longueur de pas et $\Theta_t$ est l'angle de virage. Les états latents sont
+\begin{equation}
+S_t \in \{1, \ldots, K\}.
+\end{equation}
+
+La filtration observable est notée
+\begin{equation}
+\mathcal F_t = \sigma(Y_1, \ldots, Y_t),
+\end{equation}
+avec $\mathcal F_0$ la tribu triviale ou la tribu contenant les informations fixées avant la validation. Dans un protocole train/test, les paramètres estimés sur l'ensemble d'entraînement sont considérés comme fixés conditionnellement à cet ensemble.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ll}
+\toprule
+Notation & Signification \\
+\midrule
+$Y_t$ & Observation de mouvement au temps $t$ \\
+$L_t$ & Longueur de pas au temps $t$ \\
+$\Theta_t$ & Angle de virage au temps $t$ \\
+$S_t$ & État latent au temps $t$ \\
+$K$ & Nombre d'états du HMM nul \\
+$M_0$ & Modèle nul, fixé avant validation \\
+$M_1$ & Alternative diagnostique, fixée ou choisie avant $Y_t$ \\
+$p_0(y_t \mid \mathcal F_{t-1})$ & Densité prédictive observable sous $M_0$ \\
+$p_t^1(y_t \mid \mathcal F_{t-1})$ & Densité prédictive diagnostique au temps $t$ \\
+$E_t$ & Incrément e-value au temps $t$ \\
+$E_{1:t}$ & Produit cumulatif des incréments jusqu'au temps $t$ \\
+$\alpha$ & Niveau de surveillance anytime-valid \\
+\bottomrule
+\end{tabular}
+\caption{Notation de base pour la phase 1.}
+\end{table}
+
+\section{Modèle HMM nul}
+
+Le modèle nul $M_0$ est un HMM à $K$ états. Il est défini par une distribution initiale $\boldsymbol\pi_0$, une matrice de transition $\boldsymbol\Gamma_0$ et des densités d'observation conditionnelles aux états. Pour un modèle de mouvement simple, on peut écrire
+\begin{equation}
+p_0(y_t \mid S_t = s) = f_{0,s}(l_t, \theta_t),
+\end{equation}
+où $f_{0,s}$ est souvent factorisée comme
+\begin{equation}
+f_{0,s}(l_t, \theta_t) = f_{0,s}^L(l_t) f_{0,s}^{\Theta}(\theta_t).
+\end{equation}
+Par exemple, un modèle classique peut utiliser une loi Gamma pour les longueurs de pas et une loi de von Mises pour les angles, conditionnellement à l'état latent. Cette factorisation est une hypothèse de modélisation, non une exigence de la théorie.
+
+La propriété HMM implique que, conditionnellement à l'état courant, l'observation $Y_t$ est indépendante du passé observable et latent, selon les paramètres du modèle. Toutefois, l'état $S_t$ n'est pas observé. Par conséquent, la prédiction pertinente pour construire une e-value doit intégrer l'incertitude sur $S_t$.
+
+\section{Densité prédictive observable}
+
+La densité prédictive observable sous le modèle nul est
+\begin{equation}
+\label{eq:p0_predictive}
+p_0(y_t \mid \mathcal F_{t-1})
+=
+\sum_{s=1}^K
+p_0(y_t \mid S_t=s)\Pr_0(S_t=s \mid \mathcal F_{t-1}).
+\end{equation}
+Cette expression utilise les probabilités prédictives des états avant l'observation de $Y_t$. Elle ne conditionne pas sur un état décodé.
+
+En pratique, soit
+\begin{equation}
+a_{t\mid t-1}(s) = \Pr_0(S_t=s \mid \mathcal F_{t-1}).
+\end{equation}
+Alors
+\begin{equation}
+p_0(y_t \mid \mathcal F_{t-1})
+=
+\sum_{s=1}^K a_{t\mid t-1}(s) f_{0,s}(y_t).
+\end{equation}
+Après avoir observé $Y_t=y_t$, les probabilités filtrées sont
+\begin{equation}
+\label{eq:filter_update}
+a_{t\mid t}(s)
+=
+\frac{a_{t\mid t-1}(s) f_{0,s}(y_t)}
+{\sum_{r=1}^K a_{t\mid t-1}(r) f_{0,r}(y_t)}.
+\end{equation}
+La prédiction suivante est obtenue par
+\begin{equation}
+\label{eq:filter_predict}
+a_{t+1\mid t}(s)
+=
+\sum_{r=1}^K a_{t\mid t}(r)\Gamma_0(r,s).
+\end{equation}
+Les équations \eqref{eq:p0_predictive}, \eqref{eq:filter_update} et \eqref{eq:filter_predict} donnent la base computationnelle du diagnostic.
+
+\section{Alternative diagnostique}
+
+Un diagnostic est représenté par une densité prédictive alternative
+\begin{equation}
+p_t^1(y_t \mid \mathcal F_{t-1}).
+\end{equation}
+Cette densité doit être choisie avant l'observation de $Y_t$. Elle peut être fixe sur toute la trajectoire, ou dépendre du passé observable $\mathcal F_{t-1}$. Elle peut aussi dépendre de paramètres estimés sur un ensemble d'entraînement séparé.
+
+Exemples d'alternatives diagnostiques :
+\begin{itemize}
+\item un HMM à $K+1$ états contre un HMM à $K$ états ;
+\item une distribution angulaire plus flexible contre une loi de von Mises simple ;
+\item une alternative qui modélise une dépendance conditionnelle entre longueur de pas et angle ;
+\item une alternative qui représente des durées d'état non géométriques.
+\end{itemize}
+Ces alternatives ne sont pas nécessairement proposées comme meilleurs modèles définitifs. Elles sont des paris diagnostiques ciblés contre certains défauts du modèle nul.
+
+\section{Incréments e-value et e-process}
+
+\begin{definition}[Incrément e-value prédictif]
+Pour $t=1,\ldots,T$, on définit
+\begin{equation}
+\label{eq:increment}
+E_t =
+\frac{p_t^1(Y_t \mid \mathcal F_{t-1})}
+{p_0(Y_t \mid \mathcal F_{t-1})},
+\end{equation}
+avec la convention que le ratio est bien défini lorsque $p_0(Y_t \mid \mathcal F_{t-1}) > 0$ presque sûrement sous $M_0$.
+\end{definition}
+
+\begin{definition}[E-process prédictif]
+Le produit cumulatif est
+\begin{equation}
+\label{eq:eprocess}
+E_{1:t} = \prod_{u=1}^t E_u,
+\qquad E_{1:0}=1.
+\end{equation}
+Sur l'échelle logarithmique,
+\begin{equation}
+\log E_{1:t}
+=
+\sum_{u=1}^t
+\left\{
+\log p_u^1(Y_u \mid \mathcal F_{u-1})
+-
+\log p_0(Y_u \mid \mathcal F_{u-1})
+\right\}.
+\end{equation}
+\end{definition}
+
+\section{Théorème principal pour le cas train/test}
+
+\begin{theorem}[E-process prédictif pour un HMM fixé]
+\label{thm:predictive_eprocess}
+Supposons que le modèle nul $M_0$ définit une densité prédictive observable $p_0(y_t \mid \mathcal F_{t-1})$ pour chaque temps $t$. Supposons aussi que l'alternative diagnostique $p_t^1(y_t \mid \mathcal F_{t-1})$ est une densité prédictive choisie avant d'observer $Y_t$, c'est-à-dire qu'elle est $\mathcal F_{t-1}$-mesurable comme règle de prédiction. Si $Y_1,\ldots,Y_T$ sont générés sous $M_0$ sur l'ensemble de validation, alors
+\begin{equation}
+\mathbb E_0(E_t \mid \mathcal F_{t-1}) = 1.
+\end{equation}
+Par conséquent, $(E_{1:t})_{t\geq 0}$ est une martingale non négative sous $M_0$, donc un e-process.
+\end{theorem}
+
+\begin{proof}
+Conditionnellement à $\mathcal F_{t-1}$, la loi prédictive de $Y_t$ sous $M_0$ admet la densité $p_0(y_t \mid \mathcal F_{t-1})$. L'alternative $p_t^1(y_t \mid \mathcal F_{t-1})$ est fixée avant l'observation de $Y_t$ et intègre à 1 sur l'espace observable. Ainsi,
+\begin{align}
+\mathbb E_0(E_t \mid \mathcal F_{t-1})
+&=
+\int
+\frac{p_t^1(y \mid \mathcal F_{t-1})}
+{p_0(y \mid \mathcal F_{t-1})}
+ p_0(y \mid \mathcal F_{t-1})\,dy \\
+&=
+\int p_t^1(y \mid \mathcal F_{t-1})\,dy \\
+&= 1.
+\end{align}
+Pour le produit cumulatif,
+\begin{align}
+\mathbb E_0(E_{1:t} \mid \mathcal F_{t-1})
+&=
+E_{1:t-1}\mathbb E_0(E_t \mid \mathcal F_{t-1}) \\
+&=
+E_{1:t-1}.
+\end{align}
+Donc $(E_{1:t})_{t\geq0}$ est une martingale non négative sous $M_0$. En particulier, c'est un e-process.
+\end{proof}
+
+\begin{proposition}[Contrôle anytime-valid]
+\label{prop:anytime}
+Sous les hypothèses du théorème \ref{thm:predictive_eprocess}, pour tout $\alpha \in (0,1)$,
+\begin{equation}
+\mathbb P_0\left(\sup_{t\geq 0} E_{1:t} \geq \frac{1}{\alpha}\right) \leq \alpha.
+\end{equation}
+Équivalemment,
+\begin{equation}
+\mathbb P_0\left(\sup_{t\geq 0} \log E_{1:t} \geq \log(1/\alpha)\right) \leq \alpha.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Le processus $(E_{1:t})_{t\geq0}$ est une martingale non négative avec $E_{1:0}=1$. L'inégalité maximale de Ville pour les supermartingales non négatives donne
+\begin{equation}
+\mathbb P_0\left(\sup_{t\geq 0} E_{1:t} \geq c\right) \leq \frac{1}{c}.
+\end{equation}
+En prenant $c=1/\alpha$, on obtient le résultat. Cette forme de contrôle par processus non négatif est au coeur des méthodes anytime-valid basées sur des e-process \citep{howard_2020_time_uniform}.
+\end{proof}
+
+\section{Validité et états latents}
+
+\begin{proposition}[La validité repose sur la prédiction marginale observable]
+\label{prop:latent_filtering}
+Dans un HMM, l'incrément \eqref{eq:increment} est une e-value conditionnelle si le dénominateur est la densité prédictive observable
+\begin{equation}
+p_0(y_t \mid \mathcal F_{t-1})
+=
+\sum_{s=1}^K
+f_{0,s}(y_t)\Pr_0(S_t=s \mid \mathcal F_{t-1}).
+\end{equation}
+La validité ne nécessite pas d'observer $S_t$ et ne nécessite pas de conditionner sur un état décodé $\widehat S_t$.
+\end{proposition}
+
+\begin{proof}
+Le théorème \ref{thm:predictive_eprocess} demande seulement que le dénominateur soit la loi conditionnelle correcte de $Y_t$ sachant le passé observable. Dans un HMM, cette loi conditionnelle est obtenue par la loi totale des probabilités en sommant sur les états latents possibles. Le filtrage fournit précisément les poids $\Pr_0(S_t=s \mid \mathcal F_{t-1})$. La preuve ne fait jamais intervenir une valeur observée de $S_t$.
+\end{proof}
+
+\begin{remark}[Décodage Viterbi]
+Le chemin Viterbi est une reconstruction a posteriori d'une séquence d'états latents. Il dépend généralement de l'ensemble des observations disponibles et ne transforme pas les états latents en variables observées. Utiliser $\widehat S_t$ comme si l'état était connu peut produire des diagnostics descriptifs utiles, mais ne donne pas automatiquement la propriété
+\begin{equation}
+\mathbb E_0(E_t \mid \mathcal F_{t-1}) = 1.
+\end{equation}
+Pour la validité de l'e-process, le diagnostic doit utiliser la densité prédictive observable marginalisée par filtrage.
+\end{remark}
+
+\section{Paramètres estimés}
+
+Dans une analyse réelle, les paramètres du HMM nul et des alternatives diagnostiques sont estimés. La version la plus simple et la plus défendable de la théorie est la version train/test.
+
+Soit $\mathcal D_{\mathrm{train}}$ l'ensemble d'entraînement. On estime les paramètres de $M_0$ et, si nécessaire, ceux des alternatives diagnostiques sur $\mathcal D_{\mathrm{train}}$. Ensuite, on évalue les e-process sur un ensemble de validation distinct. Conditionnellement à $\mathcal D_{\mathrm{train}}$, les paramètres estimés sont fixés. Le théorème \ref{thm:predictive_eprocess} s'applique alors à la loi prédictive conditionnelle du modèle fixé.
+
+\begin{remark}[Même jeu de données pour estimation et diagnostic]
+Si les mêmes observations servent à choisir le modèle, estimer ses paramètres, choisir les diagnostics et calculer l'e-process, les garanties exactes ne suivent pas directement du théorème \ref{thm:predictive_eprocess}. Une analyse exploratoire de ce type peut rester utile, mais elle doit être présentée avec prudence. Les options à développer ensuite incluent la validation par individus, le cross-fitting ou des règles adaptatives dont la validité conditionnelle est explicitement contrôlée.
+\end{remark}
+
+\section{Interprétation de la croissance sous mauvaise spécification}
+
+Le contrôle sous $M_0$ ne garantit pas qu'un diagnostic donné sera puissant contre toutes les formes de mauvaise spécification. L'e-process mesure la performance prédictive relative de l'alternative diagnostique choisie. Sous un processus générateur $P^\star$, si l'espérance moyenne des log-ratios est positive,
+\begin{equation}
+\mathbb E_{P^\star}\left[
+\log
+\frac{p_t^1(Y_t \mid \mathcal F_{t-1})}
+{p_0(Y_t \mid \mathcal F_{t-1})}
+\right] > 0
+\end{equation}
+de façon suffisamment régulière, alors $\log E_{1:t}$ tend à croître. Cette condition exprime que l'alternative diagnostique prédit mieux les observations que le modèle nul, en moyenne logarithmique. Si l'alternative cible mal le défaut, l'e-process peut rester peu sensible même lorsque $M_0$ est écologiquement inadéquat.
+
+Cette interprétation justifie la lecture diagnostique du processus : un grand $E_{1:t}$ indique une évidence prédictive cumulative contre $M_0$ relativement au pari diagnostique choisi, pas une preuve que l'alternative est le vrai modèle générateur.
+
+\section{Conséquences pour la suite du projet}
+
+La phase 1 fixe les choix suivants pour les phases suivantes :
+\begin{itemize}
+\item les scripts R doivent calculer les densités prédictives marginales observables ;
+\item les fonctions de diagnostic doivent retourner des log densités prédictives sous $M_0$ et $M_1$ ;
+\item les graphiques doivent représenter $\log E_{1:t}$ avec le seuil $\log(1/\alpha)$ ;
+\item les simulations sous le nul doivent vérifier le contrôle du franchissement ;
+\item l'application réelle doit privilégier une séparation train/test ou une validation par individus ;
+\item les états décodés doivent être réservés à l'interprétation descriptive.
+\end{itemize}
+
+\section{Checklist de phase 1}
+
+\begin{tabular}{p{0.72\linewidth}p{0.18\linewidth}}
+\toprule
+Élément & Statut \\
+\midrule
+Notation de base fixée & Complété \\
+Densité prédictive observable écrite & Complété \\
+Théorème principal énoncé & Complété \\
+Preuve du cas train/test écrite & Complété \\
+Proposition sur le filtrage des états latents & Complété \\
+Remarque sur Viterbi & Complété \\
+Remarque sur paramètres estimés & Complété \\
+Lien vers les tâches computationnelles de phase 2 & Complété \\
+\bottomrule
+\end{tabular}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
