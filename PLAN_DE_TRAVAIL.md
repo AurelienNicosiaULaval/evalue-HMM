@@ -99,7 +99,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 | ID | Tâche | Sortie |
 |---|---|---|
-| M1 | Construire le squelette LaTeX | `paper/main.tex` |
+| M1 | Maintenir la version principale de l'article | `paper/predictive_e_diagnostics_hmm_improved.tex` |
 | M2 | Écrire la section méthodes | Version préliminaire |
 | M3 | Écrire la section théorie | Version préliminaire avec preuves |
 | M4 | Écrire la section simulations | Figures et tables intégrées |

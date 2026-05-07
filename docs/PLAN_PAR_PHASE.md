@@ -42,7 +42,7 @@ Livrables :
 - `PLAN_DE_TRAVAIL.md`
 - `docs/PLAN_PAR_PHASE.md`
 - `docs/BIBLIOGRAPHIE_DE_DEPART.md`
-- `paper/references.bib`
+- Bibliographie intégrée dans la version actuelle de l'article
 - Arborescence complète du dépôt
 
 Critère de réussite :
@@ -70,8 +70,8 @@ Tâches :
 
 Livrables :
 
-- `paper/theory_note_phase1.tex`, rédigé en anglais dans un style proche d'un article
-- Note théorique de 6 pages compilée localement dans `manuscript_outputs/theory_note_phase1.pdf`
+- `paper/predictive_e_diagnostics_hmm_improved.tex`, version principale actuelle de l'article
+- Article compilé localement dans `manuscript_outputs/predictive_e_diagnostics_hmm_improved.pdf`
 - Table de notation
 - Théorème principal et preuve préliminaire
 - Proposition sur la validité par filtrage
@@ -239,8 +239,8 @@ Tâches :
 
 Livrables :
 
-- `paper/main.tex` complété.
-- `paper/supplement.tex` complété.
+- `paper/predictive_e_diagnostics_hmm_improved.tex` complété.
+- Supplément à créer plus tard seulement si nécessaire.
 - Figures et tables intégrées.
 - Bibliographie cohérente.
 

@@ -11,7 +11,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan initial est conservé dans `plan_travail_predictive_e_diagnostics_hmm.md`.
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
-- The phase 1 article-style theory note is in `paper/theory_note_phase1.tex`.
+- The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
 
@@ -32,10 +32,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 │   ├── simulation_figures/
 │   └── application_figures/
 ├── paper/
-│   ├── main.tex
-│   ├── theory_note_phase1.tex
-│   ├── supplement.tex
-│   ├── references.bib
+│   ├── predictive_e_diagnostics_hmm_improved.tex
 │   └── figures/
 ├── manuscript_outputs/
 └── docs/
@@ -71,6 +68,6 @@ compute_eprocess(log_p0 = log_p0, log_p1 = log_p1, alpha = 0.05)
 
 Les dossiers `application/data_raw/` et `application/data_processed/` sont ignorés par Git, sauf leurs fichiers de documentation. Cette règle évite de publier accidentellement des données sensibles, même dans un dépôt privé.
 
-## Références de départ
+## Références
 
-Voir `docs/BIBLIOGRAPHIE_DE_DEPART.md` et `paper/references.bib`.
+La version actuelle de l'article contient sa bibliographie directement dans le fichier LaTeX. Le fichier `docs/BIBLIOGRAPHIE_DE_DEPART.md` reste une note de travail historique.
