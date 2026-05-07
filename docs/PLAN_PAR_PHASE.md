@@ -120,6 +120,8 @@ Critère de réussite :
 
 ## Phase 3 : diagnostics R modulaires
 
+Statut : amorcée avec l'interface commune et le diagnostic `K` contre `K+1`.
+
 Objectif : développer les diagnostics correspondant au catalogue du papier.
 
 Interface commune attendue :
@@ -154,7 +156,8 @@ Ordre recommandé :
 
 Livrables :
 
-- Fonctions diagnostiques modulaires dans `R/`.
+- `R/diagnostic_interface.R`.
+- `R/diagnostics_states.R` avec `diagnostic_extra_state()`.
 - Documentation courte de chaque diagnostic.
 - Exemples reproductibles sur données simulées.
 - Tests unitaires ou smoke tests.
@@ -176,7 +179,7 @@ Scénarios prioritaires :
 |---|---|---|---|
 | S1 | Null fixed-generator | L'e-process est-il calibré sous HMM nul fixé ? | Implémenté, faux signal compatible avec `alpha` |
 | S2 | Train/validation avec paramètres estimés | La calibration reste-t-elle raisonnable conditionnellement au train ? | Différence documentée entre paramètres connus et estimés |
-| S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Croissance de `log E` et localisation du défaut |
+| S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté, croissance forte de `log E` |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire détecte-t-il un défaut circulaire ? | Signal surtout sur le diagnostic angulaire |
 | S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Signal feature-level clair |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée ou de bloc |
@@ -340,4 +343,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Commencer la Phase 3 en définissant l'interface commune de diagnostic, puis implémenter le diagnostic `K` contre `K+1`.
+Poursuivre la Phase 3 avec le diagnostic angulaire, puis le diagnostic feature-level de dépendance step-angle.

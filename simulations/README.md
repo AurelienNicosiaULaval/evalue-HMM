@@ -22,7 +22,7 @@ Les sorties doivent être écrites dans :
 |---|---|
 | `01_null_fixed_generator.R` | Calibration sous HMM nul fixé, implémenté |
 | `02_train_validation_estimated.R` | Validation train/validation avec paramètres estimés |
-| `03_underfit_states.R` | Nombre d'états insuffisant |
+| `03_underfit_states.R` | Nombre d'états insuffisant, implémenté |
 | `04_angle_misspecification.R` | Distribution angulaire mal spécifiée |
 | `05_step_angle_dependence.R` | Dépendance résiduelle longueur-angle via Rosenblatt ou copule |
 | `06_duration_or_blockwise.R` | Durées non géométriques ou diagnostic de bloc |

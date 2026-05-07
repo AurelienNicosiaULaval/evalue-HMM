@@ -43,7 +43,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | 0 | Structurer le dépôt | Arborescence, README, plan, article principal | Dépôt GitHub privé prêt |
 | 1 | Stabiliser la théorie | Article principal, filtrage, e-process, localisation, features, blockwise | Version théorique actuelle complétée |
 | 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype minimal S1 vérifié |
-| 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Fonctions diagnostiques modulaires |
+| 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Interface commune et diagnostic `K+1` amorcés |
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mélange, blockwise, cross-validation | Tables et figures de simulation |
 | 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Figures et interprétation écologique |
 | 6 | Finaliser le manuscrit | Sections simulations et application, figures, tables, discussion | Version article complète |
@@ -70,8 +70,8 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | C3 | Implémenter le forward filter sur l'échelle log et les densités prédictives observables | `hmm_forward_filter()`, `hmm_predictive_log_density()` |
 | C4 | Implémenter les e-process : incréments, cumulés, seuil, temps de franchissement, résumé | `compute_eprocess()` |
 | C5 | Implémenter les graphiques standards : e-process, incréments, seuil, contributions par individu et période | Fonctions de visualisation |
-| C6 | Implémenter une interface commune de diagnostic retournant `log_p0`, `log_q`, `log_e`, `log_E`, `weights`, `metadata` | Format de sortie commun |
-| C7 | Implémenter les diagnostics full-density : `K+1`, angle flexible, step-angle joint, durée | Fonctions diagnostiques |
+| C6 | Implémenter une interface commune de diagnostic retournant `log_p0`, `log_q`, `log_e`, `log_E`, `weights`, `metadata` | `make_predictive_diagnostic()` première version |
+| C7 | Implémenter les diagnostics full-density : `K+1`, angle flexible, step-angle joint, durée | `diagnostic_extra_state()` première version |
 | C8 | Implémenter les diagnostics feature-level : Rosenblatt, copule sur `[0,1]^2`, résidus circulaires | Fonctions feature-level |
 | C9 | Implémenter les diagnostics blockwise : blocs temporels, features de déplacement, retour, résidence, barrière | Fonctions blockwise |
 | C10 | Implémenter les mélanges et switching prédictibles entre diagnostics | Fonctions `diagnostic_mixture()` et `diagnostic_switch()` |
@@ -86,7 +86,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 |---|---|---|---|
 | S1 | Calibration sous null fixed-generator | Le taux de franchissement est-il contrôlé sous le HMM nul fixé ? | Implémenté : faux signal, `sup_t log E`, courbes typiques |
 | S2 | Validation train/validation avec paramètres estimés | Le comportement reste-t-il raisonnable conditionnellement au train ? | Comparaison paramètres connus vs estimés |
-| S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Puissance, temps de détection, localisation |
+| S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté : puissance et temps de détection |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire réagit-il aux défauts circulaires ? | Signal angulaire, spécificité des autres diagnostics |
 | S5 | Dépendance résiduelle step-angle | Les diagnostics Rosenblatt/copule détectent-ils la dépendance invisible aux marges ? | E-process feature-level et full-density |
 | S6 | Durées non géométriques | Le diagnostic durée ou blockwise détecte-t-il la persistance comportementale ? | Signal de durée, comparaison HMM/HSMM simplifiée |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est la Phase 3 : commencer les diagnostics R modulaires avec une interface commune, puis implémenter le diagnostic `K` contre `K+1`.
+La prochaine étape scientifique est de poursuivre la Phase 3 avec le diagnostic angulaire, puis le diagnostic feature-level de dépendance step-angle.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

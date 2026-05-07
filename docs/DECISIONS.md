@@ -15,6 +15,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D007 | 2026-05-07 | `predictive_e_diagnostics_hmm_improved.tex` devient l'unique source principale de l'article | Remplacer les anciens brouillons et travailler à partir d'une seule version propre |
 | D008 | 2026-05-07 | Le plan R et simulation suit la version améliorée de l'article : mixtures, switching, localisation, features, blockwise et validation par individus | Aligner les simulations sur les garanties théoriques réellement présentes dans le manuscrit |
 | D009 | 2026-05-07 | La Phase 2 commence par un HMM simulé avec longueurs Gamma et angles wrapped-normal | Obtenir un noyau R sans dépendances externes avant d'ajouter les diagnostics avancés |
+| D010 | 2026-05-07 | Le premier diagnostic full-density implémenté est `K` contre `K+1` avec paramètres fixés | Tester l'interface commune sur un scénario de puissance simple avant d'ajouter des diagnostics plus complexes |
 
 ## Décisions ouvertes
 
