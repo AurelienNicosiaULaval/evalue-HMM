@@ -85,7 +85,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | ID | Scénario | Question | Sorties minimales |
 |---|---|---|---|
 | S1 | Calibration sous null fixed-generator | Le taux de franchissement est-il contrôlé sous le HMM nul fixé ? | Implémenté : faux signal, `sup_t log E`, courbes typiques |
-| S2 | Validation train/validation avec paramètres estimés | Le comportement reste-t-il raisonnable conditionnellement au train ? | Comparaison paramètres connus vs estimés |
+| S2 | Validation train/validation avec paramètres estimés | Le comportement reste-t-il raisonnable conditionnellement au train ? | Implémenté : paramètres connus, estimation oracle-state, validation sous vrai nul et sous générateur ajusté |
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté : puissance et temps de détection |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire réagit-il aux défauts circulaires ? | Implémenté : signal angulaire fort |
 | S5 | Dépendance résiduelle step-angle | Les diagnostics Rosenblatt/copule détectent-ils la dépendance invisible aux marges ? | Implémenté : e-process feature-level |
@@ -160,6 +160,6 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est de poursuivre la Phase 4 avec la validation train/validation estimée.
+La prochaine étape scientifique est de poursuivre la Phase 4 avec S10 ou S11. S11 est prioritaire si l'on veut renforcer directement la validation par individus et le protocole train/validation du papier.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

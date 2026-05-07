@@ -12,8 +12,9 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
 - The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
-- Le noyau R minimal de Phase 2 est amorcé avec `R/simulate_hmm_movement.R` et `simulations/01_null_fixed_generator.R`.
+- Le noyau R minimal de Phase 2 inclut simulation, filtrage, densités prédictives, e-process et estimation oracle pour les scénarios contrôlés.
 - La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
+- Le scénario S2 compare paramètres connus, paramètres estimés sur train et validation sous générateur ajusté. L'estimation actuelle utilise les états simulés et n'est pas encore un ajusteur HMM général.
 - Le scénario S9 démontre pourquoi le produit parallèle naïf n'est pas utilisé comme procédure valide.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 - Le jeu de données réel n'est pas encore choisi. Je ne sais pas.
@@ -58,6 +59,7 @@ source("R/eprocess.R")
 source("R/hmm_forward_filter.R")
 source("R/predictive_density_hmm.R")
 source("R/simulate_hmm_movement.R")
+source("R/estimate_hmm_training.R")
 source("R/diagnostic_interface.R")
 source("R/diagnostics_states.R")
 source("R/diagnostics_angles.R")
@@ -79,6 +81,12 @@ Pour lancer la première simulation de calibration :
 
 ```bash
 Rscript simulations/01_null_fixed_generator.R
+```
+
+Pour lancer le scénario train/validation avec estimation contrôlée :
+
+```bash
+Rscript simulations/02_train_validation_estimated.R
 ```
 
 Pour lancer le premier diagnostic `K` contre `K+1` :

@@ -183,7 +183,7 @@ Scénarios prioritaires :
 | ID | Scénario | Question | Résultat attendu |
 |---|---|---|---|
 | S1 | Null fixed-generator | L'e-process est-il calibré sous HMM nul fixé ? | Implémenté, faux signal compatible avec `alpha` |
-| S2 | Train/validation avec paramètres estimés | La calibration reste-t-elle raisonnable conditionnellement au train ? | Différence documentée entre paramètres connus et estimés |
+| S2 | Train/validation avec paramètres estimés | La calibration reste-t-elle raisonnable conditionnellement au train ? | Implémenté avec estimateur oracle-state, différence documentée entre paramètres connus et estimés |
 | S3 | Nombre d'états insuffisant | Le diagnostic `K+1` détecte-t-il un état manquant ? | Implémenté, croissance forte de `log E` |
 | S4 | Angles mal spécifiés | Le diagnostic angulaire détecte-t-il un défaut circulaire ? | Implémenté, signal angulaire fort |
 | S5 | Dépendance step-angle | Le diagnostic Rosenblatt/copule détecte-t-il une dépendance invisible aux marges ? | Implémenté, signal feature-level clair |
@@ -319,7 +319,7 @@ Critère de réussite :
 | Test R minimal | 2 | `compute_eprocess()` retourne incréments, cumulés, seuil et temps de franchissement |
 | Filtrage HMM | 2 | `log_p0` utilise les probabilités filtrées, pas les états Viterbi |
 | Null fixed-generator | 4 | Le taux de faux signal reste contrôlé pour `alpha = 0.10`, `0.05`, `0.01` |
-| Train/validation estimé | 4 | Le comportement conditionnel au train est documenté |
+| Train/validation estimé | 4 | Implémenté avec paramètres connus, estimation oracle-state et validation sous générateur ajusté |
 | État manquant | 4 | Le diagnostic `K+1` accumule de l'évidence contre le modèle sous-ajusté |
 | Angles mal spécifiés | 4 | Le diagnostic angulaire réagit davantage que les diagnostics non concernés |
 | Dépendance step-angle | 4 | Le diagnostic Rosenblatt/copule détecte une dépendance résiduelle |
@@ -348,4 +348,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Poursuivre la Phase 4 avec la validation train/validation estimée.
+Poursuivre la Phase 4 avec S11 si la priorité est la validation par individus, ou S10 si la priorité est le diagnostic blockwise à long horizon.

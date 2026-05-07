@@ -21,7 +21,7 @@ Les sorties doivent être écrites dans :
 | Script | Scénario |
 |---|---|
 | `01_null_fixed_generator.R` | Calibration sous HMM nul fixé, implémenté |
-| `02_train_validation_estimated.R` | Validation train/validation avec paramètres estimés |
+| `02_train_validation_estimated.R` | Validation train/validation avec paramètres estimés, implémenté avec estimation oracle-state contrôlée |
 | `03_underfit_states.R` | Nombre d'états insuffisant, implémenté |
 | `04_angle_misspecification.R` | Distribution angulaire mal spécifiée, implémenté |
 | `05_step_angle_dependence.R` | Dépendance résiduelle longueur-angle via Rosenblatt ou copule, implémenté |
@@ -34,4 +34,4 @@ Les sorties doivent être écrites dans :
 | `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, optionnelle |
 | `run_all_simulations.R` | Exécution séquentielle des scripts implémentés |
 
-Les scénarios S1 à S8 sont prioritaires pour le premier manuscrit. Les scénarios S9 à S12 peuvent servir d'avertissement méthodologique, de supplément ou d'extension selon l'espace disponible.
+Les scénarios S1 à S9 sont implémentés. Les scénarios S10 à S12 peuvent servir d'avertissement méthodologique, de supplément ou d'extension selon l'espace disponible.

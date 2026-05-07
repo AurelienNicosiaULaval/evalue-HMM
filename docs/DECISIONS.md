@@ -22,6 +22,7 @@ Ce fichier conserve les décisions méthodologiques importantes afin de rendre l
 | D014 | 2026-05-07 | Le diagnostic de durée est implémenté comme e-value blockwise sur une feature observable de persistance | Éviter de traiter les durées latentes décodées comme observées et suivre la théorie blockwise du manuscrit |
 | D015 | 2026-05-07 | Les combinaisons de diagnostics utilisent une moyenne pondérée d'incréments ou un switching prédictible, jamais un produit parallèle | Respecter la section mixtures/switching du manuscrit et garder le produit naïf pour une démonstration négative séparée |
 | D016 | 2026-05-07 | Le produit parallèle naïf est documenté seulement comme contre-exemple de calibration | Montrer empiriquement le gonflement du faux signal sous le HMM nul |
+| D017 | 2026-05-07 | Le premier scénario train/validation estimé utilise un estimateur oracle-state sur données simulées | Isoler la logique conditionnelle train/validation avant d'introduire un ajusteur HMM général |
 
 ## Décisions ouvertes
 
