@@ -32,7 +32,7 @@ Le premier article reste ciblé sur des HMM multi-états simples avec observatio
 | Diagnostics R | État manquant, angles, step-angle, durée, localisation, mélange, blockwise | Interface commune et résultats interprétables |
 | Simulations | Scénarios alignés sur les théorèmes du papier | Tables et figures générées de façon reproductible |
 | Application réelle | Analyse de `moveHMM::elk_data` avec validation séparée | Données documentées, diagnostics prudents, figures ggplot intégrées |
-| Dépôt reproductible | Code, plans, article, scripts et sorties régénérables | Nouvelle installation capable de reproduire les sorties principales |
+| Dépôt reproductible | Code, plans, article, scripts et sorties régénérables | Audit local réussi, nouvelle installation encore à tester |
 
 ## 4. Phases du projet
 
@@ -47,7 +47,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mélange, blockwise, cross-validation | Tables et figures de simulation |
 | 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Première application elk complétée |
 | 6 | Finaliser le manuscrit | Sections simulations et application, figures, tables, discussion | Article complet en relecture éditoriale |
-| 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Dépôt et manuscrit prêts |
+| 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Audit local complété, verrouillage des dépendances à faire |
 
 ## 5. Workstreams et tâches détaillées
 
@@ -166,6 +166,6 @@ Découpage retenu pour le manuscrit :
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est une passe de finalisation du manuscrit : vérifier la cohérence entre théorie, simulations, application et supplément, harmoniser les références aux figures et tables, puis préparer un audit reproductibilité complet depuis une session R propre.
+La prochaine étape scientifique est le verrouillage léger des dépendances : ajouter un `renv.lock` ou une table de versions suffisante pour préparer un test de reproduction sur une installation neuve.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

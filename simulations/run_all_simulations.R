@@ -1,5 +1,5 @@
 # Run implemented simulation scripts in the order used by the current article plan.
-# Scripts are listed explicitly to keep execution order reproducible.
+# Each script is launched in a fresh R session to detect hidden state dependencies.
 
 simulation_scripts <- c(
   "simulations/01_null_fixed_generator.R",
@@ -16,7 +16,16 @@ simulation_scripts <- c(
   "simulations/12_composite_envelope_optional.R"
 )
 
-for (script in simulation_scripts) {
+run_script <- function(script) {
   message("Running ", script)
-  source(script)
+  status <- system2(file.path(R.home("bin"), "Rscript"), script)
+  if (!identical(status, 0L)) {
+    stop("Simulation script failed: ", script, call. = FALSE)
+  }
 }
+
+for (script in simulation_scripts) {
+  run_script(script)
+}
+
+message("All simulation scripts completed.")

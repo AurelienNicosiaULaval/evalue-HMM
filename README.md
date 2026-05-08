@@ -11,6 +11,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan initial est conservé dans `plan_travail_predictive_e_diagnostics_hmm.md`.
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
+- Le rapport d'audit reproductibilité local est dans `docs/REPRODUCIBILITY_AUDIT.md`.
 - La version courante et unique de l'article est dans `paper/predictive_e_diagnostics_hmm_improved.tex`.
 - Le matériel supplémentaire est dans `paper/supplementary_material.tex`.
 - Découpage actuel des simulations : S1, S3, S4, S5, S6, S7 et S8 dans l'article principal ; S2, S9, S10, S11 et S12 dans le supplément.

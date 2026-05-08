@@ -298,6 +298,8 @@ Critère de réussite :
 
 ## Phase 7 : vérification avant soumission
 
+Statut : audit local complété. Le rapport est dans `docs/REPRODUCIBILITY_AUDIT.md`. Il reste à verrouiller les dépendances et à tester une reproduction sur une installation neuve.
+
 Objectif : vérifier la reproductibilité, la validité statistique et la cohérence éditoriale avant soumission.
 
 Tâches :
@@ -362,4 +364,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Faire l'audit de finalisation : relire l'article et le supplément ensemble, compiler les deux fichiers, régénérer les sorties R principales depuis une session propre, puis produire un court rapport interne de reproductibilité.
+Ajouter un verrouillage léger des dépendances, idéalement avec `renv.lock`, puis tester la reproduction sur une installation neuve ou dans un clone séparé.
