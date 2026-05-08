@@ -11,17 +11,17 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan initial est conservé dans `plan_travail_predictive_e_diagnostics_hmm.md`.
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
-- The current and only article source is in `paper/predictive_e_diagnostics_hmm_improved.tex`.
+- La version courante et unique de l'article est dans `paper/predictive_e_diagnostics_hmm_improved.tex`.
 - Le matériel supplémentaire est dans `paper/supplementary_material.tex`.
 - Découpage actuel des simulations : S1, S3, S4, S5, S6, S7 et S8 dans l'article principal ; S2, S9, S10, S11 et S12 dans le supplément.
 - Le noyau R minimal de Phase 2 inclut simulation, filtrage, densités prédictives, e-process et estimation oracle pour les scénarios contrôlés.
-- La Phase 3 est amorcée avec les diagnostics `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
+- La Phase 3 a une première version fonctionnelle avec les diagnostics `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
 - Le scénario S2 compare paramètres connus, paramètres estimés sur train et validation sous générateur ajusté. L'estimation actuelle utilise les états simulés et n'est pas encore un ajusteur HMM général.
 - Le scénario S10 implémente un diagnostic blockwise long-horizon basé sur la rectitude des blocs.
 - Le scénario S9 démontre pourquoi le produit parallèle naïf n'est pas utilisé comme procédure valide.
 - Le scénario S11 implémente la validation par individus avec moyenne cross-fitted finale et signale le scan multi-individus comme exploratoire.
 - Le scénario S12 implémente une enveloppe composite conservatrice sur une famille finie de HMM nuls.
-- L'application réelle utilise maintenant `moveHMM::elk_data` avec validation sur l'individu `elk-115`.
+- L'application réelle utilise `moveHMM::elk_data` avec validation sur l'individu `elk-115`; les figures ggplot prêtes pour le manuscrit sont dans `paper/figures/`.
 - Le dépôt contient une arborescence de travail pour la théorie, le code R, les simulations, l'application réelle, les figures et le manuscrit.
 
 ## Structure du dépôt

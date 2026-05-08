@@ -2,7 +2,7 @@
 
 Projet : predictive e-diagnostics for multi-state movement models
 
-Version : 2026-05-07
+Version : 2026-05-08
 
 ## 1. Résumé du projet
 
@@ -10,7 +10,7 @@ L'objectif est de développer une méthode de diagnostic prédictif pour les HMM
 
 La version actuelle de l'article est `paper/predictive_e_diagnostics_hmm_improved.tex`. Elle structure le projet autour de sept composantes : filtrage observable, e-process prédictifs, choix prédictible des diagnostics, mélanges et switching, localisation pondérée et par états filtrés, diagnostics feature-level pour données circulaires-linéaires, diagnostics blockwise pour comportements génératifs à long horizon, et validation train/validation ou par unités indépendantes.
 
-Le premier article doit rester ciblé sur des HMM multi-états simples avec observations longueur de pas et angle de virage, mais les simulations et l'analyse R doivent maintenant refléter la théorie plus riche du papier.
+Le premier article reste ciblé sur des HMM multi-états simples avec observations longueur de pas et angle de virage. Les simulations S1 à S12 sont implémentées. L'article principal retient S1, S3, S4, S5, S6, S7 et S8, tandis que le supplément documente S2, S9, S10, S11 et S12. L'application réelle utilise `moveHMM::elk_data`, avec l'individu `elk-115` comme validation complète.
 
 ## 2. Hypothèses de départ
 
@@ -27,11 +27,11 @@ Le premier article doit rester ciblé sur des HMM multi-états simples avec obse
 
 | Livrable | Description | Critère d'acceptation |
 |---|---|---|
-| Article principal | Version actuelle dans `paper/predictive_e_diagnostics_hmm_improved.tex` | Compilation LaTeX sans erreur |
+| Article principal | Version actuelle dans `paper/predictive_e_diagnostics_hmm_improved.tex` | Compilation LaTeX sans erreur, figures principales intégrées |
 | Prototype R | Simulation HMM, filtrage observable, e-process prédictif | Exemple reproductible sous modèle simulé |
 | Diagnostics R | État manquant, angles, step-angle, durée, localisation, mélange, blockwise | Interface commune et résultats interprétables |
 | Simulations | Scénarios alignés sur les théorèmes du papier | Tables et figures générées de façon reproductible |
-| Application réelle | Analyse de `moveHMM::elk_data` avec validation séparée | Données documentées, diagnostics prudents |
+| Application réelle | Analyse de `moveHMM::elk_data` avec validation séparée | Données documentées, diagnostics prudents, figures ggplot intégrées |
 | Dépôt reproductible | Code, plans, article, scripts et sorties régénérables | Nouvelle installation capable de reproduire les sorties principales |
 
 ## 4. Phases du projet
@@ -43,10 +43,10 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | 0 | Structurer le dépôt | Arborescence, README, plan, article principal | Dépôt GitHub privé prêt |
 | 1 | Stabiliser la théorie | Article principal, filtrage, e-process, localisation, features, blockwise | Version théorique actuelle complétée |
 | 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype minimal S1 vérifié |
-| 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Interface commune, diagnostics ciblés et localisation amorcés |
+| 3 | Développer les diagnostics R | Menus diagnostiques, mélanges, switching, localisation, features, blockwise | Première version des diagnostics principaux complétée |
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mélange, blockwise, cross-validation | Tables et figures de simulation |
-| 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Figures et interprétation écologique |
-| 6 | Finaliser le manuscrit | Sections simulations et application, figures, tables, discussion | Version article complète |
+| 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Première application elk complétée |
+| 6 | Finaliser le manuscrit | Sections simulations et application, figures, tables, discussion | Article complet en relecture éditoriale |
 | 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Dépôt et manuscrit prêts |
 
 ## 5. Workstreams et tâches détaillées
@@ -57,9 +57,9 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 |---|---|---|
 | T1 | Maintenir la notation de l'article autour de `Y_t`, `S_t`, `p_0`, `q_t`, `E_t`, `E_{1:t}`, `\mathcal F_t` | Notation stable |
 | T2 | Vérifier que les simulations correspondent aux théorèmes : e-process, mixtures, switching, localisation, features, blockwise | Tableau théorie-simulation |
-| T3 | Ajouter une section simulation dans l'article une fois les résultats disponibles | Section manuscrit |
-| T4 | Ajouter une section application avec interprétation écologique prudente | Section manuscrit |
-| T5 | Décider si un supplément est nécessaire pour les preuves longues et détails algorithmiques | Décision documentée |
+| T3 | Ajouter une section simulation dans l'article une fois les résultats disponibles | Complété : section simulation |
+| T4 | Ajouter une section application avec interprétation écologique prudente | Complété : section application |
+| T5 | Décider si un supplément est nécessaire pour les preuves longues et détails algorithmiques | Complété : supplément créé |
 
 ### Analyse R et infrastructure
 
@@ -69,7 +69,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | C2 | Implémenter la simulation HMM : états, longueurs, angles, covariables optionnelles, individus | `simulate_hmm_movement()` première version |
 | C3 | Implémenter le forward filter sur l'échelle log et les densités prédictives observables | `hmm_forward_filter()`, `hmm_predictive_log_density()` |
 | C4 | Implémenter les e-process : incréments, cumulés, seuil, temps de franchissement, résumé | `compute_eprocess()` |
-| C5 | Implémenter les graphiques standards : e-process, incréments, seuil, contributions par individu et période | Fonctions de visualisation |
+| C5 | Implémenter les graphiques standards : e-process, incréments, seuil, contributions par individu et période | Complété pour simulations et application elk |
 | C6 | Implémenter une interface commune de diagnostic retournant `log_p0`, `log_q`, `log_e`, `log_E`, `weights`, `metadata` | `make_predictive_diagnostic()` première version |
 | C7 | Implémenter les diagnostics full-density : `K+1`, angle flexible, step-angle joint, durée | `diagnostic_extra_state()` et `diagnostic_angle()` premières versions |
 | C8 | Implémenter les diagnostics feature-level : Rosenblatt, copule sur `[0,1]^2`, résidus circulaires | `diagnostic_step_angle_dependence()` première version |
@@ -113,10 +113,10 @@ Découpage retenu pour le manuscrit :
 | A4 | Prétraiter les trajectoires et construire `L_t`, `Theta_t`, identifiants et covariables prédictibles | Complété : `application/01_preprocess.R` |
 | A5 | Ajuster le HMM nul et les alternatives diagnostiques sur train seulement | Complété : `application/02_fit_hmm.R` |
 | A6 | Calculer le filtrage observable et les log densités prédictives sur validation | Complété : `application/03_compute_eprocess.R` |
-| A7 | Calculer les diagnostics globaux, localisés, feature-level et blockwise pertinents | Amorçé : `K+1`, angle, mixture, localisation par état filtré |
-| A8 | Comparer diagnostics individuels, mélange pondéré et switching si justifié | Table de synthèse |
-| A9 | Produire les figures finales : trajectoire, états filtrés, `log E`, incréments, localisation | Amorçé : figures application |
-| A10 | Rédiger l'interprétation écologique en distinguant signal prédictif, localisation et hypothèses exploratoires | Section application |
+| A7 | Calculer les diagnostics globaux, localisés, feature-level et blockwise pertinents | Complété pour la première application : `K+1`, angle, mixture, localisation par état filtré |
+| A8 | Comparer diagnostics individuels, mélange pondéré et switching si justifié | Complété : diagnostics individuels et fixed mixture |
+| A9 | Produire les figures finales : trajectoire, états filtrés, `log E`, incréments, localisation | Complété : figures ggplot dans `paper/figures/` |
+| A10 | Rédiger l'interprétation écologique en distinguant signal prédictif, localisation et hypothèses exploratoires | Complété : section application |
 
 ### Manuscrit
 
@@ -124,10 +124,10 @@ Découpage retenu pour le manuscrit :
 |---|---|---|
 | M1 | Maintenir la version principale de l'article | `paper/predictive_e_diagnostics_hmm_improved.tex` |
 | M2 | Ajouter le protocole de simulation aligné sur S1 à S12 | Section simulation |
-| M3 | Ajouter les résultats de simulation et figures | Figures et tables intégrées |
-| M4 | Ajouter l'application réelle | Section application |
-| M5 | Mettre à jour discussion et limites selon les résultats | Discussion proportionnée |
-| M6 | Créer un supplément seulement si nécessaire | Supplément optionnel |
+| M3 | Ajouter les résultats de simulation et figures | Complété : table principale de simulation |
+| M4 | Ajouter l'application réelle | Complété : section application et figures |
+| M5 | Mettre à jour discussion et limites selon les résultats | Complété pour première version, à relire |
+| M6 | Créer un supplément seulement si nécessaire | Complété : `paper/supplementary_material.tex` |
 
 ## 6. Jalons de décision
 
@@ -166,6 +166,6 @@ Découpage retenu pour le manuscrit :
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est d'intégrer l'application elk dans le manuscrit : rédiger le protocole, présenter la sélection `K = 3`, expliquer les diagnostics et interpréter prudemment les signaux sur l'individu `elk-115`.
+La prochaine étape scientifique est une passe de finalisation du manuscrit : vérifier la cohérence entre théorie, simulations, application et supplément, harmoniser les références aux figures et tables, puis préparer un audit reproductibilité complet depuis une session R propre.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

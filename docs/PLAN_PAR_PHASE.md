@@ -2,13 +2,13 @@
 
 Source : `PLAN_DE_TRAVAIL.md`
 
-Version : 2026-05-07
+Version : 2026-05-08
 
 ## Résumé
 
-Le projet sera mené en huit phases, de la structuration du dépôt jusqu'à la préparation à la soumission. La version actuelle de l'article, `paper/predictive_e_diagnostics_hmm_improved.tex`, élargit le plan initial : les simulations et l'analyse R doivent maintenant couvrir non seulement les e-process prédictifs pour HMM, mais aussi les diagnostics prédictibles multiples, les mélanges, le switching, la localisation pondérée, les diagnostics feature-level, les diagnostics blockwise et la validation par unités indépendantes.
+Le projet est maintenant dans la phase de finalisation du manuscrit. La version actuelle de l'article, `paper/predictive_e_diagnostics_hmm_improved.tex`, couvre les e-process prédictifs pour HMM, les diagnostics prédictibles multiples, les mélanges, le switching, la localisation pondérée, les diagnostics feature-level, les diagnostics blockwise et la validation par unités indépendantes.
 
-Le principe directeur reste le même : commencer par un noyau R simple et vérifiable, puis ajouter les diagnostics dans l'ordre où ils sont nécessaires pour soutenir les claims du papier.
+Le principe directeur reste le même : chaque affirmation méthodologique doit être soutenue par une preuve, une simulation, une application reproductible ou une référence.
 
 ## Vue d'ensemble des phases
 
@@ -19,8 +19,8 @@ Le principe directeur reste le même : commencer par un noyau R simple et vérif
 | 2 | Construire le noyau R | Simulation HMM, filtrage observable, log densités, e-process, graphiques | Prototype R minimal | Calibration simple sous le nul |
 | 3 | Développer les diagnostics R | Full-density, feature-level, blockwise, mixtures, switching, localisation | Fonctions diagnostiques modulaires | Interface commune et résultats interprétables |
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mixtures, blockwise, cross-validation | Tables et figures | Résultats alignés avec les théorèmes de l'article |
-| 5 | Traiter l'application réelle | Données, split train/validation, HMM, diagnostics globaux et localisés | Analyse reproductible | Interprétation écologique prudente |
-| 6 | Finaliser le manuscrit | Simulations, application, figures, tables, discussion | Article complet | Claims appuyés par théorie, simulation ou application |
+| 5 | Traiter l'application réelle | Données, split train/validation, HMM, diagnostics globaux et localisés | Analyse elk reproductible | Interprétation écologique prudente |
+| 6 | Finaliser le manuscrit | Simulations, application, figures, tables, discussion | Article complet en relecture | Claims appuyés par théorie, simulation ou application |
 | 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Dépôt et manuscrit prêts | Nouvelle installation capable de reproduire les sorties |
 
 ## Phase 0 : structuration du dépôt
@@ -120,7 +120,7 @@ Critère de réussite :
 
 ## Phase 3 : diagnostics R modulaires
 
-Statut : amorcée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
+Statut : première version complétée avec l'interface commune, les diagnostics `K` contre `K+1`, angulaire, step-angle feature-level, localisation pondérée, durée blockwise, mixture et switching prédictible.
 
 Objectif : développer les diagnostics correspondant au catalogue du papier.
 
@@ -176,6 +176,8 @@ Critère de réussite :
 
 ## Phase 4 : simulations principales
 
+Statut : complétée pour la première version avec S1 à S12.
+
 Objectif : évaluer calibration, puissance, spécificité, localisation et comportement des combinaisons diagnostiques.
 
 Scénarios prioritaires :
@@ -193,7 +195,7 @@ Scénarios prioritaires :
 | S9 | Produit parallèle naïf | Le produit de diagnostics parallèles gonfle-t-il le faux signal ? | Implémenté, faux signal gonflé sous nul |
 | S10 | Blockwise long-horizon | Les défauts à long horizon sont-ils détectés par blocs ? | Implémenté, signal blockwise via rectitude des blocs |
 | S11 | Validation par individus | Les e-values par individus et leur moyenne cross-fitted sont-elles stables ? | Implémenté, moyenne finale sûre et scan individuel exploratoire |
-| S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Implémenté comme scénario optionnel ou supplément |
+| S12 | Enveloppe composite | Une enveloppe composite simple contrôle-t-elle le faux signal ? | Implémenté en supplément |
 
 Découpage retenu :
 
@@ -233,23 +235,23 @@ Critère de réussite :
 
 Objectif : démontrer l'utilité du cadre sur un jeu de données de mouvement réel, public et reproductible.
 
-Statut : première chaîne reproductible amorcée avec `moveHMM::elk_data`. L'individu `elk-115` est tenu hors entraînement, les autres individus servent à ajuster les HMM `K = 2, 3, 4`, et le modèle nul est sélectionné par BIC.
+Statut : première application reproductible complétée avec `moveHMM::elk_data`. L'individu `elk-115` est tenu hors entraînement, les autres individus servent à ajuster les HMM `K = 2, 3, 4`, et le modèle nul est sélectionné par BIC.
 
 Tâches :
 
 - Identifier des jeux de données candidats dans les écosystèmes `moveHMM` et `momentuHMM`. Complété pour la première version.
-- Documenter la source, la licence, les variables disponibles, le nombre d'individus et la qualité temporelle. Amorçé dans les tables d'application.
+- Documenter la source, les variables disponibles, le nombre d'individus et la qualité temporelle. Complété pour la première application.
 - Choisir un dataset simple plutôt qu'une application trop complexe. Complété : `moveHMM::elk_data`.
 - Définir un split train/validation, préférablement par individus si plusieurs individus sont disponibles. Complété : `elk-115` en validation.
 - Prétraiter les trajectoires. Complété : `application/01_preprocess.R`.
 - Construire longueurs de pas, angles de virage, identifiants, périodes et covariables prédictibles. Complété.
 - Ajuster le HMM nul et les alternatives sur train seulement. Complété : `application/02_fit_hmm.R`.
 - Calculer `log_p0` par filtrage observable sur validation. Complété : `application/03_compute_eprocess.R`.
-- Calculer un menu de diagnostics : `K+1`, angle, step-angle, durée ou blockwise selon la pertinence du dataset. Amorçé : `K+1`, angle, mixture et localisation.
-- Calculer les versions localisées : individu, période, habitat si disponible, état filtré. Amorçé : état filtré à longue distance.
-- Comparer diagnostics individuels, mixture pondérée et switching seulement si la règle est prédictible.
-- Produire les figures d'application.
-- Rédiger l'interprétation écologique sans surinterpréter les états décodés.
+- Calculer un menu de diagnostics : `K+1`, angle, step-angle, durée ou blockwise selon la pertinence du dataset. Complété pour la première application : `K+1`, angle, fixed mixture et localisation.
+- Calculer les versions localisées : individu, période, habitat si disponible, état filtré. Complété pour l'état filtré à longue distance.
+- Comparer diagnostics individuels, mixture pondérée et switching seulement si la règle est prédictible. Complété avec fixed mixture.
+- Produire les figures d'application. Complété avec figures ggplot.
+- Rédiger l'interprétation écologique sans surinterpréter les états décodés. Complété dans la section application.
 
 Livrables :
 
@@ -267,22 +269,25 @@ Critère de réussite :
 
 ## Phase 6 : finalisation du manuscrit
 
+Statut : en cours. Les sections théorie, simulations et application sont présentes; la priorité est maintenant la relecture éditoriale, la cohérence avec le supplément et l'audit reproductibilité.
+
 Objectif : intégrer les résultats de simulation et d'application dans la version actuelle de l'article.
 
 Tâches :
 
-- Ajouter la section simulation avec design, scénarios, métriques et résultats.
-- Ajouter les figures et tables de simulation.
-- Ajouter la section application réelle.
-- Mettre à jour discussion et limites selon les résultats.
+- Vérifier la section simulation avec design, scénarios, métriques et résultats.
+- Vérifier les figures et tables de simulation.
+- Vérifier la section application réelle et ses figures.
+- Relire discussion et limites selon les résultats.
 - Maintenir le découpage principal/supplément déjà décidé.
-- Compléter le supplément si de nouveaux résultats techniques sont ajoutés.
+- Vérifier que le supplément ne contredit pas l'article principal.
+- Harmoniser les références croisées, captions, notations et seuils.
 
 Livrables :
 
-- `paper/predictive_e_diagnostics_hmm_improved.tex` complété.
+- `paper/predictive_e_diagnostics_hmm_improved.tex` complété et relu.
 - Figures et tables intégrées.
-- Supplément `paper/supplementary_material.tex`.
+- Supplément `paper/supplementary_material.tex` cohérent avec l'article.
 - Bibliographie cohérente.
 
 Critère de réussite :
@@ -357,4 +362,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Intégrer l'application elk dans le manuscrit : protocole, sélection du nul `K = 3`, diagnostics sur `elk-115`, figures et interprétation écologique prudente.
+Faire l'audit de finalisation : relire l'article et le supplément ensemble, compiler les deux fichiers, régénérer les sorties R principales depuis une session propre, puis produire un court rapport interne de reproductibilité.

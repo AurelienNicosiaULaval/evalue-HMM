@@ -39,7 +39,7 @@
 \title{Predictive e-diagnostics for multi-state movement models\\
 A theoretical framework for hidden Markov models}
 \author{Author information to be completed}
-\date{Revised draft: 2026-05-07}
+\date{Revised draft: 2026-05-08}
 
 \begin{document}
 \maketitle
@@ -781,7 +781,7 @@ A first implementation should prioritize exact split-sample validity and transpa
 \section{Simulation study}
 \label{sec:simulations}
 
-The simulations were designed to check whether the theoretical guarantees translate into a reproducible R workflow and whether targeted diagnostic alternatives accumulate evidence under controlled movement-model failures. All scenarios use simulated movement trajectories with step lengths and turning angles, forward filtering for the observable HMM predictive density and cumulative log e-processes monitored against thresholds $\log(1/\alpha)$.
+The simulations were designed to check whether the theoretical guarantees translate into a reproducible R workflow and whether targeted diagnostic alternatives accumulate evidence under controlled movement-model failures. All scenarios use simulated movement trajectories with step lengths and turning angles, forward filtering for the observable HMM predictive density and cumulative log e-processes monitored against thresholds $\log(1/\alpha)$. The scenarios are not meant to form a benchmark of HMM-fitting algorithms. They are controlled checks of the diagnostic objects introduced above.
 
 The main article reports seven scenarios. Scenario S1 checks calibration under a correctly specified fixed HMM. Scenarios S3 to S6 evaluate targeted diagnostic power for an insufficient number of states, angular misspecification, residual step-angle dependence and non-geometric duration structure. Scenario S7 studies predictable localization of a temporally and state-localized failure. Scenario S8 evaluates predictable mixtures and switching among diagnostics.
 
@@ -807,14 +807,14 @@ S8 & Predictable mixture and switching & Mixtures and switching remain calibrate
 \label{tab:main_simulations}
 \end{table}
 
-Table \ref{tab:main_simulations} gives the main numerical summary. Under the correctly specified null in S1, the crossing rate at $\alpha=0.05$ is $0.030$, consistent with conservative finite-sample behaviour. The targeted alternatives in S3 to S5 have high power in the controlled alternatives, with crossing rates of $0.997$, $1.000$ and $1.000$, respectively. The duration scenario S6 gives no false signals under the HMM null and detects the HSMM-like alternative in every replicate. The localization scenario S7 shows why local increments should be reported: the global diagnostic crosses in $0.063$ of replicates at $\alpha=0.05$, whereas the diagnostic localized to the failure window and predicted state crosses in $0.900$ of replicates. Finally, S8 confirms that predictable mixtures and switching can be used without the severe false-signal inflation associated with non-valid parallel products.
+Table \ref{tab:main_simulations} gives the main numerical summary. Under the correctly specified null in S1, the crossing rate at $\alpha=0.05$ is $0.030$, consistent with conservative finite-sample behaviour. The targeted alternatives in S3 to S5 have high power in the controlled alternatives, with crossing rates of $0.997$, $1.000$ and $1.000$, respectively. The duration scenario S6 gives no false signals under the HMM null and detects the HSMM-like alternative in every replicate. The localization scenario S7 shows why local increments should be reported: the global diagnostic crosses in $0.063$ of replicates at $\alpha=0.05$, whereas the diagnostic localized to the failure window and predicted state crosses in $0.900$ of replicates. Finally, S8 confirms that predictable mixtures and switching can be used without the severe false-signal inflation associated with non-valid parallel products. Together, these scenarios check calibration, power, specificity, localization and diagnostic combination in separate controlled settings.
 
 These simulations are not intended to exhaustively compare HMM estimators or movement models. Their purpose is narrower: to verify that the proposed e-diagnostic objects can be computed reproducibly, that the null behaviour is compatible with the theory in controlled settings and that each diagnostic responds to the failure it is designed to target. The supplementary scenarios document additional safeguards and extensions that are useful for implementation but would broaden the main article beyond its central message.
 
 \section{Elk movement application}
 \label{sec:application}
 
-As a first real-data illustration, we used the elk movement data distributed as \texttt{elk\_data} in the R package \texttt{moveHMM} \citep{michelot_2016_movehmm}. The data are associated with the elk movement study of \citet{morales_2004_relocation}. The dataset contains four individuals and 735 locations with projected coordinates and distance to water. We used \texttt{moveHMM::prepData} to compute step lengths and turning angles. The individual \texttt{elk-115} was held out for validation, leaving the remaining three individuals for training. The validation individual contributes 192 complete step-angle observations.
+As a first real-data illustration, we used the elk movement data distributed as \texttt{elk\_data} in the R package \texttt{moveHMM} \citep{michelot_2016_movehmm}. The data are associated with the elk movement study of \citet{morales_2004_relocation}. The dataset contains four individuals and 735 locations with projected coordinates and distance to water. We used \texttt{moveHMM::prepData} to compute step lengths and turning angles. The individual \texttt{elk-115} was held out for validation, leaving the remaining three individuals for training. The validation individual contributes 192 complete step-angle observations. Figure \ref{fig:elk_trajectory_split} displays the held-out-individual split.
 
 \begin{figure}[t]
 \centering
@@ -823,7 +823,7 @@ As a first real-data illustration, we used the elk movement data distributed as 
 \label{fig:elk_trajectory_split}
 \end{figure}
 
-We fitted HMMs with $K=2,3,4$ states on the training individuals only, using Gamma step lengths and von Mises turning angles with no transition covariates. Table \ref{tab:elk_model_selection} reports the model-selection summary. The three-state model has the smallest BIC and was used as the fitted null generator. The four-state model has a lower AIC but a larger BIC, so it was reserved as a $K+1$ diagnostic alternative rather than adopted as the main fitted null.
+We fitted HMMs with $K=2,3,4$ states on the training individuals only, using Gamma step lengths and von Mises turning angles with no transition covariates. Figure \ref{fig:elk_model_selection} and Table \ref{tab:elk_model_selection} report the model-selection summary. The three-state model has the smallest BIC and was used as the fitted null generator. The four-state model has a lower AIC but a larger BIC, so it was reserved as a $K+1$ diagnostic alternative rather than adopted as the main fitted null.
 
 \begin{figure}[t]
 \centering
@@ -847,7 +847,7 @@ States & Negative log-likelihood & Parameters & AIC & BIC \\
 \label{tab:elk_model_selection}
 \end{table}
 
-We then evaluated four diagnostics on the held-out individual: a full-density $K+1$ diagnostic comparing the $K=3$ null with the $K=4$ alternative, a diffuse-angle diagnostic obtained by halving the fitted angular concentrations, a fixed mixture of these two diagnostic densities and a state-localized version of the $K+1$ diagnostic using the filtered predictive probability of the long-step state. Table \ref{tab:elk_diagnostics} summarizes the resulting e-processes.
+We then evaluated four diagnostics on the held-out individual: a full-density $K+1$ diagnostic comparing the $K=3$ null with the $K=4$ alternative, a diffuse-angle diagnostic obtained by halving the fitted angular concentrations, a fixed mixture of these two diagnostic densities and a state-localized version of the $K+1$ diagnostic using the filtered predictive probability of the long-step state. Figure \ref{fig:elk_eprocess_paths} shows the resulting cumulative paths, and Table \ref{tab:elk_diagnostics} summarizes their crossings and maxima.
 
 \begin{figure}[t]
 \centering
@@ -873,7 +873,7 @@ Long-step-state localized $K+1$ & Yes & 123 & 5.618 & 5.605 \\
 \label{tab:elk_diagnostics}
 \end{table}
 
-The $K+1$ diagnostic crosses the $\alpha=0.05$ threshold early in the validation trajectory, suggesting that the richer state structure predicts this held-out animal better than the BIC-selected three-state generator. The diffuse-angle diagnostic alone does not cross the threshold, although its maximum log e-value is close to the threshold. The fixed mixture crosses because it allocates part of its predictive mass to the successful state-number diagnostic. The state-localized diagnostic also crosses, but later, indicating that evidence is partly associated with times at which the fitted null predicts the long-step state.
+The $K+1$ diagnostic crosses the $\alpha=0.05$ threshold early in the validation trajectory, suggesting that the richer state structure predicts this held-out animal better than the BIC-selected three-state generator. The diffuse-angle diagnostic alone does not cross the threshold, although its maximum log e-value is close to the threshold. The fixed mixture crosses because it allocates part of its predictive mass to the successful state-number diagnostic. The state-localized diagnostic also crosses, but later, indicating that evidence is partly associated with times at which the fitted null predicts the long-step state. Figure \ref{fig:elk_state_localization} relates this localized e-process to the filtered predictive probability of the long-step state.
 
 \begin{figure}[t]
 \centering
@@ -882,7 +882,7 @@ The $K+1$ diagnostic crosses the $\alpha=0.05$ threshold early in the validation
 \label{fig:elk_state_localization}
 \end{figure}
 
-This application should be interpreted as exploratory. The dataset is small, the split uses one held-out individual and the diagnostic menu was chosen as a first proof of concept. The result is therefore a predictive model criticism of the fitted generator for \texttt{elk-115}, not a definitive ecological claim about the number or meaning of behavioural states. The example nevertheless illustrates the intended workflow: fix the training information, evaluate observable predictive densities on held-out data, monitor e-processes and report both global and localized evidence.
+This application should be interpreted as exploratory. The dataset is small, the split uses one held-out individual and the diagnostic menu was chosen as a first proof of concept. The result is therefore a predictive model criticism of the fitted generator for \texttt{elk-115}, not a definitive ecological claim about the number or meaning of behavioural states. The example nevertheless illustrates the intended workflow: fix the training information, choose diagnostic competitors before validation, evaluate observable predictive densities on held-out data, monitor e-processes and report both global and localized evidence.
 
 \section{Discussion}
 \label{sec:discussion}
