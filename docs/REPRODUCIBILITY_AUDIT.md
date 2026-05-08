@@ -19,7 +19,7 @@ The audit covered:
 - ignored generated outputs and data products;
 - basic R environment information.
 
-This audit was run on the current local machine. It is not a fresh-clone audit on a separate computer, and the project does not yet include an `renv.lock` file.
+This audit was run on the current local machine. It is not a fresh-clone audit on a separate computer. A first `renv.lock` file was added after the local audit to document the R package environment.
 
 ## Commands run
 
@@ -137,9 +137,9 @@ Package versions checked during the audit:
 
 - No blocking issue was found in the local audit.
 - This was not a clean install on a new machine.
-- The project does not yet have a package lockfile such as `renv.lock`.
+- The project now has an `renv.lock` file, but `renv::restore()` has not yet been tested in a fresh clone.
 - The application remains exploratory because it uses one held-out individual and a diagnostic menu chosen for this proof of concept.
 
 ## Recommended next step
 
-Create a lightweight dependency lock or session record for the submission archive. The simplest next step is to add an `renv.lock` file or a documented package-version table before external sharing.
+Test `renv::restore()` in a fresh clone or on a separate machine before external sharing.

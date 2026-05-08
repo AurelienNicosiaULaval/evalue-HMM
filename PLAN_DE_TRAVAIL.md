@@ -47,7 +47,7 @@ Le plan détaillé phase par phase est maintenu dans `docs/PLAN_PAR_PHASE.md`.
 | 4 | Réaliser les simulations | Calibration, puissance, spécificité, localisation, mélange, blockwise, cross-validation | Tables et figures de simulation |
 | 5 | Traiter l'application réelle | Choix des données, split train/validation, HMM, diagnostics globaux et localisés | Première application elk complétée |
 | 6 | Finaliser le manuscrit | Sections simulations et application, figures, tables, discussion | Article complet en relecture éditoriale |
-| 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Audit local complété, verrouillage des dépendances à faire |
+| 7 | Vérifier avant soumission | Audit reproductibilité, code, statistiques, écologie, dépôt | Audit local complété, `renv.lock` ajouté, test fresh-clone à faire |
 
 ## 5. Workstreams et tâches détaillées
 
@@ -166,6 +166,6 @@ Découpage retenu pour le manuscrit :
 
 ## 9. Prochaine unité de travail recommandée
 
-La prochaine étape scientifique est le verrouillage léger des dépendances : ajouter un `renv.lock` ou une table de versions suffisante pour préparer un test de reproduction sur une installation neuve.
+La prochaine étape scientifique est un test fresh-clone : restaurer les dépendances avec `renv::restore()` dans une copie neuve du dépôt, puis relancer l'application, les simulations et la compilation.
 
 Voir `docs/PLAN_PAR_PHASE.md` pour le déroulement détaillé, les livrables, les critères de réussite et les tests associés à chaque phase.

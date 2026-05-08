@@ -12,6 +12,7 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 - Le plan opérationnel du projet est dans `PLAN_DE_TRAVAIL.md`.
 - Le plan de travail par phase est dans `docs/PLAN_PAR_PHASE.md`.
 - Le rapport d'audit reproductibilité local est dans `docs/REPRODUCIBILITY_AUDIT.md`.
+- Les dépendances R sont verrouillées dans `renv.lock`.
 - La version courante et unique de l'article est dans `paper/predictive_e_diagnostics_hmm_improved.tex`.
 - Le matériel supplémentaire est dans `paper/supplementary_material.tex`.
 - Découpage actuel des simulations : S1, S3, S4, S5, S6, S7 et S8 dans l'article principal ; S2, S9, S10, S11 et S12 dans le supplément.
@@ -57,6 +58,12 @@ Développer un cadre théorique, computationnel et appliqué pour évaluer des H
 ```bash
 git clone git@github.com:AurelienNicosiaULaval/evalue-HMM.git
 cd evalue-HMM
+```
+
+Pour restaurer les dépendances R verrouillées :
+
+```r
+renv::restore()
 ```
 
 Les fonctions R de base peuvent être chargées ainsi :
@@ -162,6 +169,13 @@ Pour lancer l'application réelle :
 
 ```bash
 Rscript application/run_application.R
+```
+
+Pour compiler les PDF de relecture :
+
+```bash
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=manuscript_outputs paper/predictive_e_diagnostics_hmm_improved.tex
+pdflatex -interaction=nonstopmode -halt-on-error -output-directory=manuscript_outputs paper/supplementary_material.tex
 ```
 
 ## Données

@@ -298,7 +298,7 @@ Critère de réussite :
 
 ## Phase 7 : vérification avant soumission
 
-Statut : audit local complété. Le rapport est dans `docs/REPRODUCIBILITY_AUDIT.md`. Il reste à verrouiller les dépendances et à tester une reproduction sur une installation neuve.
+Statut : audit local complété. Le rapport est dans `docs/REPRODUCIBILITY_AUDIT.md`. Un premier `renv.lock` a été ajouté. Il reste à tester une reproduction sur une installation neuve.
 
 Objectif : vérifier la reproductibilité, la validité statistique et la cohérence éditoriale avant soumission.
 
@@ -364,4 +364,4 @@ Critère de réussite :
 
 ## Prochaine action concrète
 
-Ajouter un verrouillage léger des dépendances, idéalement avec `renv.lock`, puis tester la reproduction sur une installation neuve ou dans un clone séparé.
+Tester `renv::restore()` sur une installation neuve ou dans un clone séparé, puis relancer les scripts principaux.
