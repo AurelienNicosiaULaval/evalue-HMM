@@ -8,9 +8,11 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{enumitem}
+\usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
 \usepackage[round,authoryear]{natbib}
+\graphicspath{{paper/figures/}{figures/}}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -814,7 +816,21 @@ These simulations are not intended to exhaustively compare HMM estimators or mov
 
 As a first real-data illustration, we used the elk movement data distributed as \texttt{elk\_data} in the R package \texttt{moveHMM} \citep{michelot_2016_movehmm}. The data are associated with the elk movement study of \citet{morales_2004_relocation}. The dataset contains four individuals and 735 locations with projected coordinates and distance to water. We used \texttt{moveHMM::prepData} to compute step lengths and turning angles. The individual \texttt{elk-115} was held out for validation, leaving the remaining three individuals for training. The validation individual contributes 192 complete step-angle observations.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{elk_trajectory_split.png}
+\caption{Training and validation split for the elk application. The validation set is the complete trajectory of \texttt{elk-115}; all other individuals are used for training.}
+\label{fig:elk_trajectory_split}
+\end{figure}
+
 We fitted HMMs with $K=2,3,4$ states on the training individuals only, using Gamma step lengths and von Mises turning angles with no transition covariates. Table \ref{tab:elk_model_selection} reports the model-selection summary. The three-state model has the smallest BIC and was used as the fitted null generator. The four-state model has a lower AIC but a larger BIC, so it was reserved as a $K+1$ diagnostic alternative rather than adopted as the main fitted null.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.82\linewidth]{elk_model_selection.png}
+\caption{AIC and BIC for the fitted HMMs in the elk application. BIC selects the three-state model as the fitted null generator, while the four-state model is retained as a diagnostic competitor.}
+\label{fig:elk_model_selection}
+\end{figure}
 
 \begin{table}[t]
 \centering
@@ -832,6 +848,13 @@ States & Negative log-likelihood & Parameters & AIC & BIC \\
 \end{table}
 
 We then evaluated four diagnostics on the held-out individual: a full-density $K+1$ diagnostic comparing the $K=3$ null with the $K=4$ alternative, a diffuse-angle diagnostic obtained by halving the fitted angular concentrations, a fixed mixture of these two diagnostic densities and a state-localized version of the $K+1$ diagnostic using the filtered predictive probability of the long-step state. Table \ref{tab:elk_diagnostics} summarizes the resulting e-processes.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{elk_eprocess_paths.png}
+\caption{Cumulative log e-processes for the held-out elk individual. The dashed line is the $\alpha=0.05$ threshold, $\log(20)$. Crossings are evidence against the fitted generator relative to the corresponding diagnostic alternative.}
+\label{fig:elk_eprocess_paths}
+\end{figure}
 
 \begin{table}[t]
 \centering
@@ -851,6 +874,13 @@ Long-step-state localized $K+1$ & Yes & 123 & 5.618 & 5.605 \\
 \end{table}
 
 The $K+1$ diagnostic crosses the $\alpha=0.05$ threshold early in the validation trajectory, suggesting that the richer state structure predicts this held-out animal better than the BIC-selected three-state generator. The diffuse-angle diagnostic alone does not cross the threshold, although its maximum log e-value is close to the threshold. The fixed mixture crosses because it allocates part of its predictive mass to the successful state-number diagnostic. The state-localized diagnostic also crosses, but later, indicating that evidence is partly associated with times at which the fitted null predicts the long-step state.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{elk_state_localization.png}
+\caption{Predictable state-localized diagnostic for the held-out elk individual. The upper panel shows the filtered predictive probability assigned to the long-step state before each validation observation. The lower panel shows the corresponding localized cumulative log e-process.}
+\label{fig:elk_state_localization}
+\end{figure}
 
 This application should be interpreted as exploratory. The dataset is small, the split uses one held-out individual and the diagnostic menu was chosen as a first proof of concept. The result is therefore a predictive model criticism of the fitted generator for \texttt{elk-115}, not a definitive ecological claim about the number or meaning of behavioural states. The example nevertheless illustrates the intended workflow: fix the training information, evaluate observable predictive densities on held-out data, monitor e-processes and report both global and localized evidence.
 
