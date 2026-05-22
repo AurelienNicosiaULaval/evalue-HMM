@@ -9,20 +9,15 @@
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/index.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/news/index.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/plan_travail_predictive_e_diagnostics_hmm.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/compute_block_straightness 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/compute_block_straightness.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/compute_eprocess.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/create_hmm_movement_parameters.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/d_wrapped_normal 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/d_wrapped_normal.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_angle.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_composite_envelope.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_duration_blockwise 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_duration_blockwise.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_extra_state.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_long_horizon_straightness 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_long_horizon_straightness.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_mixture 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_mixture.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_step_angle_dependence.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/diagnostic_switch.html</loc></url>
@@ -30,13 +25,11 @@
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/evalueHMM-package.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/fit_block_straightness_laws.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/gaussian_copula_log_density.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_composite_envelope_log_density 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_composite_envelope_log_density.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_family_predictive_log_density.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_forward_filter.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_movement_log_emission.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_movement_predictive_log_density.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_movement_rosenblatt_residuals 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_movement_rosenblatt_residuals.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_predictive_log_density.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/hmm_predictive_state_weights.html</loc></url>
@@ -55,7 +48,6 @@
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/simulate_hsmm_movement.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/simulate_wrapped_normal.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/summarise_hmm_parameter_error.html</loc></url>
-<url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/summarise_hmm_parameter_family 2.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/summarise_hmm_parameter_family.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/summarise_predictive_diagnostic.html</loc></url>
 <url><loc>https://aureliennicosiaulaval.github.io/evalue-HMM/reference/time_window_weights.html</loc></url>
