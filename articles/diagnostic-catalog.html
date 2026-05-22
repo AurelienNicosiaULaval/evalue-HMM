@@ -67,20 +67,46 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/AurelienNicosiaULaval/evalue-HMM" class="external-link">evalueHMM</a></span><span class="op">)</span></span></code></pre></div>
-<p>This vignette shows the main diagnostic families available in
-<code>evalueHMM</code> on a small simulated trajectory.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/AurelienNicosiaULaval/evalue-HMM" class="external-link">evalueHMM</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<p>This vignette gives a compact tour of the diagnostic families
+available in <code>evalueHMM</code>. The examples use a single simulated
+validation trajectory so that the diagnostics can be compared on the
+same time axis.</p>
+<p>The simulated trajectory below has step-angle dependence induced
+through a Gaussian copula. The null model is still a standard two-state
+movement HMM. This creates a small but visible mismatch for the
+feature-level copula diagnostic.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">20260522</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">null_parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_hmm_movement_parameters.html">create_hmm_movement_parameters</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">validation_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_hmm_movement.html">simulate_hmm_movement</a></span><span class="op">(</span></span>
-<span>  n_times <span class="op">=</span> <span class="fl">120</span>,</span>
-<span>  parameters <span class="op">=</span> <span class="va">null_parameters</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span></span>
+<span><span class="va">validation_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_hmm_movement_copula.html">simulate_hmm_movement_copula</a></span><span class="op">(</span></span>
+<span>  n_times <span class="op">=</span> <span class="fl">150</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="va">null_parameters</span>,</span>
+<span>  rho_by_state <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.55</span>, <span class="fl">0.10</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">validation_data</span><span class="op">$</span><span class="va">state</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">validation_data</span><span class="op">$</span><span class="va">state</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">validation_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">step_length</span>, y <span class="op">=</span> <span class="va">turning_angle</span>, colour <span class="op">=</span> <span class="va">state</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.75</span>, size <span class="op">=</span> <span class="fl">1.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_colour_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#2A9D8F"</span>, <span class="st">"#E9C46A"</span>, <span class="st">"#264653"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Step length"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Turning angle"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"Simulated state"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Validation observations"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="diagnostic-catalog_files/figure-html/data-1.png" class="r-plt" alt="" width="840" style="display: block; margin: auto;"></p>
 <div class="section level2">
 <h2 id="full-density-diagnostics">Full-density diagnostics<a class="anchor" aria-label="anchor" href="#full-density-diagnostics"></a>
 </h2>
+<p>Full-density diagnostics replace the null predictive density by
+another full movement HMM density. They are useful when the scientific
+concern can be expressed as an alternative movement model.</p>
 <p>A state-number diagnostic compares the null HMM with a diagnostic HMM
 containing one additional state.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -107,9 +133,9 @@ containing one additional state.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/summarise_predictive_diagnostic.html">summarise_predictive_diagnostic</a></span><span class="op">(</span><span class="va">state_diagnostic</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   diagnostic_name alpha threshold signal crossing_time max_log_e final_log_e</span></span>
-<span><span class="co">#&gt; 1     extra_state  0.05  2.995732  FALSE            NA 0.3591196     -2.4075</span></span>
+<span><span class="co">#&gt; 1     extra_state  0.05  2.995732  FALSE            NA  2.047781  -0.9408181</span></span>
 <span><span class="co">#&gt;   mean_log_increment n_observations</span></span>
-<span><span class="co">#&gt; 1         -0.0200625            120</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       -0.006272121            150</span></span></code></pre></div>
 <p>An angular diagnostic keeps the number of states fixed but modifies
 the angular component.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -126,65 +152,128 @@ the angular component.</p>
 <span></span>
 <span><span class="fu"><a href="../reference/summarise_predictive_diagnostic.html">summarise_predictive_diagnostic</a></span><span class="op">(</span><span class="va">angle_diagnostic</span><span class="op">)</span></span>
 <span><span class="co">#&gt;          diagnostic_name alpha threshold signal crossing_time max_log_e</span></span>
-<span><span class="co">#&gt; 1 angle_misspecification  0.05  2.995732  FALSE            NA 0.9907954</span></span>
+<span><span class="co">#&gt; 1 angle_misspecification  0.05  2.995732  FALSE            NA  1.152723</span></span>
 <span><span class="co">#&gt;   final_log_e mean_log_increment n_observations</span></span>
-<span><span class="co">#&gt; 1   -16.05119         -0.1337599            120</span></span></code></pre></div>
+<span><span class="co">#&gt; 1   -15.81742         -0.1054495            150</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="feature-level-diagnostics">Feature-level diagnostics<a class="anchor" aria-label="anchor" href="#feature-level-diagnostics"></a>
 </h2>
-<p>The step-angle diagnostic uses sequential Rosenblatt residuals and a
-Gaussian copula diagnostic density.</p>
+<p>Feature-level diagnostics transform observations through the null
+model and then test a lower-dimensional feature. The step-angle
+diagnostic uses sequential Rosenblatt residuals and a Gaussian copula
+diagnostic density.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">copula_diagnostic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diagnostic_step_angle_dependence.html">diagnostic_step_angle_dependence</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">validation_data</span>,</span>
 <span>  null_parameters <span class="op">=</span> <span class="va">null_parameters</span>,</span>
-<span>  rho <span class="op">=</span> <span class="fl">0.35</span></span>
+<span>  rho <span class="op">=</span> <span class="fl">0.45</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summarise_predictive_diagnostic.html">summarise_predictive_diagnostic</a></span><span class="op">(</span><span class="va">copula_diagnostic</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         diagnostic_name alpha threshold signal crossing_time max_log_e</span></span>
-<span><span class="co">#&gt; 1 step_angle_dependence  0.05  2.995732  FALSE            NA 0.1915168</span></span>
+<span><span class="co">#&gt; 1 step_angle_dependence  0.05  2.995732   TRUE            45  4.700148</span></span>
 <span><span class="co">#&gt;   final_log_e mean_log_increment n_observations</span></span>
-<span><span class="co">#&gt; 1   -6.168072         -0.0514006            120</span></span>
+<span><span class="co">#&gt; 1   -8.573855        -0.05715903            150</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">copula_diagnostic</span><span class="op">$</span><span class="va">features</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   time individual_id    u_step u_angle_given_step</span></span>
-<span><span class="co">#&gt; 1    1             1 0.5192033          0.5526524</span></span>
-<span><span class="co">#&gt; 2    2             1 0.8533820          0.1120446</span></span>
-<span><span class="co">#&gt; 3    3             1 0.3045583          0.8917249</span></span>
-<span><span class="co">#&gt; 4    4             1 0.7906669          0.7526889</span></span>
-<span><span class="co">#&gt; 5    5             1 0.9969001          0.2834269</span></span>
-<span><span class="co">#&gt; 6    6             1 0.1707527          0.3835694</span></span></code></pre></div>
+<span><span class="co">#&gt; 1    1             1 0.1186335          0.1665613</span></span>
+<span><span class="co">#&gt; 2    2             1 0.3332687          0.2291244</span></span>
+<span><span class="co">#&gt; 3    3             1 0.5886906          0.8968392</span></span>
+<span><span class="co">#&gt; 4    4             1 0.7590032          0.7366286</span></span>
+<span><span class="co">#&gt; 5    5             1 0.9289046          0.2272643</span></span>
+<span><span class="co">#&gt; 6    6             1 0.5544554          0.8662198</span></span></code></pre></div>
+<p>The residual plot is often the most informative visual check. Under a
+good null model, the transformed residuals should look roughly
+independent and uniform on the unit square. Dependence or structure
+suggests a feature-level failure of the null model.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">copula_diagnostic</span><span class="op">$</span><span class="va">features</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">u_step</span>, y <span class="op">=</span> <span class="va">u_angle_given_step</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"grey85"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.25</span>, <span class="fl">0.50</span>, <span class="fl">0.75</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"grey85"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.80</span>, size <span class="op">=</span> <span class="fl">1.8</span>, colour <span class="op">=</span> <span class="st">"#2A9D8F"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_fixed.html" class="external-link">coord_equal</a></span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Step residual"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Conditional angle residual"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Copula residual check"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="diagnostic-catalog_files/figure-html/residual-plot-1.png" class="r-plt" alt="" width="840" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="predictable-combinations">Predictable combinations<a class="anchor" aria-label="anchor" href="#predictable-combinations"></a>
 </h2>
-<p>Diagnostics can be combined by predictable mixture weights.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>Diagnostics can be combined by predictable mixture weights. A mixture
+is useful when several failure modes are plausible and the analyst wants
+one valid diagnostic process rather than a post hoc choice among many
+curves.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mixture</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diagnostic_mixture.html">diagnostic_mixture</a></span><span class="op">(</span></span>
 <span>  diagnostics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    extra_state <span class="op">=</span> <span class="va">state_diagnostic</span>,</span>
 <span>    angle <span class="op">=</span> <span class="va">angle_diagnostic</span>,</span>
 <span>    copula <span class="op">=</span> <span class="va">copula_diagnostic</span></span>
 <span>  <span class="op">)</span>,</span>
-<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<span>  weights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span>, <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/summarise_predictive_diagnostic.html">summarise_predictive_diagnostic</a></span><span class="op">(</span><span class="va">mixture</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      diagnostic_name alpha threshold signal crossing_time max_log_e final_log_e</span></span>
-<span><span class="co">#&gt; 1 diagnostic_mixture  0.05  2.995732  FALSE            NA 0.5295084   -5.323307</span></span>
+<span><span class="co">#&gt; 1 diagnostic_mixture  0.05  2.995732   TRUE            53  3.173977  -0.2198431</span></span>
 <span><span class="co">#&gt;   mean_log_increment n_observations</span></span>
-<span><span class="co">#&gt; 1        -0.04436089            120</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       -0.001465621            150</span></span></code></pre></div>
+<p>The following figure compares the cumulative log e-processes. The
+dashed line is the usual <code>log(1 / alpha)</code> threshold.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">diagnostic_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="va">state_diagnostic</span><span class="op">$</span><span class="va">path</span>,</span>
+<span>  <span class="va">angle_diagnostic</span><span class="op">$</span><span class="va">path</span>,</span>
+<span>  <span class="va">copula_diagnostic</span><span class="op">$</span><span class="va">path</span>,</span>
+<span>  <span class="va">mixture</span><span class="op">$</span><span class="va">path</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">diagnostic_paths</span><span class="op">$</span><span class="va">diagnostic_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span></span>
+<span>  <span class="va">diagnostic_paths</span><span class="op">$</span><span class="va">diagnostic_name</span>,</span>
+<span>  levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"extra_state"</span>,</span>
+<span>    <span class="st">"angle"</span>,</span>
+<span>    <span class="st">"step_angle_dependence"</span>,</span>
+<span>    <span class="st">"diagnostic_mixture"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">diagnostic_paths</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">time</span>,</span>
+<span>  y <span class="op">=</span> <span class="va">log_e_cumulative</span>,</span>
+<span>  colour <span class="op">=</span> <span class="va">diagnostic_name</span></span>
+<span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span></span>
+<span>    yintercept <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">threshold</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"#D1495B"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Time"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Cumulative log e-value"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"Diagnostic"</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Comparing diagnostic paths"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="diagnostic-catalog_files/figure-html/diagnostic-paths-1.png" class="r-plt" alt="" width="840" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="localization">Localization<a class="anchor" aria-label="anchor" href="#localization"></a>
 </h2>
-<p>A diagnostic can be localized using predictable weights. The
-following example only accumulates evidence over a time window.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>A diagnostic can be localized using predictable weights. Here the
+same mixture is allowed to accumulate evidence only over a selected time
+window.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">window_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/time_window_weights.html">time_window_weights</a></span><span class="op">(</span></span>
 <span>  time <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">time</span>,</span>
-<span>  start <span class="op">=</span> <span class="fl">40</span>,</span>
-<span>  end <span class="op">=</span> <span class="fl">90</span></span>
+<span>  start <span class="op">=</span> <span class="fl">45</span>,</span>
+<span>  end <span class="op">=</span> <span class="fl">105</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">localized</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/localize_predictive_diagnostic.html">localize_predictive_diagnostic</a></span><span class="op">(</span></span>
@@ -197,19 +286,80 @@ following example only accumulates evidence over a time window.</p>
 <span><span class="co">#&gt;                   diagnostic_name alpha threshold signal crossing_time</span></span>
 <span><span class="co">#&gt; 1 diagnostic_mixture__time_window  0.05  2.995732  FALSE            NA</span></span>
 <span><span class="co">#&gt;   max_log_e final_log_e mean_log_increment n_observations</span></span>
-<span><span class="co">#&gt; 1 0.7323388   -2.593072        -0.02160893            120</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  1.000124 -0.06076115      -0.0004050743            150</span></span></code></pre></div>
 <p>State-localized diagnostics can also use filtered predictive state
-probabilities.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+probabilities. These weights are predictable because they are computed
+from past and current information under the null filtering
+recursion.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">state_weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hmm_predictive_state_weights.html">hmm_predictive_state_weights</a></span><span class="op">(</span></span>
 <span>  data <span class="op">=</span> <span class="va">validation_data</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="va">null_parameters</span>,</span>
 <span>  state <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">state_weights</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span><span class="co">#&gt; 0.08000 0.08000 0.08438 0.42445 0.87924 0.88000</span></span></code></pre></div>
+<span><span class="va">weights_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    time <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>    weight <span class="op">=</span> <span class="va">window_weights</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"time window"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    time <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>    weight <span class="op">=</span> <span class="va">state_weights</span>,</span>
+<span>    type <span class="op">=</span> <span class="st">"filtered state 2 probability"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">weights_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">time</span>, y <span class="op">=</span> <span class="va">weight</span>, colour <span class="op">=</span> <span class="va">type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Time"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Predictable weight"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Localization weights"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="diagnostic-catalog_files/figure-html/state-weights-1.png" class="r-plt" alt="" width="840" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">localized_paths</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    time <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>    log_e_cumulative <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">log_e_cumulative</span>,</span>
+<span>    process <span class="op">=</span> <span class="st">"global mixture"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>    time <span class="op">=</span> <span class="va">localized</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">time</span>,</span>
+<span>    log_e_cumulative <span class="op">=</span> <span class="va">localized</span><span class="op">$</span><span class="va">path</span><span class="op">$</span><span class="va">log_e_cumulative</span>,</span>
+<span>    process <span class="op">=</span> <span class="st">"time-localized mixture"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">localized_paths</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">time</span>,</span>
+<span>  y <span class="op">=</span> <span class="va">log_e_cumulative</span>,</span>
+<span>  colour <span class="op">=</span> <span class="va">process</span></span>
+<span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span></span>
+<span>    yintercept <span class="op">=</span> <span class="va">mixture</span><span class="op">$</span><span class="va">threshold</span>,</span>
+<span>    linetype <span class="op">=</span> <span class="st">"dashed"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"#D1495B"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span></span>
+<span>    x <span class="op">=</span> <span class="st">"Time"</span>,</span>
+<span>    y <span class="op">=</span> <span class="st">"Cumulative log e-value"</span>,</span>
+<span>    colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>    title <span class="op">=</span> <span class="st">"Global and localized diagnostic evidence"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="diagnostic-catalog_files/figure-html/localized-path-1.png" class="r-plt" alt="" width="840" style="display: block; margin: auto;"></p>
+<p>The catalog is meant as a starting point. In an applied analysis, the
+diagnostic alternative should be motivated by a concrete modeling
+concern such as missing states, poor angular dynamics, residual
+step-angle dependence, duration misspecification or localized
+habitat-specific failure.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

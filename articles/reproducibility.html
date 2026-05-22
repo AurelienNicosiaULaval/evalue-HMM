@@ -66,54 +66,161 @@
 
     
     
-<p>This project has two layers:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span></code></pre></div>
+<p>This repository has two reproducibility layers:</p>
 <ol style="list-style-type: decimal">
 <li>the installable R package <code>evalueHMM</code>;</li>
 <li>the research compendium containing simulations, the elk application
 and the LaTeX manuscript.</li>
 </ol>
-<p>The package is designed to be checked and installed independently of
-the heavy research outputs.</p>
+<p>The package layer is intentionally small enough for routine checks.
+The research layer contains heavier computations and generated outputs
+used for the manuscript.</p>
+<div class="section level2">
+<h2 id="workflow-overview">Workflow overview<a class="anchor" aria-label="anchor" href="#workflow-overview"></a>
+</h2>
+<p>The diagram below summarizes the intended workflow. Package checks
+should pass without requiring manuscript-scale simulation outputs.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">workflow</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span>,</span>
+<span>  y <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Source code"</span>,</span>
+<span>    <span class="st">"Package checks"</span>,</span>
+<span>    <span class="st">"Vignettes"</span>,</span>
+<span>    <span class="st">"Research scripts"</span>,</span>
+<span>    <span class="st">"Manuscript"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  detail <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"R/, tests/, man/"</span>,</span>
+<span>    <span class="st">"R CMD check"</span>,</span>
+<span>    <span class="st">"pkgdown articles"</span>,</span>
+<span>    <span class="st">"simulations/ and application/"</span>,</span>
+<span>    <span class="st">"paper/"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">workflow</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html" class="external-link">geom_segment</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1.15</span>, xend <span class="op">=</span> <span class="fl">4.85</span>, y <span class="op">=</span> <span class="fl">1</span>, yend <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>    linewidth <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>    colour <span class="op">=</span> <span class="st">"grey55"</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">7</span>, colour <span class="op">=</span> <span class="st">"#2A9D8F"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">label</span><span class="op">)</span>, nudge_y <span class="op">=</span> <span class="fl">0.16</span>, fontface <span class="op">=</span> <span class="st">"bold"</span>, size <span class="op">=</span> <span class="fl">3.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">detail</span><span class="op">)</span>, nudge_y <span class="op">=</span> <span class="op">-</span><span class="fl">0.16</span>, size <span class="op">=</span> <span class="fl">3.0</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.6</span>, <span class="fl">5.4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.65</span>, <span class="fl">1.35</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Reproducibility layers in the repository"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in geom_segment(aes(x = 1.15, xend = 4.85, y = 1, yend = 1), linewidth = 0.6, : All aesthetics have length 1, but the data has 5 rows.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please consider using `annotate()` or provide this layer with data containing</span></span>
+<span><span class="co">#&gt;   a single row.</span></span></code></pre></div>
+<p><img src="reproducibility_files/figure-html/workflow-plot-1.png" class="r-plt" alt="" width="840" style="display: block; margin: auto;"></p>
+</div>
 <div class="section level2">
 <h2 id="package-checks">Package checks<a class="anchor" aria-label="anchor" href="#package-checks"></a>
 </h2>
-<p>From the repository root, the package can be checked with:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">R</span> CMD build <span class="at">--no-build-vignettes</span> .</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-manual</span> <span class="at">--no-build-vignettes</span> evalueHMM_0.1.0.tar.gz</span></code></pre></div>
-<p>For a full vignette build:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">R</span> CMD build .</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-manual</span> evalueHMM_0.1.0.tar.gz</span></code></pre></div>
+<p>From the repository root, the package can be checked quickly without
+rebuilding all vignette outputs:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">R</span> CMD build <span class="at">--no-build-vignettes</span> .</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-manual</span> <span class="at">--no-build-vignettes</span> evalueHMM_0.1.0.tar.gz</span></code></pre></div>
+<p>For a full package check with vignette rebuilding:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">R</span> CMD build .</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-manual</span> evalueHMM_0.1.0.tar.gz</span></code></pre></div>
+<p>The continuous integration workflow runs the package check on Linux,
+macOS and Windows. The pkgdown workflow builds the online documentation
+from the same source files.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">checks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  layer <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Unit tests"</span>,</span>
+<span>    <span class="st">"Examples"</span>,</span>
+<span>    <span class="st">"Vignettes"</span>,</span>
+<span>    <span class="st">"pkgdown site"</span>,</span>
+<span>    <span class="st">"Research scripts"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  command <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"testthat::test_local()"</span>,</span>
+<span>    <span class="st">"R CMD check"</span>,</span>
+<span>    <span class="st">"R CMD build; R CMD check"</span>,</span>
+<span>    <span class="st">"pkgdown::build_site()"</span>,</span>
+<span>    <span class="st">"Rscript simulations/run_all_simulations.R"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  routine <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Every package change"</span>,</span>
+<span>    <span class="st">"Every package change"</span>,</span>
+<span>    <span class="st">"Before documentation publication"</span>,</span>
+<span>    <span class="st">"Before GitHub Pages deployment"</span>,</span>
+<span>    <span class="st">"For manuscript regeneration"</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">checks</span></span>
+<span><span class="co">#&gt;              layer                                   command</span></span>
+<span><span class="co">#&gt; 1       Unit tests                    testthat::test_local()</span></span>
+<span><span class="co">#&gt; 2         Examples                               R CMD check</span></span>
+<span><span class="co">#&gt; 3        Vignettes                  R CMD build; R CMD check</span></span>
+<span><span class="co">#&gt; 4     pkgdown site                     pkgdown::build_site()</span></span>
+<span><span class="co">#&gt; 5 Research scripts Rscript simulations/run_all_simulations.R</span></span>
+<span><span class="co">#&gt;                            routine</span></span>
+<span><span class="co">#&gt; 1             Every package change</span></span>
+<span><span class="co">#&gt; 2             Every package change</span></span>
+<span><span class="co">#&gt; 3 Before documentation publication</span></span>
+<span><span class="co">#&gt; 4   Before GitHub Pages deployment</span></span>
+<span><span class="co">#&gt; 5      For manuscript regeneration</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="research-workflow">Research workflow<a class="anchor" aria-label="anchor" href="#research-workflow"></a>
 </h2>
 <p>The simulation scripts are kept outside the package build because
 they are manuscript-scale computations.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="ex">Rscript</span> simulations/run_all_simulations.R</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="ex">Rscript</span> application/run_application.R</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">Rscript</span> simulations/run_all_simulations.R</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="ex">Rscript</span> application/run_application.R</span></code></pre></div>
 <p>The manuscript can be compiled from the <code>paper/</code>
-directory.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="bu">cd</span> paper</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">pdflatex</span> predictive_e_diagnostics_hmm_improved.tex</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="ex">pdflatex</span> predictive_e_diagnostics_hmm_improved.tex</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="ex">pdflatex</span> supplementary_material.tex</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="ex">pdflatex</span> supplementary_material.tex</span></code></pre></div>
+directory:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="bu">cd</span> paper</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">pdflatex</span> predictive_e_diagnostics_hmm_improved.tex</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="ex">pdflatex</span> predictive_e_diagnostics_hmm_improved.tex</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="ex">pdflatex</span> supplementary_material.tex</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="ex">pdflatex</span> supplementary_material.tex</span></code></pre></div>
+<p>Generated research outputs are written under:</p>
+<pre class="text"><code>results/
+application/data_processed/
+paper/figures/
+manuscript_outputs/</code></pre>
+<p>These outputs are intentionally separated from the source package.
+That keeps package installation and checking lightweight while
+preserving the full research workflow in the same repository.</p>
 </div>
 <div class="section level2">
 <h2 id="reproducible-environments">Reproducible environments<a class="anchor" aria-label="anchor" href="#reproducible-environments"></a>
 </h2>
 <p>The repository includes <code>renv.lock</code> for recreating the
-local package environment:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+package development environment:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">renv</span><span class="fu">::</span><span class="fu">restore</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The package tests and vignettes use small seeded examples. The
 manuscript simulation scripts set their own random seeds and write
-generated files under <code>results/</code>, while application outputs
-are written under <code>application/data_processed/</code>,
-<code>results/application_*</code>, and <code>paper/figures/</code>.</p>
-<p>The generated research outputs are intentionally excluded from the
-source package. They remain part of the research compendium
-workflow.</p>
+generated files to the research-output directories listed above.</p>
+</div>
+<div class="section level2">
+<h2 id="practical-checklist">Practical checklist<a class="anchor" aria-label="anchor" href="#practical-checklist"></a>
+</h2>
+<p>Before publishing package or manuscript changes, the intended
+sequence is:</p>
+<ol style="list-style-type: decimal">
+<li>run the package tests;</li>
+<li>rebuild the vignettes and pkgdown site;</li>
+<li>run <code>R CMD check</code>;</li>
+<li>regenerate manuscript-scale outputs only when scripts or analysis
+choices have changed;</li>
+<li>compile the manuscript and supplementary material.</li>
+</ol>
+<p>This separation makes the package reproducible as software and the
+manuscript reproducible as a research compendium.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
