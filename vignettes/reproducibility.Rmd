@@ -10,43 +10,128 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 3.6,
+  fig.align = "center",
+  dpi = 120
 )
 ```
 
-This project has two layers:
+```{r setup}
+library(ggplot2)
+```
+
+This repository has two reproducibility layers:
 
 1. the installable R package `evalueHMM`;
-2. the research compendium containing simulations, the elk application and the LaTeX manuscript.
+2. the research compendium containing simulations, the elk application and the
+   LaTeX manuscript.
 
-The package is designed to be checked and installed independently of the heavy research outputs.
+The package layer is intentionally small enough for routine checks. The research
+layer contains heavier computations and generated outputs used for the
+manuscript.
+
+## Workflow overview
+
+The diagram below summarizes the intended workflow. Package checks should pass
+without requiring manuscript-scale simulation outputs.
+
+```{r workflow-plot}
+workflow <- data.frame(
+  x = 1:5,
+  y = 1,
+  label = c(
+    "Source code",
+    "Package checks",
+    "Vignettes",
+    "Research scripts",
+    "Manuscript"
+  ),
+  detail = c(
+    "R/, tests/, man/",
+    "R CMD check",
+    "pkgdown articles",
+    "simulations/ and application/",
+    "paper/"
+  )
+)
+
+ggplot(workflow, aes(x = x, y = y)) +
+  geom_segment(
+    aes(x = 1.15, xend = 4.85, y = 1, yend = 1),
+    linewidth = 0.6,
+    colour = "grey55"
+  ) +
+  geom_point(size = 7, colour = "#2A9D8F") +
+  geom_text(aes(label = label), nudge_y = 0.16, fontface = "bold", size = 3.3) +
+  geom_text(aes(label = detail), nudge_y = -0.16, size = 3.0) +
+  scale_x_continuous(limits = c(0.6, 5.4)) +
+  scale_y_continuous(limits = c(0.65, 1.35)) +
+  labs(title = "Reproducibility layers in the repository") +
+  theme_void()
+```
 
 ## Package checks
 
-From the repository root, the package can be checked with:
+From the repository root, the package can be checked quickly without rebuilding
+all vignette outputs:
 
 ```bash
 R CMD build --no-build-vignettes .
 R CMD check --no-manual --no-build-vignettes evalueHMM_0.1.0.tar.gz
 ```
 
-For a full vignette build:
+For a full package check with vignette rebuilding:
 
 ```bash
 R CMD build .
 R CMD check --no-manual evalueHMM_0.1.0.tar.gz
 ```
 
+The continuous integration workflow runs the package check on Linux, macOS and
+Windows. The pkgdown workflow builds the online documentation from the same
+source files.
+
+```{r check-table}
+checks <- data.frame(
+  layer = c(
+    "Unit tests",
+    "Examples",
+    "Vignettes",
+    "pkgdown site",
+    "Research scripts"
+  ),
+  command = c(
+    "testthat::test_local()",
+    "R CMD check",
+    "R CMD build; R CMD check",
+    "pkgdown::build_site()",
+    "Rscript simulations/run_all_simulations.R"
+  ),
+  routine = c(
+    "Every package change",
+    "Every package change",
+    "Before documentation publication",
+    "Before GitHub Pages deployment",
+    "For manuscript regeneration"
+  )
+)
+
+checks
+```
+
 ## Research workflow
 
-The simulation scripts are kept outside the package build because they are manuscript-scale computations.
+The simulation scripts are kept outside the package build because they are
+manuscript-scale computations.
 
 ```bash
 Rscript simulations/run_all_simulations.R
 Rscript application/run_application.R
 ```
 
-The manuscript can be compiled from the `paper/` directory.
+The manuscript can be compiled from the `paper/` directory:
 
 ```bash
 cd paper
@@ -56,14 +141,42 @@ pdflatex supplementary_material.tex
 pdflatex supplementary_material.tex
 ```
 
+Generated research outputs are written under:
+
+```text
+results/
+application/data_processed/
+paper/figures/
+manuscript_outputs/
+```
+
+These outputs are intentionally separated from the source package. That keeps
+package installation and checking lightweight while preserving the full research
+workflow in the same repository.
+
 ## Reproducible environments
 
-The repository includes `renv.lock` for recreating the local package environment:
+The repository includes `renv.lock` for recreating the package development
+environment:
 
 ```r
 renv::restore()
 ```
 
-The package tests and vignettes use small seeded examples. The manuscript simulation scripts set their own random seeds and write generated files under `results/`, while application outputs are written under `application/data_processed/`, `results/application_*`, and `paper/figures/`.
+The package tests and vignettes use small seeded examples. The manuscript
+simulation scripts set their own random seeds and write generated files to the
+research-output directories listed above.
 
-The generated research outputs are intentionally excluded from the source package. They remain part of the research compendium workflow.
+## Practical checklist
+
+Before publishing package or manuscript changes, the intended sequence is:
+
+1. run the package tests;
+2. rebuild the vignettes and pkgdown site;
+3. run `R CMD check`;
+4. regenerate manuscript-scale outputs only when scripts or analysis choices
+   have changed;
+5. compile the manuscript and supplementary material.
+
+This separation makes the package reproducible as software and the manuscript
+reproducible as a research compendium.
