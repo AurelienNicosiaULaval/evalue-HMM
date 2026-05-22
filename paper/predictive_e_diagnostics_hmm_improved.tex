@@ -85,11 +85,18 @@ The paper develops the following theoretical components.
 \begin{enumerate}[label=(C\arabic*)]
 \item A predictive e-process theorem for fixed movement HMMs evaluated on held-out validation sequences.
 \item A filtering result showing that validity is based on marginal observable prediction, not on densities conditional on decoded state paths.
-\item Optional-stopping, predictable-switching and mixture results for diagnostic alternatives.
+\item Optional-stopping, predictable-switching, mixture and sequential exploratory workflow results for diagnostic alternatives.
 \item Weighted and state-localized e-processes that permit valid localization of model failure by time, habitat or predicted behavioural state.
 \item Feature-level and blockwise e-diagnostics for circular-linear movement summaries and long-horizon generative checks.
 \item A clear separation between exact split-sample validity, exploratory same-sample diagnostics and conservative composite-null extensions.
 \end{enumerate}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{conceptual_workflow.png}
+\caption{Conceptual workflow for predictive e-diagnostics. Training data determine the fitted null HMM, preprocessing choices and diagnostic menu before validation. During validation, the null denominator is the observable predictive density obtained by filtering over latent states. Diagnostic alternatives provide predictable competitors, density ratios produce e-value increments, and cumulative paths are reported through global, localized and threshold-crossing summaries.}
+\label{fig:conceptual_workflow}
+\end{figure}
 
 \section{Validation protocol and movement HMM}
 \label{sec:setup}
@@ -215,9 +222,9 @@ Examples include:
 \item a duration-aware alternative, such as a hidden semi-Markov model (HSMM), used to diagnose non-geometric state dwell times;
 \item a flexible predictive model trained on independent data and used as a diagnostic competitor to the fitted HMM.
 \end{itemize}
-These alternatives are diagnostic bets. They need not be interpreted as true data-generating mechanisms.
+These alternatives are diagnostic predictive competitors. They need not be interpreted as true data-generating mechanisms.
 
-Throughout, all predictive distributions and diagnostic bets are represented by densities with respect to a common dominating measure $\mu_t$ on the observation space at time $t$. This can be Lebesgue measure for continuous step-angle observations, counting measure for discrete observations or a product measure for mixed data. The convention is that ratios are evaluated only on the support of the null predictive density; outside that support the null event has probability zero, and we adopt the support convention that $q_t(y\mid\calF_{t-1}) = 0$ whenever $p_0(y\mid\calF_{t-1}) = 0$. Diagnostic bets $q_t$ may be fixed before validation, or updated sequentially online using past validation observations, provided the update rule is predictable.
+Throughout, all predictive distributions and diagnostic competitors are represented by densities with respect to a common dominating measure $\mu_t$ on the observation space at time $t$. This can be Lebesgue measure for continuous step-angle observations, counting measure for discrete observations or a product measure for mixed data. The convention is that ratios are evaluated only on the support of the null predictive density; outside that support the null event has probability zero, and we adopt the support convention that $q_t(y\mid\calF_{t-1}) = 0$ whenever $p_0(y\mid\calF_{t-1}) = 0$. Diagnostic competitors $q_t$ may be fixed before validation, or updated sequentially online using past validation observations, provided the update rule is predictable.
 
 \begin{definition}[Predictive e-value increment]
 For $t=1,\ldots,T$, define
@@ -287,14 +294,7 @@ Equivalently,
 Moreover, for any stopping time $\tau$ with respect to $(\calF_t)$, the stopped process $E_{1:\tau\wedge T}$ is an e-value under $M_0$, meaning $\E_0(E_{1:\tau\wedge T})\leq1$.
 \end{corollary}
 
-\begin{proof}
-First, for the finite horizon $T < \infty$, applying Ville's maximal inequality to the nonnegative supermartingale $(E_{1:t})_{0\le t\le T}$ yields the first inequality:
-\begin{equation}
- \Pbb_0\left(\max_{0\leq t\leq T}E_{1:t}\geq \frac{1}{\alpha}\right)\leq \alpha.
-\end{equation}
-The logarithmic version follows immediately from the monotonicity of the logarithm.
-Second, for any stopping time $\tau$ (possibly infinite), the stopped index $\tau\wedge T$ is a bounded stopping time since $\tau\wedge T \leq T < \infty$. Optional stopping for bounded nonnegative supermartingales therefore applies directly to $(E_{1:t})_{0\le t\le T}$, yielding $\E_0(E_{1:\tau\wedge T})\leq \E_0(E_{1:0})=1$. This proves that the stopped process at any stopping time remains a valid e-value. (Note that if an infinite-horizon validation process were defined on an infinite filtration, the same result would hold for any stopping time $\tau$ via Fatou's lemma on the nonnegative supermartingale.)
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{corollary}[Anytime p-value induced by an e-process]
 \label{cor:anytime_p}
@@ -308,9 +308,7 @@ Then $p_t^\mathrm{any}$ is an anytime-valid p-value process in the sense that, u
 \end{equation}
 \end{corollary}
 
-\begin{proof}
-The event $\{\exists \, 0 \le t \le T:p_t^\mathrm{any}\leq\alpha\}$ is the same as the event $\{\sup_{0 \le t \le T}E_{1:t}\geq1/\alpha\}$, which is controlled by Corollary \ref{cor:optional_stopping}.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \section{Why filtering is essential}
 \label{sec:filtering_essential}
@@ -364,7 +362,7 @@ A Viterbi path, local decoding or posterior state classification may be useful f
 \section{Predictable diagnostic selection, mixtures and parallel diagnostics}
 \label{sec:mixtures}
 
-In practice, the analyst may not want to commit to a single diagnostic alternative. One may want to compare a $K+1$ state HMM, an angular alternative, a copula alternative and a duration alternative. E-values are convenient here, but care is needed. Predictable switching and mixtures are valid. Products of parallel diagnostics computed on the same validation observations are not automatically valid.
+In practice, the analyst may not want to commit to a single diagnostic alternative. One may want to compare a $K+1$ state HMM, an angular alternative, a copula alternative and a duration alternative. E-values are convenient here, but care is needed. Predictable switching, mixtures and sequential diagnostic workflows are valid when each new step is conditionally valid given the information already revealed. Products of parallel diagnostics computed on the same validation observations are not automatically valid.
 
 \begin{proposition}[Predictable mixtures of diagnostic alternatives]
 \label{prop:mixtures}
@@ -383,9 +381,7 @@ and
 Then $E_t^{\mathrm{mix}}$ is a conditional e-value increment, and $\prod_{u\leq t}E_u^{\mathrm{mix}}$ is an e-process under $M_0$.
 \end{proposition}
 
-\begin{proof}
-The mixture $q_t^{\mathrm{mix}}$ is predictable and integrates to at most $\sum_jw_{j,t}\leq1$. The result follows directly from Theorem \ref{thm:predictive_eprocess}.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{corollary}[Predictable switching]
 \label{cor:switching}
@@ -396,9 +392,30 @@ Let $J_t\in\{1,\ldots,J\}$ be $\calF_{t-1}$-measurable. Then
 is a conditional e-value increment. Thus the analyst may switch among a pre-specified menu of diagnostic alternatives using only information available before the next validation observation.
 \end{corollary}
 
-\begin{proof}
-This is Proposition \ref{prop:mixtures} with $w_{j,t}=\1\{J_t=j\}$.
-\end{proof}
+\noindent The proof is given in the supplementary material.
+
+\begin{proposition}[Sequential exploratory diagnostic workflows]
+\label{prop:sequential_workflow}
+Let $(\calG_j)_{j\geq0}$ be a filtration describing the information available after successive diagnostic stages, with $\calG_0$ containing the training information and any pre-validation design choices. Suppose that, at stage $j$, the analyst chooses a diagnostic rule using only $\calG_{j-1}$ and obtains a nonnegative random variable $D_j$ satisfying
+\begin{equation}
+ \E_0(D_j\mid\calG_{j-1})\leq1.
+\end{equation}
+Then
+\begin{equation}
+ D_{1:m}=\prod_{j=1}^m D_j,\qquad D_{1:0}=1,
+\end{equation}
+is a nonnegative supermartingale with respect to $(\calG_j)_{j\geq0}$. In particular,
+\begin{equation}
+ \Pbb_0\left(\sup_{0\leq m\leq M}D_{1:m}\geq\frac{1}{\alpha}\right)\leq\alpha
+\end{equation}
+for any finite number of stages $M$.
+\end{proposition}
+
+\noindent The proof is given in the supplementary material.
+
+\begin{remark}[Exploratory diagnostics as conditional bets]
+Proposition \ref{prop:sequential_workflow} formalizes a controlled version of exploratory model criticism. After seeing one diagnostic, the analyst may decide which diagnostic to run next, which segment to inspect, or which fresh validation unit to use, provided the next diagnostic e-value is valid conditionally on all information revealed so far. The result does not justify multiplying several diagnostic outputs that were computed in parallel on the same observations after inspecting them; that setting is covered by Proposition \ref{prop:parallel}.
+\end{remark}
 
 \begin{proposition}[Parallel diagnostics on the same validation data]
 \label{prop:parallel}
@@ -413,13 +430,7 @@ is also an e-value under $M_0$. Consequently,
 In contrast, the product $\prod_{j=1}^JE^{(j)}$ is not generally an e-value when the diagnostics are computed in parallel on the same observations.
 \end{proposition}
 
-\begin{proof}
-Linearity of expectation gives
-\[
- \E_0E^{\mathrm{avg}}=\sum_jw_j\E_0E^{(j)}\leq\sum_jw_j\leq1.
-\]
-If $\max_jw_jE^{(j)}\geq1/\alpha$, then $E^{\mathrm{avg}}\geq1/\alpha$, so Markov's inequality applied to the e-value $E^{\mathrm{avg}}$ gives the displayed bound. The final statement is a warning: without additional conditional independence or a sequential construction using fresh information, products of e-values need not have expectation at most one.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{remark}[Recommended reporting for several diagnostics]
 For a diagnostic menu evaluated on the same validation sequence, report the individual e-processes and either use a weighted average e-value or pre-assigned weighted thresholds. A product of diagnostic e-processes is valid only when the factors are accumulated as a sequential process with each new factor conditionally valid given all previous diagnostic outcomes and using the appropriate next unit of information.
@@ -444,15 +455,7 @@ Then $E_t^{(W)}\geq0$ and
 Consequently, $\prod_{u\leq t}E_u^{(W)}$ is an e-process under $M_0$.
 \end{proposition}
 
-\begin{proof}
-Since $E_t\geq0$ and $0\leq W_t\leq1$, $E_t^{(W)}=(1-W_t)+W_tE_t\geq0$. Also,
-\begin{align}
- \E_0(E_t^{(W)}\mid\calF_{t-1})
- &=1+W_t\{\E_0(E_t\mid\calF_{t-1})-1\}\\
- &\leq1.
-\end{align}
-The product result follows from the same supermartingale argument as in Theorem \ref{thm:predictive_eprocess}.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{corollary}[Segment-specific e-processes]
 \label{cor:segment}
@@ -466,9 +469,7 @@ If $B_t$ is a predictable indicator of a biologically meaningful segment, such a
 yields a valid segment-specific e-process. Thus evidence can be accumulated only over a pre-specified or predictably selected subset of times.
 \end{corollary}
 
-\begin{proof}
-This is Proposition \ref{prop:weighted_localization} with $W_t=B_t\in\{0,1\}$.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{corollary}[Soft state-localized e-processes]
 \label{cor:state_localized}
@@ -483,9 +484,7 @@ Then
 defines a valid e-process localized to times at which state $s$ is predicted to be likely under the null model.
 \end{corollary}
 
-\begin{proof}
-The filtered predictive probability $a_{t\mid t-1}(s)$ is $\calF_{t-1}$-measurable and lies in $[0,1]$, so Proposition \ref{prop:weighted_localization} applies.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{proposition}[Power-tempered and linearly tempered e-increments]
 \label{prop:tempering}
@@ -500,12 +499,7 @@ Let $E_t$ be a conditional e-value increment. If $\lambda_t\in[0,1]$ is predicta
 are conditional e-value increments. Their products are e-processes.
 \end{proposition}
 
-\begin{proof}
-The linear case follows from Proposition \ref{prop:weighted_localization} with $W_t=\lambda_t$. For the power case, Jensen's inequality applied to the concave function $x\mapsto x^{\lambda_t}$ gives
-\[
- \E_0(E_t^{\lambda_t}\mid\calF_{t-1})\leq \{\E_0(E_t\mid\calF_{t-1})\}^{\lambda_t}\leq1.
-\]
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{remark}[Interpretation of localized evidence]
 The process in Corollary \ref{cor:state_localized} is not the same as conditioning on the event that the true latent state equals $s$. It is a valid soft localization based on the null model's predictive probability of state $s$. Smoothed state probabilities using future observations can be useful for visualization, but they are not predictable and therefore do not by themselves preserve the e-process guarantee.
@@ -623,9 +617,7 @@ Let $\calH$ contain the training data and all fitted parameters of the null and 
 almost surely, and the same bound holds unconditionally.
 \end{theorem}
 
-\begin{proof}
-Conditional on $\calH$, the fitted densities are fixed and the validation filtration satisfies the assumptions of Theorem \ref{thm:predictive_eprocess}. The conditional bound follows from Corollary \ref{cor:optional_stopping}. Taking expectations over $\calH$ gives the unconditional bound.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 This theorem clarifies the interpretation of the first article's target: the exact null is that the held-out validation sequence is generated by the fitted HMM. It is a diagnostic check of the fitted generator, not a claim that the parameter estimator has no uncertainty.
 
@@ -642,9 +634,7 @@ Suppose $E^{(i)}$ is an e-value under $M_0$ for validation unit $i$, for $i=1,\l
 is an e-value under $M_0$.
 \end{proposition}
 
-\begin{proof}
-The proof is the same as Proposition \ref{prop:parallel}: $\E_0E^{\mathrm{cf}}=\sum_iw_i\E_0E^{(i)}\leq1$. No independence among the e-values is needed for averaging. Independence or a suitable sequential conditional construction would be needed for products.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 \begin{remark}[Leave-one-individual-out products and joint nulls]
 A leave-one-individual-out workflow may produce individually valid e-values, but the product across individuals is not automatically valid because the fitted models may use overlapping training sets and the e-values are computed in parallel. Specifically, conditional on the training set for fold $i$, $E^{(i)}$ is valid for the hypothetical validation law generated by the fold-specific fitted model. The average $E^{\mathrm{cf}}$ is valid if all fold-specific validation laws are embedded in a common joint null under which each $E^{(i)}$ has expectation at most one. Alternatively, leave-one-animal-out (LOAO) cross-validation should be presented as a practical cross-predictive diagnostic rather than an exact global test, unless a coherent joint null is specified. The weighted average in Proposition \ref{prop:crossfit_average} is a safer default unless a sequential data-collection or sample-splitting design is used.
 \end{remark}
@@ -671,16 +661,7 @@ Then for every $\theta\in\Theta_0$,
 and $\prod_{u\leq t}\overline E_u$ is an e-process uniformly valid over the composite null family.
 \end{proposition}
 
-\begin{proof}
-For each fixed $\theta\in\Theta_0$, $p_\theta(y\mid\calF_{t-1})\leq p_t^{\mathrm{env}}(y\mid\calF_{t-1})$ pointwise. Hence
-\begin{align}
- \E_\theta(\overline E_t\mid\calF_{t-1})
- &=\int \frac{q_t(y\mid\calF_{t-1})}{p_t^{\mathrm{env}}(y\mid\calF_{t-1})}p_\theta(y\mid\calF_{t-1})\mu_t(\mathrm dy)\\
- &\leq\int q_t(y\mid\calF_{t-1})\mu_t(\mathrm dy)\\
- &\leq1.
-\end{align}
-The product result follows from the supermartingale argument.
-\end{proof}
+\noindent The proof is given in the supplementary material.
 
 \begin{remark}[Cost and limits of envelope validity]
 The envelope denominator is usually not a density and may be much larger than any single fitted predictive density. The resulting e-process can be conservative and computationally difficult for HMMs. Moreover, continuous envelopes over unrestricted Gamma or von Mises families may be infinite, unstable, or computationally prohibitive. The envelope construction is therefore primarily practical for finite or compactly restricted parameter families, rather than general HMM parameter spaces.
@@ -742,7 +723,7 @@ The first term converges to $\delta$ by assumption and the second to zero by the
 \end{proof}
 
 \begin{remark}[Power is diagnostic-specific]
-A large e-process is evidence against the null relative to the alternative used to construct the diagnostic. If the null HMM has an ecologically important defect but the alternative does not predict that defect better, the e-process may not grow. This is a feature rather than a failure: the method localizes model criticism through explicit diagnostic bets.
+A large e-process is evidence against the null relative to the alternative used to construct the diagnostic. If the null HMM has an ecologically important defect but the alternative does not predict that defect better, the e-process may not grow. This is a feature rather than a failure: the method localizes model criticism through explicit diagnostic predictive alternatives.
 \end{remark}
 
 \section{Movement-specific diagnostic catalogue}
@@ -837,17 +818,18 @@ The supplementary material contains five scenarios that are useful but less cent
 
 \begin{table}[t]
 \centering
-\footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.03\linewidth}>{\raggedright\arraybackslash}p{0.14\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\centering\arraybackslash}p{0.03\linewidth}>{\centering\arraybackslash}p{0.05\linewidth}>{\centering\arraybackslash}p{0.04\linewidth}>{\centering\arraybackslash}p{0.04\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\raggedleft\arraybackslash}p{0.14\linewidth}@{}}
+\scriptsize
+\setlength{\tabcolsep}{1pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.035\linewidth}>{\raggedright\arraybackslash}p{0.13\linewidth}>{\raggedright\arraybackslash}p{0.17\linewidth}>{\raggedright\arraybackslash}p{0.16\linewidth}>{\centering\arraybackslash}p{0.04\linewidth}>{\centering\arraybackslash}p{0.06\linewidth}>{\centering\arraybackslash}p{0.045\linewidth}>{\centering\arraybackslash}p{0.06\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\raggedleft\arraybackslash}p{0.16\linewidth}@{}}
 \toprule
-Sc. & Null gen. $p_0$ & Data generator & Diagnostic $q_t$ & $K_0$ & $K_{\mathrm{true}}$ & $T$ & $n_{\mathrm{rep}}$ & Threshold & Crossing rate (SE) \\
+Sc. & Null gen. $p_0$ & Data generator & Diagnostic $q_t$ & $K_0$ & $K_{\mathrm{true}}$ & $T$ & $n_{\mathrm{rep}}$ & Thr. & Crossing rate (SE) \\
 \midrule
 S1 & 2-state HMM & 2-state HMM & Alternative 2-state HMM & 2 & 2 & 300 & 300 & $\log(20)$ & 0.030 (0.010) \\
 S3 & 2-state HMM & 3-state HMM & $K+1$ states & 2 & 3 & 300 & 300 & $\log(20)$ & 0.997 (0.003) \\
 S4 & 2-state HMM & 2-state (misspec. angle) & Diffuse angle & 2 & 2 & 300 & 300 & $\log(20)$ & 1.000 (0.000) \\
 S5 & 2-state HMM & 2-state (copula dep.) & Joint copula & 2 & 2 & 300 & 300 & $\log(20)$ & 1.000 (0.000) \\
 S6 & 2-state HMM & 2-state HSMM & Duration-aware & 2 & 2 & 500 & 300 & $\log(20)$ & 0.000 (0.000); 1.000 (0.000) \\
-S7 & 2-state HMM & 2-state (localized fail.)& State-localized & 2 & 2 & 300 & 300 & $\log(20)$ & 0.063 (0.014); 0.900 (0.017) \\
+S7 & 2-state HMM & 2-state (localized fail.) & State-localized & 2 & 2 & 300 & 300 & $\log(20)$ & 0.063 (0.014); 0.900 (0.017) \\
 S8 & 2-state HMM & 2-state (change point) & Switching mix & 2 & 2 & 300 & 300 & $\log(20)$ & 0.036 (0.011); 1.000 (0.000) \\
 \bottomrule
 \end{tabular}
@@ -863,33 +845,41 @@ The targeted alternatives in S3 to S5 have high power in the controlled alternat
 
 These simulations are not intended to exhaustively compare HMM estimators or movement models. Their purpose is narrower: to verify that the proposed e-diagnostic objects can be computed reproducibly, that the null behaviour is compatible with the theory in controlled settings and that each diagnostic responds to the failure it is designed to target. The supplementary scenarios document additional safeguards and extensions that are useful for implementation but would broaden the main article beyond its central message.
 
-\subsection{Comparison with Classical Pseudo-Residual Diagnostics}
-\label{sec:comparison_pseudo_residuals}To evaluate the practical utility and power of the proposed predictive e-diagnostics, we compare them against classical diagnostic tests based on pseudo-residuals. It is important to distinguish componentwise marginal probability integral transform (PIT) residuals from joint sequential Rosenblatt residuals. Under a correctly specified movement HMM, the sequential PIT residuals computed from the full one-step conditional predictive distribution for step lengths ($u_{t,\text{step}}$) and turning angles ($u_{t,\text{angle}}$) individually form sequences of independent $\text{Uniform}(0,1)$ variables (subject to continuity). However, these componentwise marginal PITs do not capture contemporaneous dependence between the two dimensions within the same step. To obtain fully independent $\text{Uniform}(0,1)$ variables across both dimensions and time, one must construct joint sequential Rosenblatt residuals by conditioning turning angles on step lengths (or vice versa), i.e., $U_t^L = F_{0,t}^L(L_t \mid \calF_{t-1})$ and $U_t^\Theta = F_{0,t}^{\Theta\mid L}(\Theta_t \mid L_t, \calF_{t-1})$. These joint residuals can then be mapped to standard normal variables to perform standard tests \citep{zucchini_2016_hmm}. Moreover, while classical tests are retrospective terminal tests evaluated at the end of the validation trajectory, the proposed e-diagnostics use targeted alternative models and anytime-valid thresholds, allowing for online sequential monitoring. Because the classical tests are evaluated retrospectively and are not adjusted for sequential or multiple checking, their power is not directly comparable but serves as a useful retrospective benchmark.
+\subsection{Comparison with classical pseudo-residual diagnostics}
+\label{sec:comparison_pseudo_residuals}
+As a benchmark, we compared the predictive e-diagnostics with classical pseudo-residual tests in scenarios S3--S6. The comparison is deliberately limited. The pseudo-residual tests are retrospective terminal diagnostics, whereas the e-diagnostics are targeted sequential likelihood-ratio processes with anytime-valid thresholds. The rejection rates therefore should not be read as a strict power comparison between equivalent tests.
+
+It is also important to distinguish componentwise marginal probability integral transform (PIT) residuals from joint sequential Rosenblatt residuals. Under a correctly specified continuous movement HMM, the sequential PIT residuals computed from the full one-step conditional predictive distribution for step lengths ($u_{t,\text{step}}$) and turning angles ($u_{t,\text{angle}}$) are marginally uniform when considered component by component. However, marginal PITs do not by themselves diagnose contemporaneous dependence between step length and turning angle within the same step. To obtain joint residuals that are uniform across both dimensions and time, one may construct sequential Rosenblatt residuals by conditioning turning angles on step lengths (or vice versa), for example
+\[
+ U_t^L = F_{0,t}^L(L_t \mid \calF_{t-1}),\qquad
+ U_t^\Theta = F_{0,t}^{\Theta\mid L}(\Theta_t \mid L_t,\calF_{t-1}).
+\]
+These joint residuals can then be mapped to standard normal variables for classical residual tests \citep{zucchini_2016_hmm}. In the simulations below, the classical tests are used only as retrospective benchmarks and are not adjusted for sequential monitoring.
 
 
 \begin{itemize}
-    \item \textbf{Kolmogorov-Smirnov (KS) Test}: Applied to the circular PIT turning angle residuals ($u_{t,\text{angle}}$) and marginal step length PIT residuals ($u_{t,\text{step}}$) to test for deviations from uniformity.
-    \item \textbf{Ljung-Box Test}: Applied to the normal step pseudo-residuals ($z_{t,\text{step}}$) at lag 5 to check for residual autocorrelation.
-    \item \textbf{Correlation Test}: Applied to the normal step and angle pseudo-residuals to test for residual joint dependence (specifically in S5, using the Rosenblatt transform of angles conditional on steps).
+\item Kolmogorov--Smirnov tests applied to the circular PIT turning-angle residuals ($u_{t,\text{angle}}$) and marginal step-length PIT residuals ($u_{t,\text{step}}$) to test for deviations from uniformity.
+\item A Ljung--Box test applied to the normal step pseudo-residuals ($z_{t,\text{step}}$) at lag 5 to check for residual autocorrelation.
+\item A correlation test applied to the normal step and angle pseudo-residuals to test for residual joint dependence. In S5, this uses the Rosenblatt transform of angles conditional on steps.
 \end{itemize}
 
-Figure~\ref{fig:comparative_power_residuals} summarizes the empirical signal and rejection rates across 300 simulated trajectories, using the scenario-specific validation lengths reported in Table~\ref{tab:main_simulations}.
+Figure~\ref{fig:comparative_power_residuals} summarizes the empirical threshold-crossing and rejection rates across 300 simulated trajectories, using the scenario-specific validation lengths reported in Table~\ref{tab:main_simulations}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.92\linewidth]{comparative_power_residuals.png}
-\caption{Signal/rejection rates in scenarios S3--S6. All scenarios use 300 replicates; $T=300$ for S3--S5 and $T=500$ for S6.}
+\caption{Threshold-crossing and retrospective rejection rates in scenarios S3--S6. All scenarios use 300 replicates; $T=300$ for S3--S5 and $T=500$ for S6.}
 \label{fig:comparative_power_residuals}
 \end{figure}
 
-The comparison highlights several key advantages of the e-diagnostic framework:
+The comparison highlights how targeted e-diagnostics behave in these controlled scenarios:
 \begin{enumerate}
-    \item \textbf{Underfitted States (S3)}: The e-diagnostic detects the missing third state in 99.7\% of the replicates. In contrast, the classical marginal KS tests on steps and angles fail to reject the null in most replicates (10.3\% and 15.3\% power, respectively), and the Ljung-Box autocorrelation test achieves only 13.3\% power.
-    \item \textbf{Angular Misspecification (S4)}: Both the angular e-diagnostic and the circular-linear KS test on turning angles exhibit near-perfect power (100\% vs. 99.7\%).
-    \item \textbf{Step-Angle Joint Dependence (S5)}: The copula e-diagnostic detects the residual dependence in 100\% of the replicates. The marginal KS tests fail completely (5.0\% and 4.3\% power) because they are designed to detect univariate deviations only. While the targeted correlation test on the joint normal residuals also achieves 100\% power, the e-diagnostic achieves this without sacrificing sequential validity and allows for online monitoring.
-    \item \textbf{Non-Geometric State Durations (S6)}: The blockwise duration e-diagnostic achieves 100\% power in detecting the HSMM-like state transitions, whereas the step-length KS test and Ljung-Box test reach only 60.0\% and 78.0\% power, respectively.
+\item Underfitted states (S3). The e-diagnostic detects the missing third state in 99.7\% of the replicates. The marginal Kolmogorov--Smirnov tests on steps and angles reject in 10.3\% and 15.3\% of the replicates, respectively, and the Ljung--Box autocorrelation test rejects in 13.3\%.
+\item Angular misspecification (S4). Both the angular e-diagnostic and the marginal Kolmogorov--Smirnov test on turning angles have near-perfect rejection rates in this scenario (100\% and 99.7\%, respectively).
+\item Step-angle joint dependence (S5). The copula e-diagnostic detects the residual dependence in 100\% of the replicates. The marginal Kolmogorov--Smirnov tests reject in 5.0\% and 4.3\% of the replicates because they target univariate deviations. The targeted correlation test on the joint normal residuals also rejects in 100\% of the replicates, but it remains a retrospective terminal test rather than an anytime-valid monitoring process.
+\item Non-geometric state durations (S6). The blockwise duration e-diagnostic rejects in 100\% of the HSMM-like alternatives, whereas the step-length Kolmogorov--Smirnov test and Ljung--Box test reject in 60.0\% and 78.0\% of the replicates, respectively.
 \end{enumerate}
-These results demonstrate that e-diagnostics are highly sensitive to structured model misspecifications while preserving anytime validity. However, this comparison primarily illustrates targeted power under specific, controlled scenarios. It does not imply a universal dominance of e-diagnostics over classical tests, especially since the classical tests reported here are evaluated retrospectively without adjustments for sequential monitoring or multiple testing.
+These results show that, in the controlled alternatives considered here, e-diagnostics can be sensitive to structured misspecifications that are only weakly visible to marginal residual checks. They do not imply universal dominance over classical tests. The diagnostic alternatives in S3--S6 are targeted to the data-generating failures, and the classical tests reported here are retrospective tests whose p-values are not adjusted across tests, scenarios or sequential monitoring times.
 
 \section{Elk movement application}
 \label{sec:application}
@@ -954,7 +944,7 @@ We then evaluated four diagnostics on each validation individual: a full-density
 \footnotesize
 \begin{tabular}{lcccc}
 \toprule
-Validation Individual / Diagnostic & Signal & Crossing Time & Max $\log e$ & Final $\log e$ \\
+Validation Individual / Diagnostic & Crossed? & Crossing Time & Max $\log e$ & Final $\log e$ \\
 \midrule
 \textbf{elk-115} ($n = 192$) & & & & \\
 \quad $K=3$ vs $K=4$ & Yes & 16 & 5.459 & 5.413 \\
@@ -993,7 +983,7 @@ Validation Individual / Diagnostic & Signal & Crossing Time & Max $\log e$ & Fin
 
 The diagnostics show substantial variation across individuals. For \texttt{elk-115} and \texttt{elk-363}, the $K+1$ state diagnostic and the fixed mixture cross the standard threshold $1/\alpha = 20$ ($\log(20) = 2.996$), suggesting that the three-state null HMM is inadequate for these trajectories. The state-localized diagnostic also crosses for these two individuals, supporting the interpretation that the predictive discrepancy is concentrated during periods assigned high probability of the long-step state. For \texttt{elk-163}, the diffuse-angle diagnostic crosses the threshold, suggesting that the diffuse-angle diagnostic predicts this trajectory better than the fitted angular component for this animal, while the diagnostic for the number of states does not cross. For \texttt{elk-287}, none of the individual diagnostics cross the threshold.
 
-Importantly, evaluating multiple diagnostics post-hoc on the same individuals requires multiple-testing discipline if one wishes to make joint confirmatory statements rather than exploratory reporting. With $J = 4$ parallel diagnostics, a Bonferroni-style union bound adjustment can be applied by setting the significance level for each diagnostic to $\alpha/J = 0.0125$. This corresponds to an anytime-valid threshold of $J/\alpha = 80$, or $\log(80) \approx 4.382$ in the log scale. Under this conservative adjusted threshold, the number-of-states diagnostic and the fixed mixture still cross for \texttt{elk-115} and \texttt{elk-363}, and the state-localized diagnostic still crosses for \texttt{elk-115}, while the diffuse-angle diagnostic for \texttt{elk-163} no longer crosses ($\log E^{(2)} = 3.666$).
+Importantly, evaluating multiple diagnostics post-hoc on the same individuals requires multiple-testing discipline if one wishes to make joint confirmatory statements rather than exploratory reporting. With $J = 4$ parallel diagnostics, a Bonferroni-style union bound adjustment can be applied by setting the significance level for each diagnostic to $\alpha/J = 0.0125$. This corresponds to an anytime-valid threshold of $J/\alpha = 80$, or $\log(80) \approx 4.382$ in the log scale. Under this conservative adjusted threshold, the number-of-states diagnostic and the fixed mixture still cross for \texttt{elk-115} and \texttt{elk-363}, and the state-localized diagnostic still crosses for \texttt{elk-115}, while the diffuse-angle diagnostic for \texttt{elk-163} no longer crosses (maximum $\log E = 3.585$).
 
 Importantly, Proposition~\ref{prop:crossfit_average} allows us to pool evidence across individuals using the population-average cross-fitted e-value, $E^{\text{cf}} = \frac{1}{N} \sum_{i=1}^N E^{(i)}$. Because every individual is simultaneously both a validation unit and part of the training set for other folds, presenting LOAO as an exact global test requires caution, as the overlapping training sets make the "fixed fitted generator" interpretation less clean. More rigorously, conditional on the training set for fold $i$, $E^{(i)}$ is valid for the hypothetical validation law generated by the fold-specific fitted model. The population-average $E^{\text{cf}}$ is valid if all fold-specific validation laws are embedded in a common joint null under which each $E^{(i)}$ has expectation at most one. Under this interpretation, $E^{\text{cf}}$ remains a valid population-level cross-predictive diagnostic. However, because $E^{\text{cf}}$ is an arithmetic average, it can be dominated by one or two large individual e-values and is not a measure of typical individual fit. For example, in Table \ref{tab:elk_diagnostics}, the population average for $K+1$ states ($\log E^{\text{cf}} = 6.009$) is heavily influenced by the large positive values for \texttt{elk-115} and \texttt{elk-363}, despite a negative log e-value for \texttt{elk-163}. Thus, a complementary display of individual-level evidence is essential, and population-level claims should be interpreted cautiously.
 
@@ -1024,11 +1014,15 @@ The framework adds several elements that are specific to movement HMMs. First, i
 
 The main limitation is the treatment of fitted parameters. The exact guarantee is cleanest when the fitted null and diagnostic alternatives are fixed before validation. This is a strength for a first methodological article because the null statement is transparent: conditional on training, does the fitted HMM generate the validation trajectory credibly? Same-sample exploratory workflows are still useful but require caution. The supplementary simulations therefore treat oracle-state parameter estimation, validation by individuals and composite-null envelopes as sensitivity analyses or extensions rather than as the main empirical evidence.
 
+The sequential-workflow result also gives a formal language for exploratory data analysis of fitted movement models. An analyst can inspect one diagnostic signal, decide that a state-localized, time-localized or feature-level diagnostic is the next relevant question, and continue with a conditionally valid e-value if that next diagnostic is based on information not already used in an invalid way. This is not a license for unrecorded post-hoc selection on the same observations; rather, it separates controlled sequential exploration from descriptive follow-up.
+
 The real-data example illustrates both the promise and the caution required in practice. Predictive e-diagnostics can reveal that a fitted generator performs poorly for a held-out animal, and localized versions help identify the part of the fitted behavioural structure associated with the signal. At the same time, ecological interpretation requires additional work: the diagnostic menu, train/validation split and model-selection rule should be pre-specified for confirmatory use, and the results should be replicated across datasets or validation splits before drawing definitive biological conclusions.
+
+Several extensions are natural but outside the scope of this first HMM-focused article. These include predictive e-diagnostics for HMM step-selection or integrated step-selection formulations, diagnostics connected to visual inference workflows, and prediction-powered variants that use external predictive models as diagnostic competitors. The accompanying experimental R package, \texttt{evalueHMM}, provides an initial implementation of the HMM-focused diagnostics developed here; extensions beyond this scope would require their own statements of the validation filtration, predictable covariates and null target.
 
 
 \section*{Code and Data Availability}
-The elk data used in the application are publicly available in the supplementary materials of \cite{michelot_2016_movehmm} and via the \texttt{moveHMM} package. The repository contains R scripts, simulation parameters, random seeds, and a README to fully reproduce the tables and figures. While generated outputs are ignored by Git as noted in the supplement, the verifiable results and full scripts can be accessed at \url{https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm}.
+The elk data used in the application are publicly available in the supplementary materials of \cite{michelot_2016_movehmm} and via the \texttt{moveHMM} package. The repository is an installable R package and reproducible research compendium for \texttt{evalueHMM}; it contains package functions, R scripts, simulation parameters, random seeds, and a README to reproduce the tables and figures by rerunning the simulation and application scripts. While generated outputs are ignored by Git as noted in the supplement, the verifiable results and full scripts can be accessed at \url{https://github.com/AurelienNicosiaULaval/evalue-HMM}.
 
 \begin{thebibliography}{99}
 

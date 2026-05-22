@@ -11,6 +11,14 @@
 \usepackage{enumitem}
 \geometry{reset,left=2cm,right=2cm,top=2cm,bottom=2cm,bindingoffset=0cm}
 
+\newcommand{\E}{\mathbb E}
+\newcommand{\Pbb}{\mathbb P}
+\newcommand{\1}{\mathbf 1}
+\newcommand{\calF}{\mathcal F}
+\newcommand{\calG}{\mathcal G}
+\newcommand{\calH}{\mathcal H}
+\newcommand{\dd}{\,\mathrm d}
+
 
 \begin{document}
 
@@ -176,6 +184,143 @@ Diffuse-angle null & Composite envelope & Uniform finite-family envelope & 0.000
 \caption{S12 results at $\alpha=0.05$.}
 \label{tab:supp_s12}
 \end{table}
+
+\section{Additional proofs}
+\label{sec:supp_proofs}
+
+This section collects routine closure-property proofs that are used in the main article. The main text keeps the central density-ratio proof and the latent-state filtering argument, while the algebraic consequences are recorded here for completeness.
+
+\subsection{Optional stopping and anytime p-values}
+
+\begin{proof}[Proof of optional stopping and anytime-valid monitoring]
+For the finite horizon $T<\infty$, Ville's maximal inequality applied to the nonnegative supermartingale $(E_{1:t})_{0\leq t\leq T}$ gives
+\[
+ \Pbb_0\left(\max_{0\leq t\leq T}E_{1:t}\geq \frac{1}{\alpha}\right)\leq \alpha.
+\]
+The logarithmic version follows by monotonicity of the logarithm. For any stopping time $\tau$, the stopped index $\tau\wedge T$ is bounded, so optional stopping for bounded nonnegative supermartingales gives
+\[
+ \E_0(E_{1:\tau\wedge T})\leq \E_0(E_{1:0})=1.
+\]
+Thus the stopped process is an e-value.
+\end{proof}
+
+\begin{proof}[Proof of the anytime p-value statement]
+The event $\{\exists\,0\leq t\leq T:p_t^{\mathrm{any}}\leq\alpha\}$ is identical to
+\[
+ \left\{\sup_{0\leq t\leq T}E_{1:t}\geq\frac{1}{\alpha}\right\}.
+\]
+The result follows from the optional-stopping and anytime-valid monitoring bound.
+\end{proof}
+
+\subsection{Diagnostic mixtures, switching and sequential workflows}
+
+\begin{proof}[Proof of predictable mixtures]
+The mixture density
+\[
+q_t^{\mathrm{mix}}(y\mid\calF_{t-1})=\sum_{j=1}^Jw_{j,t}q_{j,t}(y\mid\calF_{t-1})
+\]
+is predictable. Since each component is a subdensity and the weights are predictable with $\sum_jw_{j,t}\leq1$,
+\[
+\int q_t^{\mathrm{mix}}(y\mid\calF_{t-1})\,\mu_t(\mathrm dy)
+\leq \sum_{j=1}^Jw_{j,t}\leq1.
+\]
+The predictive e-process theorem therefore applies.
+\end{proof}
+
+\begin{proof}[Proof of predictable switching]
+Set $w_{j,t}=\1\{J_t=j\}$. Since $J_t$ is $\calF_{t-1}$-measurable, these weights are predictable and sum to one. The result is the predictable-mixture result with a degenerate weight vector.
+\end{proof}
+
+\begin{proof}[Proof of sequential exploratory diagnostic workflows]
+For each diagnostic stage $j$,
+\[
+ \E_0(D_{1:j}\mid\calG_{j-1})
+ =D_{1:j-1}\E_0(D_j\mid\calG_{j-1})
+ \leq D_{1:j-1}.
+\]
+Thus $(D_{1:m})_{0\leq m\leq M}$ is a nonnegative supermartingale with respect to $(\calG_m)$. Ville's inequality gives
+\[
+ \Pbb_0\left(\sup_{0\leq m\leq M}D_{1:m}\geq\frac{1}{\alpha}\right)\leq\alpha.
+\]
+\end{proof}
+
+\begin{proof}[Proof of the weighted average and parallel-diagnostic bound]
+Linearity of expectation gives
+\[
+\E_0E^{\mathrm{avg}}
+=\sum_{j=1}^Jw_j\E_0E^{(j)}
+\leq \sum_{j=1}^Jw_j\leq1.
+\]
+Thus $E^{\mathrm{avg}}$ is an e-value. If $\max_j w_jE^{(j)}\geq1/\alpha$, then $E^{\mathrm{avg}}\geq1/\alpha$, so Markov's inequality applied to $E^{\mathrm{avg}}$ gives the stated bound. The product warning follows because no conditional-independence or sequential-validity assumption has been imposed on the parallel factors.
+\end{proof}
+
+\subsection{Localization and tempering}
+
+\begin{proof}[Proof of predictable weighted localization]
+Since $E_t\geq0$ and $0\leq W_t\leq1$,
+\[
+E_t^{(W)}=(1-W_t)+W_tE_t\geq0.
+\]
+Moreover,
+\[
+\E_0(E_t^{(W)}\mid\calF_{t-1})
+=1+W_t\{\E_0(E_t\mid\calF_{t-1})-1\}
+\leq1.
+\]
+The cumulative product is therefore an e-process by the same supermartingale argument used for predictive e-processes.
+\end{proof}
+
+\begin{proof}[Proof of segment-specific localization]
+Apply predictable weighted localization with $W_t=B_t\in\{0,1\}$.
+\end{proof}
+
+\begin{proof}[Proof of soft state-localized localization]
+The filtered predictive probability $a_{t\mid t-1}(s)$ is $\calF_{t-1}$-measurable and lies in $[0,1]$, so it is an admissible predictable localization weight.
+\end{proof}
+
+\begin{proof}[Proof of power and linear tempering]
+The linear case is predictable weighted localization with $W_t=\lambda_t$. For the power case, Jensen's inequality for the concave function $x\mapsto x^{\lambda_t}$ gives
+\[
+\E_0(E_t^{\lambda_t}\mid\calF_{t-1})
+\leq \{\E_0(E_t\mid\calF_{t-1})\}^{\lambda_t}
+\leq1.
+\]
+Both constructions therefore give conditional e-value increments.
+\end{proof}
+
+\subsection{Training, validation and composite nulls}
+
+\begin{proof}[Proof of split-sample conditional validity]
+Conditional on $\calH$, the fitted densities and diagnostic rules are fixed, and the validation filtration satisfies the assumptions of the predictive e-process theorem. The conditional anytime-valid bound follows from optional stopping. Taking expectations over $\calH$ gives the unconditional bound.
+\end{proof}
+
+\begin{proof}[Proof of the cross-fitted average]
+For nonnegative weights satisfying $\sum_iw_i\leq1$,
+\[
+\E_0E^{\mathrm{cf}}
+=\sum_{i=1}^nw_i\E_0E^{(i)}
+\leq \sum_{i=1}^nw_i\leq1.
+\]
+No independence among the e-values is required for this averaging argument. A product would require additional conditional-independence or sequential-validity assumptions.
+\end{proof}
+
+\begin{proof}[Proof of the composite-null envelope]
+For each fixed $\theta\in\Theta_0$, the envelope satisfies
+\[
+p_\theta(y\mid\calF_{t-1})\leq p_t^{\mathrm{env}}(y\mid\calF_{t-1})
+\]
+pointwise on the relevant support. Therefore,
+\[
+\E_\theta(\overline E_t\mid\calF_{t-1})
+=\int
+\frac{q_t(y\mid\calF_{t-1})}{p_t^{\mathrm{env}}(y\mid\calF_{t-1})}
+p_\theta(y\mid\calF_{t-1})\,\mu_t(\mathrm dy)
+\leq
+\int q_t(y\mid\calF_{t-1})\,\mu_t(\mathrm dy)
+\leq1.
+\]
+The cumulative product is therefore an e-process uniformly over the composite null family.
+\end{proof}
 
 \section{Reproducibility}
 
