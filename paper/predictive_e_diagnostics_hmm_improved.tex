@@ -1,26 +1,29 @@
-\documentclass[11pt]{article}
+\RequirePackage{amsthm}
+\documentclass[pdflatex,sn-basic,referee,lineno]{sn-jnl}
 
-\usepackage[margin=1in]{geometry}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage{amsmath,amssymb,amsthm,mathtools}
-\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{array}
-\usepackage{enumitem}
-\usepackage{graphicx}
 \usepackage{xcolor}
-\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
-\usepackage[round,authoryear]{natbib}
+\usepackage{manyfoot}
+\usepackage{booktabs}
+\usepackage{enumitem}
+
 \graphicspath{{paper/figures/}{figures/}}
 
+\theoremstyle{thmstyleone}
 \newtheorem{theorem}{Theorem}
-\newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}
-\newtheorem{lemma}{Lemma}
-\newtheorem{remark}{Remark}
-\newtheorem{definition}{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{thmstyletwo}
 \newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+
+\theoremstyle{thmstylethree}
+\newtheorem{definition}{Definition}
 
 \newcommand{\E}{\mathbb E}
 \newcommand{\Pbb}{\mathbb P}
@@ -36,20 +39,18 @@
 \newcommand{\argmax}{\operatorname*{arg\,max}}
 \newcommand{\dd}{\,\mathrm d}
 
-\title{Predictive e-diagnostics for multi-state movement models\\
-A theoretical framework for hidden Markov models}
-\author{Author information to be completed}
-\date{Revised draft: 2026-05-08}
-
 \begin{document}
+
+\title[Predictive e-diagnostics for movement HMMs]{Predictive e-diagnostics for multi-state movement models: A theoretical framework for hidden Markov models}
+
+\author[1]{\fnm{Aurélien} \sur{Nicosia}}
+\affil[1]{\orgname{Université Laval}, \orgaddress{\country{Canada}}}
+
+\abstract{Hidden Markov models are widely used to describe animal movement as a sequence of unobserved behavioural states generating observed step lengths, turning angles and other movement variables. Standard assessment workflows combine likelihood-based criteria, decoded state paths, simulation checks and graphical diagnostics. These tools are useful, but they do not by themselves give a sequentially valid account of adaptive model checking, nor do they distinguish clearly between observable predictive distributions and model-dependent reconstructions of latent states. This paper develops a theoretical framework for \emph{predictive e-diagnostics} in multi-state movement models. A fitted HMM is treated as a sequential generator of held-out movement data. Diagnostic alternatives are encoded as predictable one-step or blockwise predictive densities, and the corresponding density ratios define e-value increments. The latent state process is integrated out by filtering, so the denominator is the observable predictive density, not a density conditional on a decoded path. Under a fixed train/validation protocol, the cumulative product of predictive density ratios is a nonnegative supermartingale under the fitted null generator and hence an e-process. The paper extends this basic guarantee to optional stopping, predictable switching among diagnostic alternatives, weighted and state-localized e-processes, feature-level diagnostics based on residual or circular-linear transformations, blockwise long-horizon diagnostics and conservative composite-null envelopes. These results provide a principled basis for movement-specific diagnostics targeting the number of states, angular misspecification, residual step-angle dependence, duration structure, temporal nonstationarity and long-term generative behaviour.}
+
+\keywords{Animal movement, hidden Markov model, e-value, e-process, sequential prediction, model diagnostics, filtering, circular data, anytime-valid inference}
+
 \maketitle
-
-\begin{abstract}
-Hidden Markov models are widely used to describe animal movement as a sequence of unobserved behavioural states generating observed step lengths, turning angles and other movement variables. Standard assessment workflows combine likelihood-based criteria, decoded state paths, simulation checks and graphical diagnostics. These tools are useful, but they do not by themselves give a sequentially valid account of adaptive model checking, nor do they distinguish clearly between observable predictive distributions and model-dependent reconstructions of latent states. This paper develops a theoretical framework for \emph{predictive e-diagnostics} in multi-state movement models. A fitted HMM is treated as a sequential generator of held-out movement data. Diagnostic alternatives are encoded as predictable one-step or blockwise predictive densities, and the corresponding density ratios define e-value increments. The latent state process is integrated out by filtering, so the denominator is the observable predictive density, not a density conditional on a decoded path. Under a fixed train/validation protocol, the cumulative product of predictive density ratios is a nonnegative supermartingale under the fitted null generator and hence an e-process. The paper extends this basic guarantee to optional stopping, predictable switching among diagnostic alternatives, weighted and state-localized e-processes, feature-level diagnostics based on residual or circular-linear transformations, blockwise long-horizon diagnostics and conservative composite-null envelopes. These results provide a principled basis for movement-specific diagnostics targeting state number, angular misspecification, residual step-angle dependence, duration structure, temporal nonstationarity and long-term generative behaviour.
-\end{abstract}
-
-\paragraph{Keywords.}
-Animal movement; hidden Markov model; e-value; e-process; sequential prediction; model diagnostics; filtering; circular data; anytime-valid inference.
 
 \section{Introduction}
 
@@ -93,7 +94,7 @@ The paper develops the following theoretical components.
 
 \subsection{Training information and validation filtration}
 
-Let $\calH$ denote all information fixed before validation. This includes the training data, fitted null parameters, fitted diagnostic alternatives, selected covariates and all modelling choices that are not allowed to depend on the validation responses. The validation trajectory is indexed by $t=1,\ldots,T$. The observed movement variable is
+Let $(\Omega, \mathcal{A}, \Pbb_0)$ be the underlying probability space under the fitted null generator. Let $\calH \subseteq \mathcal{A}$ be the pre-validation sigma-field generated by the training data, fitted parameters, preprocessing choices, random seeds, and diagnostic-menu choices. All modelling choices in $\calH$ must be fixed before validation. The validation trajectory is indexed by $t=1,\ldots,T$. The observed movement variable is a measurable mapping $Y_t:\Omega \to \calY_t$ given by
 \begin{equation}
 Y_t=(L_t,\Theta_t),
 \end{equation}
@@ -101,9 +102,9 @@ where $L_t$ is a step length and $\Theta_t$ is a turning angle. More generally, 
 \begin{equation}
 S_t\in\{1,\ldots,K\}.
 \end{equation}
-The observable validation filtration is
+The observable validation filtration is the completion of
 \begin{equation}
-\calF_t=\calH\vee\sigma(Y_1,\ldots,Y_t),\qquad t\geq 0,
+\calF_t=\sigma(\calH,Y_1,\ldots,Y_t),\qquad t\geq 0,
 \end{equation}
 where $\calF_0=\calH$. A diagnostic rule is called \emph{predictable} if the object used at time $t$ is $\calF_{t-1}$-measurable. Informally, predictable means that the diagnostic bet for $Y_t$ is chosen before $Y_t$ is revealed.
 
@@ -118,8 +119,9 @@ $L_t$ & Step length at time $t$ \\
 $\Theta_t$ & Turning angle at time $t$ \\
 $S_t$ & Latent behavioural state at time $t$ \\
 $K$ & Number of states in the null HMM \\
+$a_{1\mid 0}(s)$ & Initial predictive probability for state $s$ \\
 $\calH$ & Training information fixed before validation \\
-$\calF_t$ & Observable validation filtration, $\calH\vee\sigma(Y_1,\ldots,Y_t)$ \\
+$\calF_t$ & Observable validation filtration, $\sigma(\calH,Y_1,\ldots,Y_t)$ \\
 $M_0$ & Null HMM or fitted null generator \\
 $p_0(y_t\mid\calF_{t-1})$ & Observable predictive density under $M_0$ \\
 $q_t(y_t\mid\calF_{t-1})$ & Diagnostic predictive density or subdensity at time $t$ \\
@@ -147,6 +149,21 @@ for example with Gamma step lengths and von Mises turning angles. The factorizat
 
 The HMM formulation also allows covariate-dependent transition probabilities, time-varying state-dependent parameters and multivariate observations, provided the one-step predictive density is well-defined and the covariates used for prediction are fixed before observing $Y_t$.
 
+\begin{table}[t]
+\centering
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.3\linewidth}>{\raggedright\arraybackslash}p{0.35\linewidth}>{\raggedright\arraybackslash}p{0.3\linewidth}@{}}
+\toprule
+Target & Validity claim & Practical interpretation \\
+\midrule
+Fixed fitted generator & Exact conditional e-process & ``Does this fitted HMM generate the validation trajectory?'' \\
+True parametric HMM with estimated parameters & Not exact without adjustment & Requires parameter uncertainty treatment \\
+Composite family & Uniform e-process via envelope or other safe construction & Conservative but genuine family-wise null \\
+\bottomrule
+\end{tabular}
+\caption{Distinct statistical targets for movement model validation. This paper focuses primarily on the fixed fitted generator, treating the diagnostic as a check of the specific predictive model resulting from training.}
+\label{tab:null_targets}
+\end{table}
+
 \section{Observable predictive density by filtering}
 \label{sec:filtering}
 
@@ -162,7 +179,7 @@ Let
 \begin{equation}
  a_{t\mid t-1}(s)=\Pbb_0(S_t=s\mid \calF_{t-1})
 \end{equation}
-denote the predictive state probabilities before observing $Y_t$. Then
+denote the predictive state probabilities before observing $Y_t$. This recursion must be explicitly initialized using the stationary or fitted initial distribution, $a_{1\mid 0}(s) = \pi_0(s)$. In applications with multiple validation individuals (such as cross-validation folds), the filter must be restarted for each held-out individual $i$ using $a_{i,1\mid 0}(s) = \pi_{0,i}(s)$. Then
 \begin{equation}
  p_0(y_t\mid\calF_{t-1})=\sum_{s=1}^K a_{t\mid t-1}(s)f_{0,s}(y_t).
 \end{equation}
@@ -174,8 +191,9 @@ After observing $Y_t=y_t$, the filtered probabilities are
 The next predictive state probabilities are
 \begin{equation}
 \label{eq:filter_predict}
- a_{t+1\mid t}(s)=\sum_{r=1}^K a_{t\mid t}(r)\Gamma_0(r,s).
+ a_{t+1\mid t}(s)=\sum_{r=1}^K a_{t\mid t}(r)\Gamma_{0,t}(r,s),
 \end{equation}
+where $\Gamma_{0,t}$ denotes the transition probabilities. If transition probabilities depend on covariates, $\Gamma_{0,t}$ must be $\calF_t$-measurable (i.e., any covariates used for predicting $S_{t+1}$ must be known at time $t$). Crucially, spatial covariates computed from the animal's arrival location (such as habitat at the end of a step or distance to water after moving) are only predictable if they can be determined exactly from information available before observing $Y_t$, or if the diagnostic explicitly targets the joint distribution of the movement and the spatial context. The time-homogeneous HMM is the special case where $\Gamma_{0,t} \equiv \Gamma_0$.
 Equations \eqref{eq:p0_predictive} to \eqref{eq:filter_predict} provide the computational basis of the null predictive density. They are also the reason the method differs from diagnostics based on Viterbi or other decoded state paths.
 
 \section{Predictive e-values}
@@ -183,11 +201,7 @@ Equations \eqref{eq:p0_predictive} to \eqref{eq:filter_predict} provide the comp
 
 \subsection{Diagnostic alternatives as predictable densities}
 
-A diagnostic alternative is represented by a predictable density or subdensity
-\begin{equation}
- q_t(y\mid\calF_{t-1}).
-\end{equation}
-The subscript $t$ allows the diagnostic to depend on the observed past. The key requirement is predictability: the rule defining $q_t$ must be fixed before observing $Y_t$.
+A diagnostic alternative is represented by a predictable Markov kernel or sub-Markov kernel $Q_t$. When represented by a density or subdensity $q_t(y\mid\calF_{t-1})$ with respect to a common dominating measure, the joint map $(\omega, y) \mapsto q_t(y\mid\calF_{t-1})(\omega)$ must be $\calF_{t-1} \otimes \calY$-measurable. The subscript $t$ allows the diagnostic to depend on the observed past. The key requirement is predictability: the rule defining $q_t$ must be fixed before observing $Y_t$.
 
 Examples include:
 \begin{itemize}[leftmargin=1.5em]
@@ -199,7 +213,7 @@ Examples include:
 \end{itemize}
 These alternatives are diagnostic bets. They need not be interpreted as true data-generating mechanisms.
 
-Throughout, all densities are understood with respect to a common dominating measure on the observation space at time $t$. This can be Lebesgue measure for continuous step-angle observations, counting measure for discrete observations or a product measure for mixed data. The convention is that ratios are evaluated only on the support of the null predictive density; outside that support the null event has probability zero.
+Throughout, all predictive distributions and diagnostic bets are represented by densities with respect to a common dominating measure $\mu_t$ on the observation space at time $t$. This can be Lebesgue measure for continuous step-angle observations, counting measure for discrete observations or a product measure for mixed data. The convention is that ratios are evaluated only on the support of the null predictive density; outside that support the null event has probability zero, and we adopt the support convention that $q_t(y\mid\calF_{t-1}) = 0$ whenever $p_0(y\mid\calF_{t-1}) = 0$. Diagnostic bets $q_t$ may be fixed before validation, or updated sequentially online using past validation observations, provided the update rule is predictable.
 
 \begin{definition}[Predictive e-value increment]
 For $t=1,\ldots,T$, define
@@ -228,23 +242,23 @@ Equivalently,
 
 \begin{theorem}[Predictive e-process for a fixed HMM]
 \label{thm:predictive_eprocess}
-Assume that, conditional on $\calH$, the validation sequence is generated under the null HMM $M_0$, and that $p_0(y\mid\calF_{t-1})$ is the corresponding observable predictive density. Let $q_t(y\mid\calF_{t-1})$ be an $\calF_{t-1}$-measurable diagnostic subdensity satisfying
+Assume that, conditional on $\calH$, the validation sequence is generated under the null HMM $M_0$, and that $p_0(y\mid\calF_{t-1})$ is the corresponding observable predictive density with respect to $\mu_t$. Let $q_t(y\mid\calF_{t-1})$ be an $\calF_{t-1}$-measurable diagnostic subdensity satisfying
 \begin{equation}
- \int q_t(y\mid\calF_{t-1})\dd y\leq 1
+ \int q_t(y\mid\calF_{t-1})\dd\mu_t(y)\leq 1
 \end{equation}
 almost surely. Then
 \begin{equation}
  \E_0(E_t\mid\calF_{t-1})\leq 1.
 \end{equation}
-Consequently, $(E_{1:t})_{t\geq0}$ is a nonnegative supermartingale under $M_0$. If $q_t(\cdot\mid\calF_{t-1})$ is a density assigning all its mass to the support of $p_0(\cdot\mid\calF_{t-1})$, then equality holds and $(E_{1:t})_{t\geq0}$ is a martingale.
+Consequently, $(E_{1:t})_{0\le t\le T}$ is a nonnegative supermartingale under $M_0$. If $q_t(\cdot\mid\calF_{t-1})$ is a density assigning all its mass to the support of $p_0(\cdot\mid\calF_{t-1})$, then equality holds and $(E_{1:t})_{0\le t\le T}$ is a martingale.
 \end{theorem}
 
 \begin{proof}
 Conditional on $\calF_{t-1}$, $Y_t$ has density $p_0(y\mid\calF_{t-1})$ under $M_0$. Therefore,
 \begin{align}
 \E_0(E_t\mid\calF_{t-1})
-&=\int_{\{p_0>0\}}\frac{q_t(y\mid\calF_{t-1})}{p_0(y\mid\calF_{t-1})}p_0(y\mid\calF_{t-1})\dd y\\
-&=\int_{\{p_0>0\}}q_t(y\mid\calF_{t-1})\dd y\\
+&=\int_{\{p_0>0\}}\frac{q_t(y\mid\calF_{t-1})}{p_0(y\mid\calF_{t-1})}p_0(y\mid\calF_{t-1})\dd\mu_t(y)\\
+&=\int_{\{p_0>0\}}q_t(y\mid\calF_{t-1})\dd\mu_t(y)\\
 &\leq 1.
 \end{align}
 For the cumulative process,
@@ -253,24 +267,24 @@ For the cumulative process,
 &=E_{1:t-1}\E_0(E_t\mid\calF_{t-1})\\
 &\leq E_{1:t-1}.
 \end{align}
-Thus $(E_{1:t})_{t\geq0}$ is a nonnegative supermartingale. If $q_t$ is a density supported by the null support, the conditional expectation is one at every time, giving the martingale case.
+Thus $(E_{1:t})_{0\le t\le T}$ is a nonnegative supermartingale. If $q_t$ is a density supported by the null support, the conditional expectation is one at every time, giving the martingale case.
 \end{proof}
 
 \begin{corollary}[Optional stopping and anytime-valid monitoring]
 \label{cor:optional_stopping}
 Under the conditions of Theorem \ref{thm:predictive_eprocess}, for any $\alpha\in(0,1)$,
 \begin{equation}
- \Pbb_0\left(\sup_{t\geq0}E_{1:t}\geq \frac{1}{\alpha}\right)\leq \alpha.
+ \Pbb_0\left(\sup_{0\leq t\leq T}E_{1:t}\geq \frac{1}{\alpha}\right)\leq \alpha.
 \end{equation}
 Equivalently,
 \begin{equation}
- \Pbb_0\left(\sup_{t\geq0}\log E_{1:t}\geq \log(1/\alpha)\right)\leq \alpha.
+ \Pbb_0\left(\sup_{0\leq t\leq T}\log E_{1:t}\geq \log(1/\alpha)\right)\leq \alpha.
 \end{equation}
-Moreover, for any stopping time $\tau$ with respect to $(\calF_t)$, $E_{1:\tau}$ is an e-value under $M_0$, meaning $\E_0(E_{1:\tau})\leq1$ whenever the stopped process is well-defined.
+Moreover, for any stopping time $\tau$ with respect to $(\calF_t)$, the stopped process $E_{1:\tau\wedge T}$ is an e-value under $M_0$, meaning $\E_0(E_{1:\tau\wedge T})\leq1$.
 \end{corollary}
 
 \begin{proof}
-Ville's maximal inequality applied to the nonnegative supermartingale $(E_{1:t})_{t\geq0}$ gives the first display. The logarithmic version follows from monotonicity of the logarithm. For a bounded stopping time $\tau$, optional stopping for nonnegative supermartingales gives $\E_0(E_{1:\tau})\leq E_{1:0}=1$. The general case follows by applying the bounded result to $\tau\wedge m$ and using Fatou's lemma as $m\to\infty$.
+Ville's maximal inequality applied to the nonnegative supermartingale $(E_{1:t})_{0\le t\le T}$ gives the first display. The logarithmic version follows from monotonicity of the logarithm. For a bounded stopping time $\tau$, optional stopping for nonnegative supermartingales gives $\E_0(E_{1:\tau})\leq E_{1:0}=1$. The general case follows by applying the bounded result to $\tau\wedge m$ and using Fatou's lemma as $m\to\infty$.
 \end{proof}
 
 \begin{corollary}[Anytime p-value induced by an e-process]
@@ -281,12 +295,12 @@ Define
 \end{equation}
 Then $p_t^\mathrm{any}$ is an anytime-valid p-value process in the sense that, under $M_0$,
 \begin{equation}
- \Pbb_0\left(\exists t\geq0:p_t^\mathrm{any}\leq \alpha\right)\leq \alpha.
+ \Pbb_0\left(\exists \, 0 \le t \le T: p_t^\mathrm{any}\leq\alpha\right)\leq\alpha.
 \end{equation}
 \end{corollary}
 
 \begin{proof}
-The event $\{\exists t:p_t^\mathrm{any}\leq\alpha\}$ is the same as the event $\{\sup_tE_{1:t}\geq1/\alpha\}$, which is controlled by Corollary \ref{cor:optional_stopping}.
+The event $\{\exists \, 0 \le t \le T:p_t^\mathrm{any}\leq\alpha\}$ is the same as the event $\{\sup_{0 \le t \le T}E_{1:t}\geq1/\alpha\}$, which is controlled by Corollary \ref{cor:optional_stopping}.
 \end{proof}
 
 \section{Why filtering is essential}
@@ -328,6 +342,8 @@ Suppose one incorrectly uses $f_1(y)$ as the denominator because a decoded or as
 which is larger than 1. Thus the ratio is not an e-value under the observable null. The problem is not the use of likelihood ratios; the problem is the use of the wrong denominator.
 \end{example}
 
+In movement terms, replacing the filtering mixture by a Viterbi state-specific turning-angle density can turn a descriptive behavioural state label into an invalid predictive denominator.
+
 \begin{remark}[Decoded states are useful after, not before, validation]
 A Viterbi path, local decoding or posterior state classification may be useful for interpretation after a diagnostic signal has been found. For example, one may report whether large local log-increments occur during times with high smoothed probability of a particular behaviour. Such summaries are descriptive unless the weights used for localization are predictable. Section \ref{sec:localization} gives a valid predictable alternative based on filtered state probabilities.
 \end{remark}
@@ -341,7 +357,7 @@ In practice, the analyst may not want to commit to a single diagnostic alternati
 \label{prop:mixtures}
 Let $q_{j,t}(y\mid\calF_{t-1})$, $j=1,\ldots,J$, be predictable diagnostic subdensities satisfying
 \[
- \int q_{j,t}(y\mid\calF_{t-1})\dd y\leq1.
+ \int q_{j,t}(y\mid\calF_{t-1})\mu_t(\mathrm dy)\leq1.
 \]
 Let $w_{j,t}\geq0$ be predictable weights with $\sum_{j=1}^Jw_{j,t}\leq1$. Define
 \begin{equation}
@@ -458,13 +474,13 @@ defines a valid e-process localized to times at which state $s$ is predicted to 
 The filtered predictive probability $a_{t\mid t-1}(s)$ is $\calF_{t-1}$-measurable and lies in $[0,1]$, so Proposition \ref{prop:weighted_localization} applies.
 \end{proof}
 
-\begin{proposition}[Power and linear tempering]
+\begin{proposition}[Power-tempered and linearly tempered e-increments]
 \label{prop:tempering}
 Let $E_t$ be a conditional e-value increment. If $\lambda_t\in[0,1]$ is predictable, then both
 \begin{equation}
  \widetilde E_t^{\mathrm{pow}}=E_t^{\lambda_t}
 \end{equation}
-and
+(with the convention $0^0=1$) and
 \begin{equation}
  \widetilde E_t^{\mathrm{lin}}=1+\lambda_t(E_t-1)
 \end{equation}
@@ -489,7 +505,7 @@ The previous sections use full predictive densities for $Y_t$. In movement appli
 
 \begin{theorem}[Feature-level predictive e-values]
 \label{thm:feature}
-Let $Z_t=\psi_t(Y_t,\calF_{t-1})$ be a diagnostic feature whose transformation rule $\psi_t$ is predictable. Let $g_{0,t}(z\mid\calF_{t-1})$ be the conditional density of $Z_t$ under $M_0$, and let $g_{1,t}(z\mid\calF_{t-1})$ be a predictable diagnostic subdensity satisfying $\int g_{1,t}(z\mid\calF_{t-1})\dd z\leq1$. Define
+Let $Z_t=\psi_t(Y_t,\calF_{t-1})$ be a diagnostic feature whose transformation rule $\psi_t$ is predictable. Let $g_{0,t}(z\mid\calF_{t-1})$ be the conditional density of $Z_t$ under $M_0$, and let $g_{1,t}(z\mid\calF_{t-1})$ be a predictable diagnostic subdensity satisfying $\int g_{1,t}(z\mid\calF_{t-1})\nu_t(\mathrm dz)\leq1$. Define
 \begin{equation}
  R_t=\frac{g_{1,t}(Z_t\mid\calF_{t-1})}{g_{0,t}(Z_t\mid\calF_{t-1})}.
 \end{equation}
@@ -499,7 +515,7 @@ Then $R_t$ is a conditional e-value increment under $M_0$, and $\prod_{u\leq t}R
 \begin{proof}
 Conditional on $\calF_{t-1}$, $Z_t$ has density $g_{0,t}(z\mid\calF_{t-1})$ under $M_0$. Therefore,
 \[
- \E_0(R_t\mid\calF_{t-1})=\int_{\{g_0>0\}}g_{1,t}(z\mid\calF_{t-1})\dd z\leq1.
+ \E_0(R_t\mid\calF_{t-1})=\int_{\{g_0>0\}}g_{1,t}(z\mid\calF_{t-1})\nu_t(\mathrm dz)\leq1.
 \]
 The product result follows as before.
 \end{proof}
@@ -531,7 +547,7 @@ Let $0=\tau_0<\tau_1<\tau_2<\cdots$ be stopping times such that $\tau_j$ is fini
 \begin{equation}
  Y_{B_j}=Y_{\tau_{j-1}+1:\tau_j}.
 \end{equation}
-Let $p_{0,j}(y_{B_j}\mid\calF_{\tau_{j-1}})$ be the conditional null predictive density of the block, and let $q_j(y_{B_j}\mid\calF_{\tau_{j-1}})$ be a predictable diagnostic subdensity. Define
+Let $p_{0,j}(y_{B_j}\mid\calF_{\tau_{j-1}})$ be the conditional null predictive density of the stopped block on the variable-length product space $\cup_{m=1}^\infty \calY^m$, and let $q_j(y_{B_j}\mid\calF_{\tau_{j-1}})$ be a predictable diagnostic subdensity on the same space. Define
 \begin{equation}
  E_j^{\mathrm{block}}=\frac{q_j(Y_{B_j}\mid\calF_{\tau_{j-1}})}{p_{0,j}(Y_{B_j}\mid\calF_{\tau_{j-1}})}.
 \end{equation}
@@ -543,7 +559,7 @@ Conditional on $\calF_{\tau_{j-1}}$, the block $Y_{B_j}$ has density $p_{0,j}$ u
 \[
  \E_0(E_j^{\mathrm{block}}\mid\calF_{\tau_{j-1}})\leq1.
 \]
-The cumulative product over blocks is therefore a nonnegative supermartingale with respect to the block filtration $(\calF_{\tau_j})_{j\geq0}$.
+The cumulative product over blocks is therefore a nonnegative supermartingale with respect to the block filtration $(\calF_{\tau_j})_{0\le j\le J}$.
 \end{proof}
 
 \begin{corollary}[Feature-level block diagnostics]
@@ -570,7 +586,7 @@ The exact theory above treats $M_0$ as a fixed generator at validation time. In 
 \label{thm:split}
 Let $\calH$ contain the training data and all fitted parameters of the null and diagnostic alternatives. Suppose that, conditional on $\calH$, the validation trajectory is generated from the fitted null predictive law $p_0(\cdot\mid\calF_{t-1})$, and suppose $q_t$ is predictable with respect to $\calF_{t-1}=\calH\vee\sigma(Y_1,\ldots,Y_{t-1})$. Then the process in Theorem \ref{thm:predictive_eprocess} is an e-process conditional on $\calH$. In particular,
 \begin{equation}
- \Pbb_0\left(\sup_tE_{1:t}\geq1/\alpha\mid\calH\right)\leq\alpha
+ \Pbb_0\left(\sup_{0 \le t \le T}E_{1:t}\geq1/\alpha\mid\calH\right)\leq\alpha
 \end{equation}
 almost surely, and the same bound holds unconditionally.
 \end{theorem}
@@ -608,11 +624,11 @@ The fitted-generator null is often the most transparent target for model critici
 
 \begin{proposition}[Composite-null envelope]
 \label{prop:envelope}
-Let $\{p_\theta(y\mid\calF_{t-1}):\theta\in\Theta_0\}$ be a family of null predictive densities, and define the pointwise envelope
+Let $\{p_\theta(y\mid\calF_{t-1}):\theta\in\Theta_0\}$ be a family of null predictive densities. Assume that the pointwise supremum
 \begin{equation}
- \overline p_0(y\mid\calF_{t-1})=\sup_{\theta\in\Theta_0}p_\theta(y\mid\calF_{t-1}).
+ \overline p_0(y\mid\calF_{t-1})=\sup_{\theta\in\Theta_0}p_\theta(y\mid\calF_{t-1})
 \end{equation}
-Let $q_t$ be a predictable diagnostic subdensity. Define
+is measurable, positive wherever any $p_\theta$ is positive, and finite on the relevant support. This is typically satisfied if $\Theta_0$ is a finite family, or by using an essential supremum over a well-controlled parametric family. Let $q_t$ be a predictable diagnostic subdensity. Define
 \begin{equation}
  \overline E_t=\frac{q_t(Y_t\mid\calF_{t-1})}{\overline p_0(Y_t\mid\calF_{t-1})}.
 \end{equation}
@@ -627,8 +643,8 @@ and $\prod_{u\leq t}\overline E_u$ is an e-process uniformly valid over the comp
 For each fixed $\theta\in\Theta_0$, $p_\theta(y\mid\calF_{t-1})\leq\overline p_0(y\mid\calF_{t-1})$ pointwise. Hence
 \begin{align}
  \E_\theta(\overline E_t\mid\calF_{t-1})
- &=\int \frac{q_t(y\mid\calF_{t-1})}{\overline p_0(y\mid\calF_{t-1})}p_\theta(y\mid\calF_{t-1})\dd y\\
- &\leq\int q_t(y\mid\calF_{t-1})\dd y\\
+ &=\int \frac{q_t(y\mid\calF_{t-1})}{\overline p_0(y\mid\calF_{t-1})}p_\theta(y\mid\calF_{t-1})\mu_t(\mathrm dy)\\
+ &\leq\int q_t(y\mid\calF_{t-1})\mu_t(\mathrm dy)\\
  &\leq1.
 \end{align}
 The product result follows from the supermartingale argument.
@@ -658,8 +674,8 @@ Thus the expected local log-increment is positive exactly when the diagnostic al
 By definition,
 \begin{align}
 \E_\star\left[\log\frac{q_t(Y_t\mid\calF_{t-1})}{p_0(Y_t\mid\calF_{t-1})}\middle|\calF_{t-1}\right]
-&=\int p_\star(y\mid\calF_{t-1})\log\frac{q_t(y\mid\calF_{t-1})}{p_0(y\mid\calF_{t-1})}\dd y\\
-&=\int p_\star\log\frac{p_\star}{p_0}\dd y-\int p_\star\log\frac{p_\star}{q_t}\dd y,
+&=\int p_\star(y\mid\calF_{t-1})\log\frac{q_t(y\mid\calF_{t-1})}{p_0(y\mid\calF_{t-1})}\mu_t(\mathrm dy)\\
+&=\int p_\star\log\frac{p_\star}{p_0}\mu_t(\mathrm dy)-\int p_\star\log\frac{p_\star}{q_t}\mu_t(\mathrm dy),
 \end{align}
 which is the displayed identity.
 \end{proof}
@@ -711,7 +727,7 @@ Diagnostic target & Null component & Diagnostic alternative & Ecological interpr
 \midrule
 Number of states & $K$-state HMM & $K+1$ state HMM or richer latent structure & Detects behaviour classes merged by the null model \\
 Angular distribution & State-specific von Mises or wrapped distribution & Mixture of von Mises, flexible circular density or circular residual tilt & Detects multimodality, asymmetry or wrong concentration of turning angles \\
-Step-angle dependence & Conditional independence $f^L_s(l)f^\Theta_s(\theta)$ & Joint circular-linear density or copula on predictive residuals & Detects whether speed and directionality remain dependent within states \\
+Step-angle dependence & Conditional independence $f^L_{0,s}(l)f^\Theta_{0,s}(\theta)$ & Joint circular-linear density or copula on predictive residuals & Detects whether speed and directionality remain dependent within states \\
 State durations & Geometric dwell times implied by HMM & HSMM or duration-aware predictive model & Detects behaviours that persist too long or too briefly for a Markov state process \\
 Temporal nonstationarity & Time-homogeneous parameters & Season-, phase- or covariate-varying diagnostic alternative & Detects periods where the fitted generator stops predicting well \\
 Individual heterogeneity & Shared parameters or random effects in null & Individual-specific or hierarchical diagnostic alternative & Detects held-out animals poorly represented by the fitted population model \\
@@ -722,9 +738,9 @@ Long-horizon spatial behaviour & One-step HMM generator & Blockwise features suc
 \label{tab:diagnostics}
 \end{table}
 
-\subsection{Diagnostic for state number}
+\subsection{Diagnostic for the number of states}
 
-A direct diagnostic for underfitting the number of states compares the fitted $K$-state null HMM with a $K+1$ state alternative fitted on training data. The increment is
+A natural alternative to a $K$-state HMM is a $(K+1)$-state HMM. Let $p_K(y_t\mid\calF_{t-1})$ denote the observable predictive density of the $K$-state null HMM (ie., $p_0$) and let $p_{K+1}(y_t\mid\calF_{t-1})$ denote the predictive density of a $(K+1)$-state alternative. The ratio
 \begin{equation}
  E_t^{K+1}=\frac{p_{K+1}(Y_t\mid\calF_{t-1})}{p_K(Y_t\mid\calF_{t-1})},
 \end{equation}
@@ -762,7 +778,7 @@ A first implementation should prioritize exact split-sample validity and transpa
 \paragraph{Algorithm: predictive e-diagnostics for a movement HMM.}
 \begin{enumerate}[leftmargin=1.5em]
 \item Split the data into training and validation components. For animal movement, a held-out-individual split is often preferable when several individuals are available.
-\item Fit the null HMM $M_0$ on the training data. Record all preprocessing, covariate choices and state number decisions in $\calH$.
+\item Fit the null HMM $M_0$ on the training data. Record all preprocessing, covariate choices and decisions regarding the number of states in $\calH$.
 \item Define a diagnostic menu before validation. Examples include $K+1$ states, angular flexibility, step-angle dependence, duration structure and blockwise spatial summaries.
 \item For each validation time $t$, compute the null observable predictive density by filtering:
 \[
@@ -790,20 +806,20 @@ The supplementary material contains five scenarios that are useful but less cent
 \begin{table}[t]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.08\linewidth}>{\raggedright\arraybackslash}p{0.31\linewidth}>{\raggedright\arraybackslash}p{0.34\linewidth}>{\raggedleft\arraybackslash}p{0.13\linewidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.03\linewidth}>{\raggedright\arraybackslash}p{0.14\linewidth}>{\raggedright\arraybackslash}p{0.18\linewidth}>{\raggedright\arraybackslash}p{0.14\linewidth}>{\centering\arraybackslash}p{0.03\linewidth}>{\centering\arraybackslash}p{0.05\linewidth}>{\centering\arraybackslash}p{0.04\linewidth}>{\centering\arraybackslash}p{0.04\linewidth}>{\centering\arraybackslash}p{0.08\linewidth}>{\raggedleft\arraybackslash}p{0.14\linewidth}@{}}
 \toprule
-Scenario & Target & Main result at $\alpha=0.05$ & Signal rate \\
+Sc. & Null gen. $p_0$ & Data generator & Diagnostic $q_t$ & $K_0$ & $K_{\mathrm{true}}$ & $T$ & $n_{\mathrm{rep}}$ & Threshold & Signal rate (SE) \\
 \midrule
-S1 & Correct fixed HMM null & False signal remains below the nominal level over 500 replicates & 0.030 \\
-S3 & Missing latent state & A $K+1$ diagnostic accumulates strong evidence against an underfitted $K$-state HMM & 0.997 \\
-S4 & Angular misspecification & The angular diagnostic detects the misspecified circular distribution in every replicate & 1.000 \\
-S5 & Residual step-angle dependence & The copula or residual-dependence diagnostic detects dependence invisible to marginal checks & 1.000 \\
-S6 & Non-geometric duration structure & A blockwise duration diagnostic is conservative under the HMM null and powerful under the HSMM alternative & 0.000; 1.000 \\
-S7 & Localized failure & Predictable time and state localization concentrates the signal relative to the global diagnostic & 0.063; 0.900 \\
-S8 & Predictable mixture and switching & Mixtures and switching remain calibrated under the null and robust under a changing alternative & 0.036; 1.000 \\
+S1 & 2-state HMM & 2-state HMM & Exact 2-state & 2 & 2 & 300 & 300 & $\log(20)$ & 0.030 (0.010) \\
+S3 & 2-state HMM & 3-state HMM & $K+1$ states & 2 & 3 & 300 & 300 & $\log(20)$ & 0.997 (0.003) \\
+S4 & 2-state HMM & 2-state (misspec. angle) & Diffuse angle & 2 & 2 & 300 & 300 & $\log(20)$ & 1.000 (0.000) \\
+S5 & 2-state HMM & 2-state (copula dep.) & Joint copula & 2 & 2 & 300 & 300 & $\log(20)$ & 1.000 (0.000) \\
+S6 & 2-state HMM & 2-state HSMM & Duration-aware & 2 & 2 & 500 & 300 & Blockwise & 0.000 (0.000); 1.000 (0.000) \\
+S7 & 2-state HMM & 2-state (localized fail.)& State-localized & 2 & 2 & 300 & 300 & $\log(20)$ & 0.063 (0.014); 0.900 (0.017) \\
+S8 & 2-state HMM & 2-state (change point) & Switching mix & 2 & 2 & 300 & 300 & $\log(20)$ & 0.036 (0.011); 1.000 (0.000) \\
 \bottomrule
 \end{tabular}
-\caption{Simulation scenarios retained in the main article. For scenarios with two entries in the signal-rate column, the first value refers to the relevant null or global comparison and the second to the targeted alternative or localized diagnostic.}
+\caption{Simulation scenarios retained in the main article. For scenarios with two entries in the signal-rate column, the first value refers to the null calibration run and the second to the targeted alternative. For S6 specifically, the first value is the crossing rate under an HMM null calibration run, and the second is the crossing rate under the HSMM alternative. With 300 replicates, a signal rate of 0.000 implies an approximate upper 95\% confidence bound of about 0.01.}
 \label{tab:main_simulations}
 \end{table}
 
@@ -811,78 +827,152 @@ Table \ref{tab:main_simulations} gives the main numerical summary. Under the cor
 
 These simulations are not intended to exhaustively compare HMM estimators or movement models. Their purpose is narrower: to verify that the proposed e-diagnostic objects can be computed reproducibly, that the null behaviour is compatible with the theory in controlled settings and that each diagnostic responds to the failure it is designed to target. The supplementary scenarios document additional safeguards and extensions that are useful for implementation but would broaden the main article beyond its central message.
 
+\subsection{Comparison with Classical Pseudo-Residual Diagnostics}
+\label{sec:comparison_pseudo_residuals}To evaluate the practical utility and power of the proposed predictive e-diagnostics, we compare them against classical diagnostic tests based on pseudo-residuals. It is important to distinguish marginal probability integral transform (PIT) residuals from joint sequential Rosenblatt residuals. Under a correctly specified movement HMM, marginal PIT residuals are marginally Uniform(0,1) variables, but they are generally not independent because the observable predictive mixture induces dependence through state uncertainty. True joint sequential Rosenblatt residuals, constructed conditionally as described in Section 8.1, are independent Uniform(0,1) variables, which can be mapped to standard normal variables \citep{zucchini_2016_hmm}. 
+
+\begin{itemize}
+    \item \textbf{Kolmogorov-Smirnov (KS) Test}: Applied to the circular PIT turning angle residuals ($u_{t,\text{angle}}$) and marginal step length PIT residuals ($u_{t,\text{step}}$) to test for deviations from uniformity.
+    \item \textbf{Ljung-Box Test}: Applied to the normal step pseudo-residuals ($z_{t,\text{step}}$) at lag 5 to check for residual autocorrelation.
+    \item \textbf{Correlation Test}: Applied to the normal step and angle pseudo-residuals to test for residual joint dependence (specifically in S5, using the Rosenblatt transform of angles conditional on steps).
+\end{itemize}
+
+Figure~\ref{fig:comparative_power_residuals} summarizes the empirical signal and rejection rates across 300 simulated trajectories, using the scenario-specific validation lengths reported in Table~\ref{tab:main_simulations}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\linewidth]{comparative_power_residuals.png}
+\caption{Signal/rejection rates in scenarios S3--S6. All scenarios use 300 replicates; $T=300$ for S3--S5 and $T=500$ for S6.}
+\label{fig:comparative_power_residuals}
+\end{figure}
+
+The comparison highlights several key advantages of the e-diagnostic framework:
+\begin{enumerate}
+    \item \textbf{Underfitted States (S3)}: The e-diagnostic detects the missing third state in 99.7\% of the replicates. In contrast, the classical marginal KS tests on steps and angles fail to reject the null in most replicates (10.3\% and 15.3\% power, respectively), and the Ljung-Box autocorrelation test achieves only 13.3\% power.
+    \item \textbf{Angular Misspecification (S4)}: Both the angular e-diagnostic and the circular-linear KS test on turning angles exhibit near-perfect power (100\% vs. 99.7\%).
+    \item \textbf{Step-Angle Joint Dependence (S5)}: The copula e-diagnostic detects the residual dependence in 100\% of the replicates. The marginal KS tests fail completely (5.0\% and 4.3\% power) because they are designed to detect univariate deviations only. While the targeted correlation test on the joint normal residuals also achieves 100\% power, the e-diagnostic achieves this without sacrificing sequential validity and allows for online monitoring.
+    \item \textbf{Non-Geometric State Durations (S6)}: The blockwise duration e-diagnostic achieves 100\% power in detecting the HSMM-like state transitions, whereas the step-length KS test and Ljung-Box test reach only 60.0\% and 78.0\% power, respectively.
+\end{enumerate}
+These results demonstrate that e-diagnostics are highly sensitive to structured model misspecifications while preserving anytime-validity. However, this comparison primarily illustrates targeted power under specific, controlled scenarios. It does not imply a universal dominance of e-diagnostics over classical tests, especially since the classical tests reported here are evaluated retrospectively without adjustments for sequential monitoring or multiple testing.
+
 \section{Elk movement application}
 \label{sec:application}
 
-As a first real-data illustration, we used the elk movement data distributed as \texttt{elk\_data} in the R package \texttt{moveHMM} \citep{michelot_2016_movehmm}. The data are associated with the elk movement study of \citet{morales_2004_relocation}. The dataset contains four individuals and 735 locations with projected coordinates and distance to water. We used \texttt{moveHMM::prepData} to compute step lengths and turning angles. The individual \texttt{elk-115} was held out for validation, leaving the remaining three individuals for training. The validation individual contributes 192 complete step-angle observations. Figure \ref{fig:elk_trajectory_split} displays the held-out-individual split.
+As a real-data application, we used the elk movement data distributed as \texttt{elk\_data} in the R package \texttt{moveHMM} \citep{michelot_2016_movehmm}. The data are associated with the elk movement study of \citet{morales_2004_relocation}. The dataset contains four individuals and 735 locations with projected coordinates and distance to water. We used \texttt{moveHMM::prepData} to compute step lengths and turning angles. We implemented a Leave-One-Animal-Out (LOAO) cross-validation protocol: for each of the four individuals in turn, we held it out for validation and trained the candidate models on the remaining three individuals. Figure \ref{fig:elk_trajectory_split} displays the trajectories of the four individuals.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{elk_trajectory_split.png}
-\caption{Training and validation split for the elk application. The validation set is the complete trajectory of \texttt{elk-115}; all other individuals are used for training.}
+\caption{Trajectories of the four elk individuals. Under the Leave-One-Animal-Out (LOAO) protocol, each trajectory is used for validation in turn.}
 \label{fig:elk_trajectory_split}
 \end{figure}
 
-We fitted HMMs with $K=2,3,4$ states on the training individuals only, using Gamma step lengths and von Mises turning angles with no transition covariates. Figure \ref{fig:elk_model_selection} and Table \ref{tab:elk_model_selection} report the model-selection summary. The three-state model has the smallest BIC and was used as the fitted null generator. The four-state model has a lower AIC but a larger BIC, so it was reserved as a $K+1$ diagnostic alternative rather than adopted as the main fitted null.
+For each of the four folds, we fitted HMMs with $K=2,3,4$ states on the training individuals only, using Gamma step lengths and von Mises turning angles with no transition covariates. To handle local optima, models were fitted using \texttt{moveHMM::fitHMM} with 10 random perturbations of the initial parameters. The state distribution at the first observation was fixed to the stationary distribution. Label switching between cross-validation folds was resolved by ordering the states by their mean step lengths before prediction. The fixed mixture diagnostic allocated equal weight ($1/2$) to the $K=4$ density and the diffuse-angle density. Missing first steps or turning angles due to missing coordinates were dropped by \texttt{prepData}, and the filter was explicitly restarted for each individual to ensure valid prediction. Initial parameters for the 10 random perturbations were drawn uniformly between realistic bounds based on the sample quantiles of the data. The diffuse-angle diagnostic retains the fitted state weights and step length distributions, modifying only the turning angle density to a more diffuse von Mises distribution. All diagnostic choices were fixed before observing the validation trajectories. Figure \ref{fig:elk_model_selection} and Table \ref{tab:elk_model_selection} report the model-selection metrics. BIC selects $K=3$ as the null model for three folds (\texttt{elk-115}, \texttt{elk-287}, and \texttt{elk-363}) and $K=4$ for fold \texttt{elk-163}. To maintain consistency and allow population-level cross-fitted pooling, we fix the null generator to $K=3$ states and the diagnostic alternative to $K=4$ states across all validation individuals.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.82\linewidth]{elk_model_selection.png}
-\caption{AIC and BIC for the fitted HMMs in the elk application. BIC selects the three-state model as the fitted null generator, while the four-state model is retained as a diagnostic competitor.}
+\includegraphics[width=0.92\linewidth]{elk_model_selection.png}
+\caption{AIC and BIC for the fitted HMMs across the four training folds. BIC selects $K=3$ for three folds and $K=4$ for one fold.}
 \label{fig:elk_model_selection}
 \end{figure}
 
 \begin{table}[t]
 \centering
-\begin{tabular}{@{}rrrrr@{}}
+\footnotesize
+\begin{tabular}{lccccr}
 \toprule
-States & Negative log-likelihood & Parameters & AIC & BIC \\
+Fold (Validation Indiv.) & States ($K$) & Negative Log-Likelihood & Parameters & AIC & BIC \\
 \midrule
-2 & 5190.649 & 13 & 10407.298 & 10462.919 \\
-3 & 4994.368 & 23 & 10034.736 & 10133.142 \\
-4 & 4976.707 & 35 & 10023.414 & 10173.162 \\
+\textbf{elk-115} & 2 & 5190.649 & 13 & 10407.298 & 10462.919 \\
+(Training $n = 533$) & 3 & 4994.368 & 23 & 10034.736 & 10133.142$^\star$ \\
+                     & 4 & 4976.707 & 35 & 10023.414 & 10173.162 \\
+\addlinespace
+\textbf{elk-163} & 2 & 5442.706 & 13 & 10911.412 & 10967.860 \\
+(Training $n = 568$) & 3 & 5378.781 & 23 & 10803.562 & 10903.430 \\
+                     & 4 & 5335.920 & 35 & 10741.841 & 10893.815$^\star$ \\
+\addlinespace
+\textbf{elk-287} & 2 & 5481.246 & 13 & 10988.493 & 11044.826 \\
+(Training $n = 563$) & 3 & 5332.742 & 23 & 10711.484 & 10811.149$^\star$ \\
+                     & 4 & 5297.755 & 35 & 10665.510 & 10817.175 \\
+\addlinespace
+\textbf{elk-363} & 2 & 4999.619 & 11 & 10021.237 & 10067.837 \\
+(Training $n = 511$) & 3 & 4830.232 & 20 & 9700.463 & 9785.190$^\star$ \\
+                     & 4 & 4813.181 & 31 & 9688.363 & 9819.690 \\
 \bottomrule
 \end{tabular}
-\caption{HMM fits for the elk application. The three-state model is selected by BIC and used as the fitted null generator.}
+\caption{Model selection metrics for fitted HMMs across Leave-One-Animal-Out training sets. The $^\star$ symbol denotes the model selected by BIC for each fold.}
 \label{tab:elk_model_selection}
 \end{table}
 
-We then evaluated four diagnostics on the held-out individual: a full-density $K+1$ diagnostic comparing the $K=3$ null with the $K=4$ alternative, a diffuse-angle diagnostic obtained by halving the fitted angular concentrations, a fixed mixture of these two diagnostic densities and a state-localized version of the $K+1$ diagnostic using the filtered predictive probability of the long-step state. Figure \ref{fig:elk_eprocess_paths} shows the resulting cumulative paths, and Table \ref{tab:elk_diagnostics} summarizes their crossings and maxima.
+We then evaluated four diagnostics on each validation individual: a full-density $K+1$ diagnostic comparing the $K=3$ null HMM with the $K=4$ alternative HMM, a diffuse-angle diagnostic obtained by halving the fitted angular concentrations under the null, a fixed mixture of these two diagnostic densities (allocating equal weight to each), and a state-localized version of the $K+1$ diagnostic using the filtered predictive probability of the long-step state. Figure \ref{fig:elk_eprocess_paths} shows the resulting cumulative paths for the four individuals, and Table \ref{tab:elk_diagnostics} summarizes their crossings, maxima, and final values, alongside the population-average cross-fitted e-values (Proposition~\ref{prop:crossfit_average}).
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{elk_eprocess_paths.png}
-\caption{Cumulative log e-processes for the held-out elk individual. The dashed line is the $\alpha=0.05$ threshold, $\log(20)$. Crossings are evidence against the fitted generator relative to the corresponding diagnostic alternative.}
+\caption{Cumulative log e-processes for the four validation elk individuals across the four diagnostics. The dashed horizontal line is the $\alpha=0.05$ threshold, $\log(20) = 2.996$.}
 \label{fig:elk_eprocess_paths}
 \end{figure}
 
 \begin{table}[t]
 \centering
 \footnotesize
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.36\linewidth}rrrr@{}}
+\begin{tabular}{lcccc}
 \toprule
-Diagnostic & Signal & Crossing time & Max log e & Final log e \\
+Validation Individual / Diagnostic & Signal & Crossing Time & Max $\log e$ & Final $\log e$ \\
 \midrule
-$K=3$ versus $K=4$ & Yes & 16 & 5.459 & 5.413 \\
-Diffuse-angle alternative & No & NA & 2.811 & 0.154 \\
-Fixed mixture & Yes & 22 & 11.089 & 10.981 \\
-Long-step-state localized $K+1$ & Yes & 123 & 5.618 & 5.605 \\
+\textbf{elk-115} ($n = 192$) & & & & \\
+\quad $K=3$ vs $K=4$ & Yes & 16 & 5.459 & 5.413 \\
+\quad Diffuse angle & No & NA & 2.811 & 0.154 \\
+\quad Fixed mixture & Yes & 22 & 11.089 & 10.981 \\
+\quad Localized $K+1$ & Yes & 123 & 5.618 & 5.605 \\
+\addlinespace
+\textbf{elk-163} ($n = 157$) & & & & \\
+\quad $K=3$ vs $K=4$ & No & NA & 0.610 & -12.216 \\
+\quad Diffuse angle & Yes & 109 & 3.585 & 2.663 \\
+\quad Fixed mixture & No & NA & 1.556 & -1.244 \\
+\quad Localized $K+1$ & No & NA & 0.165 & -1.725 \\
+\addlinespace
+\textbf{elk-287} ($n = 162$) & & & & \\
+\quad $K=3$ vs $K=4$ & No & NA & 1.854 & 1.056 \\
+\quad Diffuse angle & No & NA & 2.220 & 1.801 \\
+\quad Fixed mixture & No & NA & 2.836 & 2.592 \\
+\quad Localized $K+1$ & No & NA & 0.619 & 0.513 \\
+\addlinespace
+\textbf{elk-363} ($n = 214$) & & & & \\
+\quad $K=3$ vs $K=4$ & Yes & 118 & 13.627 & 7.246 \\
+\quad Diffuse angle & No & NA & 1.337 & -0.761 \\
+\quad Fixed mixture & Yes & 116 & 9.973 & 9.174 \\
+\quad Localized $K+1$ & Yes & 212 & 5.095 & 4.734 \\
+\midrule
+\textbf{Population Average} ($N = 4, n_{tot} = 725$) & & & & \\
+\quad $K=3$ vs $K=4$ & Yes & NA & 6.009 & 6.009 \\
+\quad Diffuse angle & No & NA & 1.706 & 1.706 \\
+\quad Fixed mixture & Yes & NA & 9.747 & 9.747 \\
+\quad Localized $K+1$ & Yes & NA & 4.573 & 4.573 \\
 \bottomrule
 \end{tabular}
-\caption{Predictive e-diagnostics for the held-out elk individual. The threshold for $\alpha=0.05$ is $\log(20)=2.996$.}
+\caption{Leave-One-Animal-Out predictive e-diagnostics for the four elk individuals and the population-average cross-fitted e-values. The threshold for $\alpha=0.05$ is $\log(20) = 2.996$. For the population average, the final log e-value represents $\log E^{\text{cf}}$ and the max log e-value is identical to the final value by definition.}
 \label{tab:elk_diagnostics}
 \end{table}
 
-The $K+1$ diagnostic crosses the $\alpha=0.05$ threshold early in the validation trajectory, suggesting that the richer state structure predicts this held-out animal better than the BIC-selected three-state generator. The diffuse-angle diagnostic alone does not cross the threshold, although its maximum log e-value is close to the threshold. The fixed mixture crosses because it allocates part of its predictive mass to the successful state-number diagnostic. The state-localized diagnostic also crosses, but later, indicating that evidence is partly associated with times at which the fitted null predicts the long-step state. Figure \ref{fig:elk_state_localization} relates this localized e-process to the filtered predictive probability of the long-step state.
+The diagnostics show substantial variation across individuals. For \texttt{elk-115} and \texttt{elk-363}, the $K+1$ state diagnostic and the fixed mixture cross the $\alpha=0.05$ threshold ($\log(20) = 2.996$), suggesting that the three-state null HMM is inadequate for these trajectories. The state-localized diagnostic also crosses for these two individuals, supporting the interpretation that the predictive discrepancy is concentrated during periods assigned high probability of the long-step state. For \texttt{elk-163}, the diffuse-angle diagnostic crosses the threshold, suggesting that the diffuse-angle diagnostic predicts this trajectory better than the fitted angular component for this animal, while the diagnostic for the number of states does not cross. For \texttt{elk-287}, none of the individual diagnostics cross the threshold.
+
+Importantly, Proposition~\ref{prop:crossfit_average} allows us to pool evidence across individuals using the population-average cross-fitted e-value, $E^{\text{cf}} = \frac{1}{N} \sum_{i=1}^N E^{(i)}$. Under the LOAO composite null hypothesis $H_0^{\mathrm{LOAO}}$, which posits that each validation trajectory $Y^{(i)}$ is generated by the HMM fitted on the remaining $N-1$ individuals, $E^{\text{cf}}$ remains a valid terminal e-value. As shown in Table \ref{tab:elk_diagnostics} and Figure \ref{fig:elk_diagnostic_summary}, the population-average log e-value exceeds the terminal e-value threshold for the diagnostic for the number of states ($\log E^{\text{cf}} = 6.009$), the fixed mixture ($\log E^{\text{cf}} = 9.747$), and the localized diagnostic ($\log E^{\text{cf}} = 4.573$). Only the diffuse-angle diagnostic does not exceed the terminal threshold at the population level ($\log E^{\text{cf}} = 1.706$). In this illustrative dataset, the LOAO diagnostics suggest that the three-state fitted generator is inadequate for some held-out individuals, with population-average evidence concentrated in the number-of-states and long-step-localized diagnostics. Figure \ref{fig:elk_state_localization} shows the predictable state weights and localized cumulative e-process for \texttt{elk-115}.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{elk_state_localization.png}
-\caption{Predictable state-localized diagnostic for the held-out elk individual. The upper panel shows the filtered predictive probability assigned to the long-step state before each validation observation. The lower panel shows the corresponding localized cumulative log e-process.}
+\caption{Predictable state-localized diagnostic for validation individual \texttt{elk-115}. The upper panel shows the filtered predictive probability assigned to the long-step state before each validation observation. The lower panel shows the corresponding localized cumulative log e-process.}
 \label{fig:elk_state_localization}
 \end{figure}
 
-This application should be interpreted as exploratory. The dataset is small, the split uses one held-out individual and the diagnostic menu was chosen as a first proof of concept. The result is therefore a predictive model criticism of the fitted generator for \texttt{elk-115}, not a definitive ecological claim about the number or meaning of behavioural states. The example nevertheless illustrates the intended workflow: fix the training information, choose diagnostic competitors before validation, evaluate observable predictive densities on held-out data, monitor e-processes and report both global and localized evidence.
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\linewidth]{elk_diagnostic_summary.png}
+\caption{Summary of final log e-values across validation individuals (circles) and the population-average cross-fitted e-value (green diamond). The dashed line represents the $\alpha=0.05$ threshold, $\log(20) = 2.996$.}
+\label{fig:elk_diagnostic_summary}
+\end{figure}
+
+This application illustrates the Leave-One-Animal-Out cross-fitted workflow: train the HMM on a subset of individuals, specify diagnostic alternatives, evaluate the e-processes on held-out animals, and compute population-level cross-fitted e-values to pool evidence. The results illustrate how predictive e-diagnostics can reveal individual-specific lack of predictive fit and can be combined into a population-level terminal e-value.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -893,10 +983,11 @@ The framework adds several elements that are specific to movement HMMs. First, i
 
 The main limitation is the treatment of fitted parameters. The exact guarantee is cleanest when the fitted null and diagnostic alternatives are fixed before validation. This is a strength for a first methodological article because the null statement is transparent: conditional on training, does the fitted HMM generate the validation trajectory credibly? Same-sample exploratory workflows are still useful but require caution. The supplementary simulations therefore treat oracle-state parameter estimation, validation by individuals and composite-null envelopes as sensitivity analyses or extensions rather than as the main empirical evidence.
 
-The real-data example illustrates both the promise and the caution required in practice. Predictive e-diagnostics can reveal that a fitted generator performs poorly for a held-out animal, and localized versions help identify the part of the fitted behavioural structure associated with the signal. At the same time, ecological interpretation requires additional work: the diagnostic menu, train/validation split and model-selection rule should be pre-specified for confirmatory use, and the results should be replicated across datasets or validation splits before drawing strong biological conclusions.
+The real-data example illustrates both the promise and the caution required in practice. Predictive e-diagnostics can reveal that a fitted generator performs poorly for a held-out animal, and localized versions help identify the part of the fitted behavioural structure associated with the signal. At the same time, ecological interpretation requires additional work: the diagnostic menu, train/validation split and model-selection rule should be pre-specified for confirmatory use, and the results should be replicated across datasets or validation splits before drawing definitive biological conclusions.
 
-\section*{Acknowledgements}
-To be completed.
+
+\section*{Code and Data Availability}
+The elk data used in the application are publicly available in the supplementary materials of \cite{michelot_2016_movehmm} and via the \texttt{moveHMM} package. The repository contains R scripts, simulation parameters, random seeds, and a README to fully reproduce the tables and figures. While generated outputs are ignored by Git as noted in the supplement, the verifiable results and full scripts can be accessed at \url{https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm}.
 
 \begin{thebibliography}{99}
 
@@ -905,12 +996,6 @@ Dawid, A. P. (1984).
 Statistical theory: the prequential approach.
 \emph{Journal of the Royal Statistical Society. Series A}, 147(2), 278--292.
 \url{https://doi.org/10.2307/2981683}
-
-\bibitem[Glennie et~al.(2023)]{glennie_2022_pitfalls}
-Glennie, R., Adam, T., Leos-Barajas, V., Michelot, T., Photopoulou, T., and McClintock, B. T. (2023).
-Hidden Markov models: pitfalls and opportunities in ecology.
-\emph{Methods in Ecology and Evolution}, 14(1), 43--56.
-\url{https://doi.org/10.1111/2041-210X.13801}
 
 \bibitem[Gr{\"u}nwald et~al.(2024)]{grunwald_2024_safe_testing}
 Gr{\"u}nwald, P., de Heide, R., and Koolen, W. M. (2024).
@@ -936,12 +1021,6 @@ Hidden Markov models with arbitrary state dwell-time distributions.
 \emph{Computational Statistics \& Data Analysis}, 55(1), 715--724.
 \url{https://doi.org/10.1016/j.csda.2010.06.015}
 
-\bibitem[Leos-Barajas et~al.(2017)]{leos_barajas_2017_multiscale}
-Leos-Barajas, V., Photopoulou, T., Langrock, R., Patterson, T. A., Watanabe, Y. Y., Murgatroyd, M., and Papastamatiou, Y. P. (2017).
-Multi-scale modeling of animal movement and general behavior data using hidden Markov models with hierarchical structures.
-\emph{Journal of Agricultural, Biological, and Environmental Statistics}, 22, 232--248.
-\url{https://doi.org/10.1007/s13253-017-0282-9}
-
 \bibitem[McClintock and Michelot(2018)]{mcclintock_2018_momentuhmm}
 McClintock, B. T. and Michelot, T. (2018).
 \texttt{momentuHMM}: R package for generalized hidden Markov models of animal movement.
@@ -959,12 +1038,6 @@ Morales, J. M., Haydon, D. T., Frair, J., Holsinger, K. E., and Fryxell, J. M. (
 Extracting more out of relocation data: building movement models as mixtures of random walks.
 \emph{Ecology}, 85(9), 2436--2445.
 \url{https://doi.org/10.1890/03-0269}
-
-\bibitem[Nicosia et~al.(2017)]{nicosia_2017_hidden_state}
-Nicosia, A., Duchesne, T., Rivest, L.-P., and Fortin, D. (2017).
-A general hidden state random walk model for animal movement.
-\emph{Computational Statistics \& Data Analysis}, 105, 76--95.
-\url{https://doi.org/10.1016/j.csda.2016.07.009}
 
 \bibitem[Ville(1939)]{ville_1939_collectif}
 Ville, J. (1939).

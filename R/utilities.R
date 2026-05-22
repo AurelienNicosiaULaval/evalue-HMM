@@ -1,1 +1,5 @@
-# Shared utilities will be added here as the prototype grows.
+# Shared utilities and global variables for R CMD check.
+
+if (getRversion() >= "2.15.1") {
+  utils::globalVariables(c(".data"))
+}

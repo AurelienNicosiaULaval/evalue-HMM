@@ -1,20 +1,22 @@
-\documentclass[11pt]{article}
+\RequirePackage{amsthm}
+\documentclass[pdflatex,sn-basic,referee,lineno]{sn-jnl}
 
-\usepackage[margin=1in]{geometry}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
 \usepackage{lmodern}
-\usepackage{amsmath,amssymb}
-\usepackage{booktabs}
+\usepackage{amssymb}
+\usepackage{mathtools}
 \usepackage{array}
-\usepackage[colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black]{hyperref}
-
-\title{Supplementary material for\\
-Predictive e-diagnostics for multi-state movement models}
-\author{Author information to be completed}
-\date{Revised draft: 2026-05-08}
+\usepackage{xcolor}
+\usepackage{manyfoot}
+\usepackage{booktabs}
+\usepackage{enumitem}
 
 \begin{document}
+
+\title[Supplementary material for predictive HMM e-diagnostics]{Supplementary material for: Predictive e-diagnostics for multi-state movement models}
+
+\author[1]{\fnm{Aurélien} \sur{Nicosia}}
+\affil[1]{\orgname{Université Laval}, \orgaddress{\country{Canada}}}
+
 \maketitle
 
 \section{Simulation allocation}
@@ -45,6 +47,22 @@ S12 & Supplement & Composite envelopes are conservative and optional for the fir
 \caption{Allocation of simulation scenarios between the main article and supplementary material.}
 \label{tab:supp_allocation}
 \end{table}
+
+\section{Simulation DGP details}
+\label{sec:dgp_details}
+
+To ensure the simulation results can be understood independently, we briefly outline the data-generating processes (DGPs) used in the main scenarios. Von Mises distributions in the simulations are parametrized through circular standard deviations (sd); the corresponding concentration parameters $\kappa$ were obtained by numerical inversion of the circular variance formula $V = 1 - I_1(\kappa)/I_0(\kappa)$, where $I_p$ denotes the modified Bessel function of order $p$. All parameters are specified on the natural scale.
+
+\begin{itemize}
+    \item \textbf{S1 (Calibration)}: A 2-state HMM with initial probabilities $(0.5, 0.5)$ and transition matrix $\Gamma$ with $\Gamma(1,1)=0.8$, $\Gamma(2,2)=0.7$. State 1 (encamped) has step lengths drawn from $\text{Gamma}(\text{shape}=2, \text{rate}=0.5)$ and turning angles from $\text{von Mises}(\mu=0, \text{sd}=0.5)$. State 2 (exploratory) has step lengths $\text{Gamma}(10, 2)$ and turning angles $\text{von Mises}(\mu=0, \text{sd}=2)$. The diagnostic $q_t$ is the exact null density, i.e.\ the same HMM \emph{(oracle)}.
+    \item \textbf{S3 (Missing state)}: The true DGP is a 3-state HMM with an intermediate speed state, but the null model is restricted to $K=2$. True transition matrix $\Gamma$: row 1 $(0.91, 0.06, 0.03)$, row 2 $(0.08, 0.87, 0.05)$, row 3 $(0.08, 0.10, 0.82)$. Step shapes $(2.0, 7.5, 4.0)$, rates $(3.0, 2.0, 1.2)$, angle means $(0, 0, 0.6)$, angle SDs $(1.6, 0.35, 0.75)$. The diagnostic $q_t$ uses the \emph{true} 3-state DGP parameters \emph{(oracle diagnostic)}.
+    \item \textbf{S4 (Angular misspecification)}: The true DGP has step shapes $(2.0, 7.0)$, rates $(3.0, 2.0)$, and angle SDs $(1.8, 0.25)$. The null model is misspecified with angle SDs $(0.85, 0.30)$ and state 2 centered at $\mu=0.25$ rather than $0$. The diagnostic $q_t$ is a fixed, manually chosen diffuse-angle alternative \emph{(fixed alternative)}.
+    \item \textbf{S5 (Copula dependence)}: The true DGP includes a Gaussian copula with correlation $\rho = 0.6$ between step lengths and turning angles within each state, violating the conditional independence assumption of standard HMMs. The copula diagnostic uses a fixed target correlation $\rho_q = 0.55$ \emph{(fixed alternative)}.
+    \item \textbf{S6 (Duration)}: The true DGP is a hidden semi-Markov model (HSMM) where the dwell time in both states follows a shifted Poisson distribution (mean 18), rather than a geometric distribution. The duration diagnostic is a blockwise observable feature (switch counts within each block) and is \emph{fixed} before seeing the data \emph{(fixed alternative)}.
+    \item \textbf{S7 (Localized failure)}: Similar to S5 ($\rho = 0.8$ in state 2) but restricted to a time window (times 121 to 220). The diagnostic $q_t$ uses a fixed predictable weight concentrated on the failure window \emph{(fixed alternative)}.
+    \item \textbf{S8 (Mixture switching)}: The alternative has two successive defects: angular misspecification (times 1 to 149) followed by step-angle copula dependence (times 150 to 300). The mixture and switching diagnostics combine fixed alternatives specified before the run \emph{(fixed alternatives)}.
+\end{itemize}
+Future work could further characterize diagnostic sensitivity by exploring weaker alternatives, such as scenarios with highly overlapping state-dependent distributions, only slightly misspecified turning angles (e.g., small differences in concentration parameters), moderate copula dependence ($\rho \approx 0.1$), or near-geometric dwell time distributions.
 
 \section{Supplementary scenarios}
 
@@ -133,7 +151,7 @@ Single failed individual & Any individual scan & Exploratory & 1.000 \\
 
 \subsection{S12: finite-family composite envelope}
 
-Scenario S12 studies a conservative envelope over a finite family of three HMM null generators. The center-only denominator is not uniform over the family and gives a false signal rate of $0.980$ when the true generator is the diffuse-angle null. The composite envelope gives signal rate $0.000$ at $\alpha=0.05$ for each generator in the finite family. The scenario illustrates uniform validity and its cost in conservatism.
+Scenario S12 studies a conservative envelope over a finite family of three HMM null generators. It is important to note that the practical use of the composite envelope (Proposition 17) is primarily intended for finite or compactly restricted families. Continuous envelopes of unbounded parameter families for densities such as Gamma or von Mises can become numerically unstable or computationally prohibitive. The center-only denominator is not uniform over the family and gives a false signal rate of $0.980$ when the true generator is the diffuse-angle null. The composite envelope gives signal rate $0.000$ at $\alpha=0.05$ for each generator in the finite family. The scenario illustrates uniform validity and its cost in conservatism.
 
 \begin{table}[h]
 \centering

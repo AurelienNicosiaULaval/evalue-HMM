@@ -1,4 +1,4 @@
-# Preprocess the real-data application dataset.
+# Preprocess the real-data application dataset for Leave-One-Animal-Out (LOAO) validation.
 #
 # Dataset choice:
 # - moveHMM::elk_data
@@ -35,11 +35,7 @@ prepared$time_index <- ave(
   FUN = seq_along
 )
 
-# Hold out one individual before fitting. This is a simple pre-specified
-# validation split, not a data-adaptive choice.
-validation_id <- "elk-115"
-prepared$split <- ifelse(prepared$ID == validation_id, "validation", "train")
-
+# Under Leave-One-Animal-Out (LOAO), each animal is held out for validation in turn.
 dataset_summary <- data.frame(
   dataset = "moveHMM::elk_data",
   package = "moveHMM",
@@ -50,9 +46,7 @@ dataset_summary <- data.frame(
   package_doi = "https://doi.org/10.1111/2041-210X.12578",
   n_rows = nrow(prepared),
   n_individuals = length(unique(prepared$ID)),
-  validation_id = validation_id,
-  train_rows = sum(prepared$split == "train"),
-  validation_rows = sum(prepared$split == "validation"),
+  validation_protocol = "Leave-One-Animal-Out (LOAO)",
   stringsAsFactors = FALSE
 )
 
@@ -61,7 +55,6 @@ individual_summary <- do.call(
   lapply(split(prepared, prepared$ID), function(individual_data) {
     data.frame(
       ID = unique(individual_data$ID),
-      split = unique(individual_data$split),
       n_rows = nrow(individual_data),
       n_complete_step_angle = sum(is.finite(individual_data$step) & is.finite(individual_data$angle)),
       mean_step = mean(individual_data$step, na.rm = TRUE),
@@ -109,6 +102,6 @@ write.csv(
 
 message("Application preprocessing completed.")
 message("Selected dataset: moveHMM::elk_data")
-message("Validation individual: ", validation_id)
+message("Validation protocol: Leave-One-Animal-Out (LOAO) cross-validation across all 4 individuals.")
 message("Processed data written to: ", file.path(output_data_dir, "elk_prepared.csv"))
 message("Summary tables written to: ", output_table_dir)

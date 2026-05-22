@@ -1,5 +1,16 @@
-# Common interface for predictive e-diagnostics.
-
+#' Common interface for predictive e-diagnostics.
+#'
+#' @param diagnostic_name A character string. Name of the diagnostic.
+#' @param log_p0 Numeric vector. Log predictive density under the null.
+#' @param log_q Numeric vector. Log predictive density under the alternative.
+#' @param alpha Numeric. Significance level (default is 0.05).
+#' @param time Numeric vector. Time indices.
+#' @param individual_id Character vector or string. Identifiers for individuals.
+#' @param weights Numeric vector or value. Observation weights.
+#' @param metadata List. Additional metadata.
+#'
+#' @return A list of class \code{predictive_e_diagnostic}.
+#' @export
 make_predictive_diagnostic <- function(
     diagnostic_name,
     log_p0,
@@ -84,6 +95,13 @@ make_predictive_diagnostic <- function(
   out
 }
 
+#' Summarise predictive e-diagnostic results.
+#'
+#' @param diagnostic A \code{predictive_e_diagnostic} object.
+#'
+#' @importFrom utils tail
+#' @return A data frame summarizing the diagnostic.
+#' @export
 summarise_predictive_diagnostic <- function(diagnostic) {
   if (!inherits(diagnostic, "predictive_e_diagnostic")) {
     stop("`diagnostic` must be created by `make_predictive_diagnostic()`.", call. = FALSE)
@@ -103,8 +121,15 @@ summarise_predictive_diagnostic <- function(diagnostic) {
   )
 }
 
+#' Print method for predictive_e_diagnostic.
+#'
+#' @param x A \code{predictive_e_diagnostic} object.
+#' @param ... Unused.
+#'
+#' @export
 print.predictive_e_diagnostic <- function(x, ...) {
   summary <- summarise_predictive_diagnostic(x)
   print(summary, row.names = FALSE)
   invisible(x)
 }
+

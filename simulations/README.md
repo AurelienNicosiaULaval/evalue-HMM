@@ -1,46 +1,29 @@
-# Simulations
+# Simulation Scenarios
 
-Les simulations doivent maintenant suivre la version actuelle de l'article `paper/predictive_e_diagnostics_hmm_improved.tex`.
+This directory contains the R scripts to reproduce the simulation scenarios presented in the paper (S1 to S12). 
 
-Chaque script doit séparer clairement :
+## Simulation Scripts
 
-1. génération des données ;
-2. entraînement ou fixation du modèle nul ;
-3. construction des alternatives diagnostiques ;
-4. validation ;
-5. calcul des e-process ;
-6. figures et tables.
+| Script | Scenario | Description | Location in Paper |
+|---|---|---|---|
+| `01_null_fixed_generator.R` | S1 | Calibration under a correctly specified 2-state HMM null generator. | Main Article |
+| `02_train_validation_estimated.R` | S2 | Train/validation protocol with estimated parameters. | Supplementary Material |
+| `03_underfit_states.R` | S3 | Underfitted model (null K=2 vs. true K=3). | Main Article |
+| `04_angle_misspecification.R` | S4 | Angular component misspecification. | Main Article |
+| `05_step_angle_dependence.R` | S5 | Residual step-angle dependence (copula violation). | Main Article |
+| `06_duration_or_blockwise.R` | S6 | Non-geometric state dwell times (HSMM data). | Main Article |
+| `07_localized_failure.R` | S7 | State-localized copula failure. | Main Article |
+| `08_mixture_switching.R` | S8 | Multiple sequential failures (switching diagnostic). | Main Article |
+| `09_parallel_product_warning.R` | S9 | Demonstration of the invalidity of naive parallel products. | Supplementary Material |
+| `10_blockwise_long_horizon.R` | S10 | Blockwise long-horizon diagnostics. | Supplementary Material |
+| `11_individual_validation_crossfit.R` | S11 | Multi-individual validation and population cross-fitting. | Supplementary Material |
+| `12_composite_envelope_optional.R` | S12 | Conservative composite-null envelope. | Supplementary Material |
+| `13_comparative_power_residuals.R` | - | Comparative power against classical pseudo-residual tests. | Main Article (Figure 1) |
 
-Les sorties doivent être écrites dans :
+## Running the Simulations
 
-- `results/simulation_tables/`
-- `results/simulation_figures/`
-
-## Scripts prévus
-
-| Script | Scénario |
-|---|---|
-| `01_null_fixed_generator.R` | Calibration sous HMM nul fixé, implémenté |
-| `02_train_validation_estimated.R` | Validation train/validation avec paramètres estimés, implémenté avec estimation oracle-state contrôlée |
-| `03_underfit_states.R` | Nombre d'états insuffisant, implémenté |
-| `04_angle_misspecification.R` | Distribution angulaire mal spécifiée, implémenté |
-| `05_step_angle_dependence.R` | Dépendance résiduelle longueur-angle via Rosenblatt ou copule, implémenté |
-| `06_duration_or_blockwise.R` | Durées non géométriques via diagnostic de bloc, implémenté |
-| `07_localized_failure.R` | Échec localisé et pondérations prédictibles, implémenté |
-| `08_mixture_switching.R` | Mélanges et switching prédictibles, implémenté |
-| `09_parallel_product_warning.R` | Démonstration que le produit parallèle naïf n'est pas valide par défaut, implémenté |
-| `10_blockwise_long_horizon.R` | Diagnostics blockwise à long horizon, implémenté |
-| `11_individual_validation_crossfit.R` | Validation par individus et moyenne cross-fitted, implémenté |
-| `12_composite_envelope_optional.R` | Enveloppe composite conservatrice, implémenté comme scénario optionnel |
-| `run_all_simulations.R` | Exécution séquentielle des scripts implémentés |
-
-Les scénarios S1 à S12 sont implémentés.
-
-## Découpage article principal et supplément
-
-| Placement | Scénarios | Raison |
-|---|---|---|
-| Article principal | S1, S3, S4, S5, S6, S7, S8 | Calibration, diagnostics ciblés, localisation et combinaison prédictible |
-| Supplément | S2, S9, S10, S11, S12 | Sensibilité, avertissement méthodologique et extensions avancées |
-
-Ce découpage est appliqué dans `paper/predictive_e_diagnostics_hmm_improved.tex` et `paper/supplementary_material.tex`.
+You can run all simulations sequentially by executing:
+```bash
+Rscript simulations/run_all_simulations.R
+```
+This script runs the scenarios and saves the outputs (CSV tables and PNG plots) to `results/simulation_tables/` and `results/simulation_figures/`.

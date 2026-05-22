@@ -10,7 +10,7 @@ source("R/simulate_hmm_movement.R")
 set.seed(20260507)
 
 # Simulation controls. Keep these modest so the script is quick in a clean run.
-n_replicates <- 500L
+n_replicates <- 1000L
 n_times <- 300L
 alphas <- c(0.10, 0.05, 0.01)
 

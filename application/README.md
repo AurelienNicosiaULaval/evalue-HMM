@@ -1,54 +1,27 @@
-# Application réelle
+# Real-Data Application: Elk Movement Analysis
 
-Ce dossier contiendra l'analyse empirique du projet, alignée sur l'article `paper/predictive_e_diagnostics_hmm_improved.tex`.
+This directory implements the Leave-One-Animal-Out (LOAO) predictive validation protocol on the elk movement dataset from Michelot et al. (2016).
 
-Le jeu de données retenu pour la première application est `moveHMM::elk_data`, le jeu de données elk associé à Morales et al. (2004) et distribué avec le package `moveHMM` de Michelot et al. (2016).
+## Data Source
 
-Références :
+The raw elk trajectory data is distributed with the `moveHMM` R package:
+- Michelot, T., Langrock, R., & Patterson, T. A. (2016). `moveHMM`: an R package for the analysis of animal movement data using hidden Markov models. *Methods in Ecology and Evolution*, 7(11), 1301-1307.
+- Morales, J. M., Haydon, D. T., Frair, J., Holsinger, K. E., & Fryxell, J. M. (2004). Extracting more out of relocation data: building movement models as mixtures of random walks. *Ecology*, 85(9), 2433-2445.
 
-- Morales et al. (2004), Ecology, https://doi.org/10.1890/03-0269
-- Michelot et al. (2016), Methods in Ecology and Evolution, https://doi.org/10.1111/2041-210X.12578
+## Analysis Pipeline
 
-## Principe d'analyse
+The empirical analysis is split into modular scripts:
 
-L'application doit privilégier une validation séparée :
+1. `01_preprocess.R`: Loads and preprocesses the raw elk relocations, computes step lengths and turning angles, and prepares the LOAO folds.
+2. `02_fit_hmm.R`: Fits candidate null HMMs (K = 2, 3, 4) on training folds using maximum likelihood estimation.
+3. `03_compute_eprocess.R`: Integrates out latent states via forward filtering and computes the sequential predictive e-processes on the held-out validation trajectories.
+4. `04_figures_application.R`: Generates the figures summarizing the individual and population-level diagnostics.
+5. `utils_movehmm_eprocess.R`: Helper functions to convert fitted `moveHMM` models into observable predictive densities.
 
-- entraînement et choix des diagnostics sur `train` ;
-- calcul des densités prédictives et e-process sur `validation` ;
-- validation par individus si plusieurs individus sont disponibles.
+## Running the Pipeline
 
-Les états latents doivent être intégrés par filtrage dans `log_p0`. Les états décodés peuvent être utilisés pour la description écologique, mais pas pour établir la validité des e-process.
-
-## Scripts prévus
-
-| Script | Rôle |
-|---|---|
-| `01_preprocess.R` | Importer `moveHMM::elk_data`, construire longueurs de pas et angles, documenter le split train/validation |
-| `02_fit_hmm.R` | Ajuster les HMM `K = 2, 3, 4` sur les individus d'entraînement et choisir le nul par BIC |
-| `03_compute_eprocess.R` | Calculer `log_p0`, les diagnostics `K+1`, angulaire, mixture et localisation par état filtré sur validation |
-| `04_figures_application.R` | Produire trajectoires, courbes `log E`, incréments et synthèses visuelles |
-| `run_application.R` | Exécuter toute la chaîne d'application dans l'ordre |
-| `utils_movehmm_eprocess.R` | Convertir les objets `moveHMM` en densités prédictives observables par filtrage |
-
-## Sorties attendues
-
-- Tables dans `results/application_tables/`.
-- Figures dans `results/application_figures/`.
-- Interprétation écologique prudente pour la section application.
-
-Les données brutes et traitées sont ignorées par Git par défaut. Ajouter ici seulement des fichiers de documentation ou des données explicitement partageables.
-
-## Commandes
-
-```bash
-Rscript application/01_preprocess.R
-Rscript application/02_fit_hmm.R
-Rscript application/03_compute_eprocess.R
-Rscript application/04_figures_application.R
-```
-
-Ou toute la chaîne :
-
+To run the entire pipeline from raw data to finished figures:
 ```bash
 Rscript application/run_application.R
 ```
+Outputs are written to `results/application_figures/` and copied to the `paper/figures/` directory for LaTeX compilation.

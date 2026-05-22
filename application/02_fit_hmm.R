@@ -1,8 +1,8 @@
-# Fit candidate HMMs for the elk application.
+# Fit candidate HMMs for the elk application under Leave-One-Animal-Out (LOAO).
 #
-# The fitted null is selected by BIC among K = 2, 3, 4 models fitted on the
-# training individuals only. This script uses moveHMM for model fitting and
-# stores the fitted objects for downstream predictive e-diagnostics.
+# For each of the 4 individuals, we hold out that individual, and fit HMMs with
+# K = 2, 3, 4 states on the remaining three training individuals. The fitted null
+# model is selected by BIC for each fold.
 
 required_packages <- c("moveHMM")
 missing_packages <- required_packages[!vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)]
@@ -26,8 +26,7 @@ dir.create(output_data_dir, recursive = TRUE, showWarnings = FALSE)
 dir.create(output_table_dir, recursive = TRUE, showWarnings = FALSE)
 
 prepared <- read.csv(input_data_file, stringsAsFactors = FALSE)
-train_data <- prepared[prepared$split == "train", ]
-class(train_data) <- c("moveData", "data.frame")
+individual_ids <- unique(prepared$ID)
 
 make_initial_values <- function(data, n_states, profile) {
   step <- data$step[is.finite(data$step) & data$step > 0]
@@ -107,9 +106,11 @@ fit_one_start <- function(data, n_states, initial_values) {
   )
 }
 
-summarise_fit <- function(fit, n_states, profile, warning_count) {
+summarise_fit <- function(fit, n_states, profile, warning_count, train_data, val_id) {
+  n_observations <- sum(is.finite(train_data$step) & is.finite(train_data$angle))
   if (inherits(fit, "error")) {
     return(data.frame(
+      validation_id = val_id,
       n_states = n_states,
       profile = profile,
       converged = FALSE,
@@ -118,7 +119,7 @@ summarise_fit <- function(fit, n_states, profile, warning_count) {
       neg_log_likelihood = NA_real_,
       log_likelihood = NA_real_,
       n_parameters = NA_integer_,
-      n_observations = sum(is.finite(train_data$step) & is.finite(train_data$angle)),
+      n_observations = n_observations,
       AIC = NA_real_,
       BIC = NA_real_,
       warning_count = warning_count,
@@ -128,10 +129,10 @@ summarise_fit <- function(fit, n_states, profile, warning_count) {
   }
 
   n_parameters <- length(fit$mod$estimate)
-  n_observations <- sum(is.finite(train_data$step) & is.finite(train_data$angle))
   neg_log_likelihood <- fit$mod$minimum
 
   data.frame(
+    validation_id = val_id,
     n_states = n_states,
     profile = profile,
     converged = fit$mod$code %in% c(1L, 2L),
@@ -150,77 +151,101 @@ summarise_fit <- function(fit, n_states, profile, warning_count) {
 }
 
 profiles <- c("compact", "spread", "upper", "reversed_angle", "long_tail")
-candidate_rows <- list()
-candidate_fits <- list()
+all_candidate_rows <- list()
+all_best_by_k <- list()
+models_by_fold <- list()
 row_index <- 1L
 
-for (n_states in 2:4) {
-  message("Fitting moveHMM model with K = ", n_states)
-  for (profile in profiles) {
-    initial_values <- make_initial_values(
-      data = train_data,
-      n_states = n_states,
-      profile = profile
-    )
-    fitted_start <- fit_one_start(
-      data = train_data,
-      n_states = n_states,
-      initial_values = initial_values
-    )
-    candidate_rows[[row_index]] <- summarise_fit(
-      fit = fitted_start$fit,
-      n_states = n_states,
-      profile = fitted_start$profile,
-      warning_count = length(fitted_start$warnings)
-    )
-    candidate_fits[[row_index]] <- fitted_start
-    names(candidate_fits)[row_index] <- paste0("K", n_states, "_", profile)
-    row_index <- row_index + 1L
+for (val_id in individual_ids) {
+  message("\n--- LOAO Fold: validation individual = ", val_id, " ---")
+  train_data <- prepared[prepared$ID != val_id, ]
+  class(train_data) <- c("moveData", "data.frame")
+  
+  fold_candidate_rows <- list()
+  fold_candidate_fits <- list()
+  fold_row_index <- 1L
+  
+  for (n_states in 2:4) {
+    message("Fitting moveHMM model with K = ", n_states, " on training individuals...")
+    for (profile in profiles) {
+      initial_values <- make_initial_values(
+        data = train_data,
+        n_states = n_states,
+        profile = profile
+      )
+      fitted_start <- fit_one_start(
+        data = train_data,
+        n_states = n_states,
+        initial_values = initial_values
+      )
+      summary_row <- summarise_fit(
+        fit = fitted_start$fit,
+        n_states = n_states,
+        profile = fitted_start$profile,
+        warning_count = length(fitted_start$warnings),
+        train_data = train_data,
+        val_id = val_id
+      )
+      fold_candidate_rows[[fold_row_index]] <- summary_row
+      all_candidate_rows[[row_index]] <- summary_row
+      
+      fold_candidate_fits[[fold_row_index]] <- fitted_start
+      names(fold_candidate_fits)[fold_row_index] <- paste0("K", n_states, "_", profile)
+      
+      fold_row_index <- fold_row_index + 1L
+      row_index <- row_index + 1L
+    }
   }
+  
+  fold_summary <- do.call(rbind, fold_candidate_rows)
+  usable_fold_summary <- fold_summary[
+    fold_summary$converged & is.finite(fold_summary$BIC),
+  ]
+  if (nrow(usable_fold_summary) == 0L) {
+    stop("No converged HMM fit was obtained for fold: ", val_id, call. = FALSE)
+  }
+  
+  best_fold_by_k <- do.call(
+    rbind,
+    lapply(split(usable_fold_summary, usable_fold_summary$n_states), function(rows) {
+      rows[which.min(rows$neg_log_likelihood), , drop = FALSE]
+    })
+  )
+  best_fold_by_k$selected_null <- FALSE
+  best_fold_by_k$selected_null[which.min(best_fold_by_k$BIC)] <- TRUE
+  
+  all_best_by_k[[val_id]] <- best_fold_by_k
+  
+  selected_models <- list()
+  for (k in best_fold_by_k$n_states) {
+    selected_profile <- best_fold_by_k$profile[best_fold_by_k$n_states == k]
+    fit_name <- paste0("K", k, "_", selected_profile)
+    selected_models[[paste0("K", k)]] <- fold_candidate_fits[[fit_name]]$fit
+  }
+  models_by_fold[[val_id]] <- selected_models
+  
+  selected_null_k <- best_fold_by_k$n_states[best_fold_by_k$selected_null]
+  message("For fold ", val_id, ", selected null model: K = ", selected_null_k)
 }
 
-candidate_summary <- do.call(rbind, candidate_rows)
-usable_summary <- candidate_summary[
-  candidate_summary$converged & is.finite(candidate_summary$BIC),
-]
-if (nrow(usable_summary) == 0L) {
-  stop("No converged HMM fit was obtained.", call. = FALSE)
-}
-
-best_by_k <- do.call(
-  rbind,
-  lapply(split(usable_summary, usable_summary$n_states), function(rows) {
-    rows[which.min(rows$neg_log_likelihood), , drop = FALSE]
-  })
-)
-best_by_k$selected_null <- FALSE
-best_by_k$selected_null[which.min(best_by_k$BIC)] <- TRUE
-
-selected_null_k <- best_by_k$n_states[best_by_k$selected_null]
-
-selected_models <- list()
-for (k in best_by_k$n_states) {
-  selected_profile <- best_by_k$profile[best_by_k$n_states == k]
-  fit_name <- paste0("K", k, "_", selected_profile)
-  selected_models[[paste0("K", k)]] <- candidate_fits[[fit_name]]$fit
-}
+candidate_summary_combined <- do.call(rbind, all_candidate_rows)
+best_by_k_combined <- do.call(rbind, all_best_by_k)
 
 write.csv(
-  candidate_summary,
+  candidate_summary_combined,
   file = file.path(output_table_dir, "elk_hmm_all_fit_attempts.csv"),
   row.names = FALSE
 )
 write.csv(
-  best_by_k,
+  best_by_k_combined,
   file = file.path(output_table_dir, "elk_hmm_model_selection.csv"),
   row.names = FALSE
 )
 saveRDS(
-  selected_models,
+  models_by_fold,
   file = file.path(output_data_dir, "elk_movehmm_selected_models.rds")
 )
 
-message("Application HMM fitting completed.")
-message("Selected null model: K = ", selected_null_k)
+message("\nApplication HMM fitting completed.")
 message("Model selection table written to: ", file.path(output_table_dir, "elk_hmm_model_selection.csv"))
 message("Selected model objects written to: ", file.path(output_data_dir, "elk_movehmm_selected_models.rds"))

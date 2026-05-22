@@ -1,4 +1,4 @@
-# Generate ggplot figures for the elk application.
+# Generate ggplot figures for the elk application under LOAO.
 
 required_packages <- c("ggplot2", "dplyr", "tidyr", "scales")
 missing_packages <- required_packages[!vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)]
@@ -109,7 +109,7 @@ theme_elk <- function(base_size = 12) {
       legend.position = "bottom",
       legend.title = element_blank(),
       strip.text = element_text(face = "bold", colour = "#17324d"),
-      plot.margin = margin(12, 38, 12, 12)
+      plot.margin = margin(12, 12, 12, 12)
     )
 }
 
@@ -132,25 +132,14 @@ save_application_plot <- function(plot, file_name, width = 10, height = 7, dpi =
   )
 }
 
-split_colours <- c(train = "#a8b0b7", validation = "#c23b22")
-diagnostic_colours <- c(
-  "State-number diagnostic (K=3 vs K=4)" = "#1b6ca8",
-  "Diffuse-angle diagnostic" = "#c46a00",
-  "Fixed mixture" = "#0b7a53",
-  "Long-step-state localized diagnostic" = "#6b5b2e"
-)
-increment_colours <- c(
-  "Evidence for diagnostic" = "#0b7a53",
-  "Evidence for null" = "#b8c0c8"
-)
-
+# 1. Trajectory Plot (showing the 4 individuals)
 trajectory_labels <- prepared |>
   group_by(ID) |>
   slice_max(order_by = time_index, n = 1, with_ties = FALSE) |>
   ungroup()
 
-trajectory_plot <- ggplot(prepared, aes(x = x, y = y, group = ID, colour = split)) +
-  geom_path(aes(linewidth = split, alpha = split), lineend = "round") +
+trajectory_plot <- ggplot(prepared, aes(x = x, y = y, group = ID, colour = ID)) +
+  geom_path(linewidth = 0.65, lineend = "round", alpha = 0.8) +
   geom_point(
     data = trajectory_labels,
     aes(x = x, y = y),
@@ -167,20 +156,19 @@ trajectory_plot <- ggplot(prepared, aes(x = x, y = y, group = ID, colour = split
     show.legend = FALSE
   ) +
   coord_equal() +
-  scale_colour_manual(values = split_colours) +
-  scale_linewidth_manual(values = c(train = 0.45, validation = 1.15)) +
-  scale_alpha_manual(values = c(train = 0.55, validation = 0.98)) +
+  scale_colour_brewer(palette = "Set1") +
   labs(
-    title = "Held-out validation is one whole animal",
-    subtitle = "The red trajectory, elk-115, is never used to fit the HMMs.",
+    title = "Trajectories of the four elk individuals",
+    subtitle = "Under Leave-One-Animal-Out cross-validation, each individual is used for validation in turn.",
     x = "Easting",
     y = "Northing",
-    caption = "Data: moveHMM::elk_data. Split: elk-115 validation, remaining individuals training."
+    caption = "Data: moveHMM::elk_data."
   ) +
   scale_x_continuous(labels = label_number(big.mark = ",")) +
   scale_y_continuous(labels = label_number(big.mark = ",")) +
   theme_elk()
 
+# 2. Model Selection Plot (showing AIC/BIC for each fold)
 criterion_long <- model_selection |>
   mutate(selected = if_else(selected_null, "BIC-selected null", "Candidate")) |>
   pivot_longer(
@@ -189,73 +177,32 @@ criterion_long <- model_selection |>
     values_to = "value"
   )
 
-selected_row <- criterion_long |>
-  filter(selected_null, criterion == "BIC")
-
 model_selection_plot <- ggplot(
   criterion_long,
   aes(x = n_states, y = value, colour = criterion, group = criterion)
 ) +
   geom_line(linewidth = 1.1) +
-  geom_point(aes(shape = selected), size = 3.2, stroke = 1.1) +
-  geom_label(
-    data = selected_row,
-    aes(label = "BIC selects K = 3"),
-    nudge_y = 45,
-    linewidth = 0,
-    fill = "white",
-    colour = "#17324d",
-    show.legend = FALSE
-  ) +
+  geom_point(aes(shape = selected), size = 2.8, stroke = 1.1) +
+  facet_wrap(~validation_id, scales = "free_y") +
   scale_x_continuous(breaks = sort(unique(model_selection$n_states))) +
   scale_y_continuous(labels = label_number(big.mark = ",")) +
   scale_colour_manual(values = c(AIC = "#c46a00", BIC = "#1b6ca8")) +
   scale_shape_manual(values = c(Candidate = 16, `BIC-selected null` = 21)) +
   labs(
-    title = "Model selection chooses a parsimonious null",
-    subtitle = "K = 4 improves AIC, but BIC selects K = 3 as the fitted generator.",
+    title = "Model selection across Leave-One-Animal-Out folds",
+    subtitle = "BIC consistently selects K = 3 as the null model for all training sets.",
     x = "Number of states",
     y = "Information criterion",
-    caption = "All HMMs are fitted on training individuals only."
+    caption = "All HMMs are fitted on training individuals for each fold."
   ) +
   theme_elk()
 
+# 3. Cumulative E-process Paths Plot (faceted by diagnostic, showing the 4 individuals)
 threshold <- unique(diagnostic_paths$threshold)[1]
-final_labels <- diagnostic_paths |>
-  group_by(diagnostic_label) |>
-  slice_max(order_by = time, n = 1, with_ties = FALSE) |>
-  ungroup() |>
-  mutate(
-    label_x = max(diagnostic_paths$time) + 5,
-    label_y = case_when(
-      diagnostic_name == "state_number_K3_vs_K4" ~ log_e_cumulative - 0.16,
-      diagnostic_name == "state_number_K3_vs_K4__predicted_state_3" ~ log_e_cumulative + 0.16,
-      TRUE ~ log_e_cumulative
-    )
-  )
-
-crossing_points <- diagnostic_paths |>
-  group_by(diagnostic_label) |>
-  filter(log_e_cumulative >= threshold) |>
-  slice_min(order_by = time, n = 1, with_ties = FALSE) |>
-  ungroup() |>
-  mutate(
-    crossing_label = paste0("t = ", time),
-    label_x = case_when(
-      diagnostic_name == "state_number_K3_vs_K4" ~ time - 2,
-      diagnostic_name == "mixture_state_angle" ~ time + 10,
-      TRUE ~ time + 7
-    ),
-    label_y = case_when(
-      diagnostic_name == "state_number_K3_vs_K4" ~ threshold + 0.82,
-      diagnostic_name == "mixture_state_angle" ~ threshold + 0.34,
-      TRUE ~ threshold + 0.58
-    )
-  )
 
 eprocess_plot <- ggplot(
   diagnostic_paths,
-  aes(x = time, y = log_e_cumulative, colour = diagnostic_label)
+  aes(x = time, y = log_e_cumulative, colour = individual_id, group = individual_id)
 ) +
   geom_hline(
     yintercept = threshold,
@@ -263,97 +210,57 @@ eprocess_plot <- ggplot(
     linewidth = 0.8,
     colour = "#1f2933"
   ) +
-  annotate(
-    "label",
-    x = 62,
-    y = threshold,
-    label = "alpha 0.05 threshold",
-    vjust = -0.8,
-    size = 3.2,
-    linewidth = 0,
-    fill = "white",
-    colour = "#1f2933"
-  ) +
-  geom_line(linewidth = 1.1) +
-  geom_point(
-    data = crossing_points,
-    size = 2.4,
-    show.legend = FALSE
-  ) +
-  geom_label(
-    data = crossing_points,
-    aes(x = label_x, y = label_y, label = crossing_label),
-    size = 3,
-    linewidth = 0,
-    fill = "white",
-    show.legend = FALSE
-  ) +
-  geom_text(
-    data = final_labels,
-    aes(x = label_x, y = label_y, label = diagnostic_short_label),
-    hjust = 0,
-    size = 3.1,
-    show.legend = FALSE
-  ) +
-  coord_cartesian(
-    xlim = c(min(diagnostic_paths$time), max(diagnostic_paths$time) + 34),
-    clip = "off"
-  ) +
-  scale_x_continuous(expand = expansion(mult = c(0.01, 0.02))) +
-  scale_y_continuous(expand = expansion(mult = c(0.03, 0.10))) +
-  scale_colour_manual(values = diagnostic_colours) +
+  geom_line(linewidth = 1.0, alpha = 0.8) +
+  facet_wrap(~diagnostic_label, scales = "free_y") +
+  scale_colour_brewer(palette = "Set1") +
   labs(
-    title = "The held-out elk challenges the BIC-selected HMM",
-    subtitle = "The K+1 diagnostic crosses early; the localized version crosses later in long-step periods.",
+    title = "Leave-One-Animal-Out cumulative log e-processes",
+    subtitle = "The dashed line is the alpha = 0.05 threshold, log(20). Tracks vary across individual animals.",
     x = "Validation time index",
     y = "Cumulative log e-value",
-    caption = "A crossing is evidence against the fitted generator relative to the chosen diagnostic, not proof of a biological state."
+    caption = "A crossing of the threshold is evidence against the fitted generator."
   ) +
-  theme_elk() +
-  theme(legend.position = "none")
+  theme_elk()
 
-primary_name <- diagnostic_summary |>
-  arrange(desc(max_log_e)) |>
-  slice(1) |>
-  pull(diagnostic_name)
+# 4. Local increments plot (shown for representative individual elk-115)
+primary_path_elk115 <- diagnostic_paths |>
+  filter(diagnostic_name == "mixture_state_angle", individual_id == "elk-115")
 
-primary_path <- diagnostic_paths |>
-  filter(diagnostic_name == primary_name)
+increment_colours <- c(
+  "Evidence for diagnostic" = "#0b7a53",
+  "Evidence for null" = "#b8c0c8"
+)
 
 increment_plot <- ggplot(
-  primary_path,
+  primary_path_elk115,
   aes(x = time, y = log_e_increment, fill = increment_direction)
 ) +
   geom_col(width = 0.9, colour = NA) +
   geom_hline(yintercept = 0, linewidth = 0.7, colour = "#1f2933") +
   scale_fill_manual(values = increment_colours) +
   labs(
-    title = "Local increments show where the evidence is earned",
+    title = "Local increments show where the evidence is earned (elk-115)",
     subtitle = "Positive bars are observations predicted better by the diagnostic mixture than by the fitted null.",
     x = "Validation time index",
     y = "Local log e-value increment",
-    caption = paste0("Displayed diagnostic: ", unique(primary_path$diagnostic_label), ".")
+    caption = "Displayed diagnostic: Fixed mixture for elk-115."
   ) +
   theme_elk()
 
-localized_diagnostic_name <- diagnostic_paths |>
-  filter(grepl("predicted_state_", diagnostic_name)) |>
-  slice(1) |>
-  pull(diagnostic_name)
-long_state <- as.integer(sub(".*predicted_state_([0-9]+).*", "\\1", localized_diagnostic_name))
+# 5. Localization plot (shown for representative individual elk-115)
+predicted_state_probs_elk115 <- predicted_state_probs |>
+  filter(ID == "elk-115")
+localized_path_elk115 <- diagnostic_paths |>
+  filter(diagnostic_name == "state_number_K3_vs_K4__predicted_state_3", individual_id == "elk-115")
 
-long_state_col <- paste0("state_", long_state)
-localized_path <- diagnostic_paths |>
-  filter(grepl("predicted_state_", diagnostic_name))
-
-state_probability_panel <- predicted_state_probs |>
+state_probability_panel <- predicted_state_probs_elk115 |>
   transmute(
     time = time_index,
-    panel = paste0("Pr(long-step state ", long_state, ")"),
-    value = .data[[long_state_col]]
+    panel = "Pr(long-step state 3)",
+    value = state_3
   )
 
-localized_panel <- localized_path |>
+localized_panel <- localized_path_elk115 |>
   transmute(
     time = time,
     panel = "Localized log e-value",
@@ -362,7 +269,7 @@ localized_panel <- localized_path |>
 
 localization_panel <- bind_rows(state_probability_panel, localized_panel) |>
   mutate(panel = factor(panel, levels = c(
-    paste0("Pr(long-step state ", long_state, ")"),
+    "Pr(long-step state 3)",
     "Localized log e-value"
   )))
 
@@ -380,7 +287,7 @@ localization_plot <- ggplot(localization_panel, aes(x = time, y = value)) +
     linewidth = 0.7
   ) +
   geom_area(
-    data = filter(localization_panel, grepl("^Pr\\(", panel)),
+    data = filter(localization_panel, panel == "Pr(long-step state 3)"),
     fill = "#d9eadf",
     colour = NA
   ) +
@@ -390,13 +297,13 @@ localization_plot <- ggplot(localization_panel, aes(x = time, y = value)) +
     linewidth = 1.1
   ) +
   geom_line(
-    data = filter(localization_panel, grepl("^Pr\\(", panel)),
+    data = filter(localization_panel, panel == "Pr(long-step state 3)"),
     colour = "#0b7a53",
     linewidth = 1.0
   ) +
   facet_grid(panel ~ ., scales = "free_y", switch = "y") +
   labs(
-    title = "The localized signal waits for long-step conditions",
+    title = "The localized signal waits for long-step conditions (elk-115)",
     subtitle = "Filtering supplies predictable state weights before each validation observation.",
     x = "Validation time index",
     y = NULL,
@@ -410,35 +317,55 @@ localization_plot <- ggplot(localization_panel, aes(x = time, y = value)) +
     panel.spacing.y = grid::unit(10, "pt")
   )
 
-summary_plot <- diagnostic_summary |>
-  arrange(max_log_e) |>
-  mutate(diagnostic_label = factor(diagnostic_label, levels = diagnostic_label)) |>
-  ggplot(aes(x = max_log_e, y = diagnostic_label, colour = signal_label)) +
+# 6. Summary Plot of final log e-values (Individual points and Population Cross-fitted Average)
+indiv_summary <- diagnostic_summary |> filter(validation_id != "population_average")
+pop_summary <- diagnostic_summary |> filter(validation_id == "population_average")
+
+summary_plot <- ggplot() +
   geom_vline(xintercept = threshold, linetype = "dashed", linewidth = 0.8, colour = "#1f2933") +
-  geom_segment(aes(x = 0, xend = max_log_e, yend = diagnostic_label), linewidth = 1.2) +
-  geom_point(size = 4) +
   annotate(
     "label",
     x = threshold,
-    y = 0.6,
+    y = "Fixed mixture",
     label = "threshold",
     size = 3.1,
     linewidth = 0,
     fill = "white",
     colour = "#1f2933"
   ) +
-  scale_colour_manual(values = c(`Crosses threshold` = "#0b7a53", `Does not cross` = "#b85c38")) +
+  geom_segment(
+    data = pop_summary,
+    aes(x = 0, xend = final_log_e, y = diagnostic_label, yend = diagnostic_label),
+    linewidth = 1.2,
+    colour = "#788796"
+  ) +
+  geom_point(
+    data = indiv_summary,
+    aes(x = final_log_e, y = diagnostic_label, colour = validation_id),
+    size = 3.2,
+    alpha = 0.75,
+    shape = 16
+  ) +
+  geom_point(
+    data = pop_summary,
+    aes(x = final_log_e, y = diagnostic_label),
+    size = 5.2,
+    colour = "#0b7a53",
+    shape = 18
+  ) +
+  scale_colour_brewer(palette = "Dark2") +
   labs(
-    title = "Which diagnostics speak the loudest?",
-    subtitle = "The mixture and localized state-number diagnostics provide the clearest evidence.",
-    x = "Maximum cumulative log e-value",
+    title = "Summary of final log e-values across individuals",
+    subtitle = "Individual results (circles) and population cross-fitted average (green diamond).",
+    x = "Final log e-value",
     y = NULL,
-    caption = "All diagnostics are computed on the same held-out individual, elk-115."
+    caption = "The cross-fitted average is E^cf = (1/N) * sum(E^(i)). The threshold is log(20) = 2.996."
   ) +
   theme_elk()
 
+# Save all plots
 save_application_plot(trajectory_plot, "elk_trajectory_split.png", width = 9.5, height = 7.2)
-save_application_plot(model_selection_plot, "elk_model_selection.png", width = 8.4, height = 6.2)
+save_application_plot(model_selection_plot, "elk_model_selection.png", width = 9.5, height = 7.2)
 save_application_plot(eprocess_plot, "elk_eprocess_paths.png", width = 11.4, height = 7.2)
 save_application_plot(increment_plot, "elk_log_e_increments.png", width = 10, height = 6.2)
 save_application_plot(localization_plot, "elk_state_localization.png", width = 10, height = 7.2)

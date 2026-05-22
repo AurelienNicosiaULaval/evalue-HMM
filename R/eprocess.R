@@ -1,5 +1,12 @@
-# Compute predictive e-processes from log predictive densities.
-
+#' Compute predictive e-processes from log predictive densities.
+#'
+#' @param log_p0 Numeric vector. Log predictive density under the null.
+#' @param log_p1 Numeric vector. Log predictive density under the alternative.
+#' @param alpha Numeric. Significance level (default is 0.05).
+#' @param time Numeric vector. Time indices.
+#'
+#' @return A list containing the e-process path and signal metrics.
+#' @export
 compute_eprocess <- function(log_p0, log_p1, alpha = 0.05, time = seq_along(log_p0)) {
   if (!is.numeric(log_p0) || !is.numeric(log_p1)) {
     stop("`log_p0` and `log_p1` must be numeric vectors.", call. = FALSE)

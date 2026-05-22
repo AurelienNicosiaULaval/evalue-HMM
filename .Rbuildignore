@@ -1,0 +1,14 @@
+^evalue-HMM\.Rproj$
+^\.Rproj\.user$
+^renv$
+^renv\.lock$
+^\.python-version$
+^application$
+^simulations$
+^results$
+^paper$
+^docs$
+^PLAN_DE_TRAVAIL\.md$
+^plan_travail_predictive_e_diagnostics_hmm\.md$
+^manuscript_outputs$
+^\.DS_Store$
