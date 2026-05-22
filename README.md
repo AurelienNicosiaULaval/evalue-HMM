@@ -2,9 +2,9 @@
 
 # evalueHMM
 
-[![R-CMD-check](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/R-CMD-check.yaml)
-[![pkgdown](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/pkgdown.yaml)
-[![Codecov test coverage](https://codecov.io/gh/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AurelienNicosiaULaval/predictive_e_diagnostics_hmm)
+[![R-CMD-check](https://github.com/AurelienNicosiaULaval/evalue-HMM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/evalue-HMM/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/AurelienNicosiaULaval/evalue-HMM/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/evalue-HMM/actions/workflows/pkgdown.yaml)
+[![Codecov test coverage](https://codecov.io/gh/AurelienNicosiaULaval/evalue-HMM/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AurelienNicosiaULaval/evalue-HMM)
 [![License: GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
@@ -21,14 +21,14 @@ Install the development version from GitHub:
 
 ```r
 install.packages("remotes")
-remotes::install_github("AurelienNicosiaULaval/predictive_e_diagnostics_hmm")
+remotes::install_github("AurelienNicosiaULaval/evalue-HMM")
 ```
 
 To clone the research repository with SSH:
 
 ```bash
-git clone git@github.com:AurelienNicosiaULaval/predictive_e_diagnostics_hmm.git
-cd predictive_e_diagnostics_hmm
+git clone git@github.com:AurelienNicosiaULaval/evalue-HMM.git
+cd evalue-HMM
 ```
 
 Restore the project environment:
@@ -102,7 +102,7 @@ pkgdown::build_site()
 ```
 
 When GitHub Pages is enabled, the online site is configured for
-`AurelienNicosiaULaval.github.io/predictive_e_diagnostics_hmm`.
+`aureliennicosiaulaval.github.io/evalue-HMM`.
 
 ## Research compendium
 

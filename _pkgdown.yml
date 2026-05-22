@@ -1,4 +1,4 @@
-url: https://AurelienNicosiaULaval.github.io/predictive_e_diagnostics_hmm/
+url: https://aureliennicosiaulaval.github.io/evalue-HMM/
 destination: pkgdown
 
 template:
@@ -11,7 +11,7 @@ home:
   description: Predictive e-diagnostics for hidden Markov models of animal movement.
   links:
   - text: Source repository
-    href: https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm
+    href: https://github.com/AurelienNicosiaULaval/evalue-HMM
 
 navbar:
   structure:

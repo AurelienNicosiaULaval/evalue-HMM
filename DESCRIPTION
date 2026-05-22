@@ -14,8 +14,9 @@ Description: Implements predictive e-diagnostics for hidden Markov models (HMMs)
     applied to animal movement data. Supports computation of predictive densities,
     e-processes, diagnostic combinations, localized diagnostics, and envelope constructions.
 License: GPL-3
-URL: https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm
-BugReports: https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/issues
+URL: https://github.com/AurelienNicosiaULaval/evalue-HMM,
+    https://aureliennicosiaulaval.github.io/evalue-HMM/
+BugReports: https://github.com/AurelienNicosiaULaval/evalue-HMM/issues
 Depends:
     R (>= 4.1.0)
 Encoding: UTF-8
