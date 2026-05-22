@@ -28,4 +28,8 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - uses: r-lib/actions/pkgdown@v2
+      - name: Deploy pkgdown site
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
