@@ -1,5 +1,3 @@
-<img src="man/figures/logo.png" align="right" height="170" alt="evalueHMM hex logo" />
-
 # evalueHMM
 
 [![R-CMD-check](https://github.com/AurelienNicosiaULaval/evalue-HMM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/evalue-HMM/actions/workflows/R-CMD-check.yaml)
