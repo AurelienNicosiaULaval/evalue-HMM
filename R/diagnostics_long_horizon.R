@@ -7,6 +7,18 @@ clip_to_open_unit <- function(x, eps = 1e-5) {
   pmin(pmax(x, eps), 1 - eps)
 }
 
+#' Simulate movement with autoregressive angle residuals
+#'
+#' Simulate trajectories where the latent angle residual follows a state-specific
+#' autoregressive process, useful as a long-horizon diagnostic alternative.
+#'
+#' @param n_times Number of observations per individual.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param rho_by_state State-dependent autoregressive correlations.
+#' @param n_individuals Number of independent individuals.
+#'
+#' @return A simulated movement data frame.
+#' @export
 simulate_hmm_movement_ar_angles <- function(
     n_times,
     parameters,
@@ -78,6 +90,17 @@ simulate_hmm_movement_ar_angles <- function(
   do.call(rbind, output)
 }
 
+#' Compute block straightness
+#'
+#' Compute net displacement divided by total path length for a block of movement
+#' observations.
+#'
+#' @param step_length Numeric step lengths.
+#' @param turning_angle Numeric turning angles.
+#' @param eps Clipping value used to keep the feature in `(0, 1)`.
+#'
+#' @return A scalar straightness index.
+#' @export
 compute_block_straightness <- function(step_length, turning_angle, eps = 1e-5) {
   if (length(step_length) == 0L || length(turning_angle) == 0L) {
     stop("`step_length` and `turning_angle` must not be empty.", call. = FALSE)
@@ -121,6 +144,17 @@ fit_beta_moments <- function(x, eps = 1e-5, min_precision = 1e-3) {
   )
 }
 
+#' Simulate block straightness values
+#'
+#' @param n_simulations Number of simulated blocks.
+#' @param block_size Number of observations per block.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param generator Either `"hmm"` or `"ar_angle"`.
+#' @param rho_by_state State-dependent autoregressive correlations for
+#'   `generator = "ar_angle"`.
+#'
+#' @return A numeric vector of straightness values.
+#' @export
 simulate_block_straightness_values <- function(
     n_simulations,
     block_size,
@@ -158,6 +192,16 @@ simulate_block_straightness_values <- function(
   )
 }
 
+#' Fit beta approximations to block-straightness laws
+#'
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param rho_by_state State-dependent autoregressive correlations for the
+#'   diagnostic alternative.
+#' @param block_size Number of observations per block.
+#' @param n_simulations Number of simulated blocks for each law.
+#'
+#' @return A data frame of fitted beta law parameters.
+#' @export
 fit_block_straightness_laws <- function(
     parameters,
     rho_by_state,
@@ -201,6 +245,20 @@ fit_block_straightness_laws <- function(
   )
 }
 
+#' Long-horizon straightness diagnostic
+#'
+#' Build a blockwise e-process for a straightness feature using beta
+#' approximations to null and diagnostic block-feature laws.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param law_parameters Output from [fit_block_straightness_laws()].
+#' @param block_size Number of observations per block.
+#' @param alpha Monitoring level.
+#' @param diagnostic_name Diagnostic name.
+#' @param metadata Optional metadata list.
+#'
+#' @return A `predictive_e_diagnostic` object with block-level features.
+#' @export
 diagnostic_long_horizon_straightness <- function(
     data,
     law_parameters,

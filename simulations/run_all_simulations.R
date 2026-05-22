@@ -13,7 +13,8 @@ simulation_scripts <- c(
   "simulations/09_parallel_product_warning.R",
   "simulations/10_blockwise_long_horizon.R",
   "simulations/11_individual_validation_crossfit.R",
-  "simulations/12_composite_envelope_optional.R"
+  "simulations/12_composite_envelope_optional.R",
+  "simulations/13_comparative_power_residuals.R"
 )
 
 run_script <- function(script) {

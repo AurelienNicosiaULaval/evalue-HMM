@@ -81,22 +81,16 @@ The simulation and application runners now launch each component script in a fre
 
 ## Elk application checks
 
-The application regenerated the following model-selection table.
+The current application output uses Leave-One-Animal-Out validation across the four elk individuals. The regenerated model-selection table selects `K = 3` by BIC for folds `elk-115`, `elk-287`, and `elk-363`, and `K = 4` for fold `elk-163`. For a common cross-fitted diagnostic comparison, the application fixes the null generator to `K = 3` and the diagnostic state-number alternative to `K = 4` across folds.
 
-| States | Negative log-likelihood | AIC | BIC | Selected null |
-|---:|---:|---:|---:|---:|
-| 2 | 5190.649 | 10407.298 | 10462.919 | No |
-| 3 | 4994.368 | 10034.736 | 10133.142 | Yes |
-| 4 | 4976.707 | 10023.414 | 10173.162 | No |
+The current population-average diagnostic summary is:
 
-The application regenerated the following diagnostic summary.
-
-| Diagnostic | Signal | Crossing time | Max log e | Final log e |
-|---|---:|---:|---:|---:|
-| `state_number_K3_vs_K4` | Yes | 16 | 5.459 | 5.413 |
-| `angle_diffuse_K3` | No | NA | 2.811 | 0.154 |
-| `mixture_state_angle` | Yes | 22 | 11.089 | 10.981 |
-| `state_number_K3_vs_K4__predicted_state_3` | Yes | 123 | 5.618 | 5.605 |
+| Diagnostic | Signal | Final log e |
+|---|---:|---:|
+| `state_number_K3_vs_K4` | Yes | 6.009 |
+| `angle_diffuse_K3` | No | 1.706 |
+| `mixture_state_angle` | Yes | 9.747 |
+| `state_number_K3_vs_K4__predicted_state_3` | Yes | 4.573 |
 
 ## Generated outputs
 
@@ -138,7 +132,7 @@ Package versions checked during the audit:
 - No blocking issue was found in the local audit.
 - This was not a clean install on a new machine.
 - The project now has an `renv.lock` file, but `renv::restore()` has not yet been tested in a fresh clone.
-- The application remains exploratory because it uses one held-out individual and a diagnostic menu chosen for this proof of concept.
+- The application remains exploratory because it uses a four-individual Leave-One-Animal-Out analysis and a diagnostic menu chosen for this proof of concept.
 
 ## Recommended next step
 

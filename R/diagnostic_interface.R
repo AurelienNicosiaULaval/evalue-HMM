@@ -10,6 +10,13 @@
 #' @param metadata List. Additional metadata.
 #'
 #' @return A list of class \code{predictive_e_diagnostic}.
+#' @examples
+#' diagnostic <- make_predictive_diagnostic(
+#'   diagnostic_name = "toy",
+#'   log_p0 = c(-1.2, -0.8, -1.0),
+#'   log_q = c(-1.0, -0.7, -0.9)
+#' )
+#' summarise_predictive_diagnostic(diagnostic)
 #' @export
 make_predictive_diagnostic <- function(
     diagnostic_name,
@@ -101,6 +108,13 @@ make_predictive_diagnostic <- function(
 #'
 #' @importFrom utils tail
 #' @return A data frame summarizing the diagnostic.
+#' @examples
+#' diagnostic <- make_predictive_diagnostic(
+#'   diagnostic_name = "toy",
+#'   log_p0 = c(-1.2, -0.8),
+#'   log_q = c(-1.0, -0.7)
+#' )
+#' summarise_predictive_diagnostic(diagnostic)
 #' @export
 summarise_predictive_diagnostic <- function(diagnostic) {
   if (!inherits(diagnostic, "predictive_e_diagnostic")) {
@@ -126,10 +140,10 @@ summarise_predictive_diagnostic <- function(diagnostic) {
 #' @param x A \code{predictive_e_diagnostic} object.
 #' @param ... Unused.
 #'
+#' @keywords internal
 #' @export
 print.predictive_e_diagnostic <- function(x, ...) {
   summary <- summarise_predictive_diagnostic(x)
   print(summary, row.names = FALSE)
   invisible(x)
 }
-

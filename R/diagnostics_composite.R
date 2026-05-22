@@ -26,6 +26,13 @@ validate_hmm_parameter_family <- function(parameter_family, min_size = 2L) {
   parameter_family
 }
 
+#' Predictive log-densities for a finite HMM family
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param parameter_family Named list of HMM parameter sets.
+#'
+#' @return A numeric matrix of predictive log-densities.
+#' @export
 hmm_family_predictive_log_density <- function(data, parameter_family) {
   parameter_family <- validate_hmm_parameter_family(parameter_family)
   log_density_matrix <- vapply(
@@ -42,6 +49,15 @@ hmm_family_predictive_log_density <- function(data, parameter_family) {
   log_density_matrix
 }
 
+#' Composite-envelope predictive log-density
+#'
+#' Compute the pointwise maximum predictive log-density over a finite null family.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param parameter_family Named list of HMM parameter sets.
+#'
+#' @return A numeric vector of envelope log-densities.
+#' @export
 hmm_composite_envelope_log_density <- function(data, parameter_family) {
   log_density_matrix <- hmm_family_predictive_log_density(
     data = data,
@@ -50,6 +66,21 @@ hmm_composite_envelope_log_density <- function(data, parameter_family) {
   apply(log_density_matrix, 1L, max)
 }
 
+#' Conservative finite-family composite-null diagnostic
+#'
+#' Use the pointwise maximum predictive density over a finite null family as a
+#' conservative denominator.
+#'
+#' @param data Movement data with `step_length`, `turning_angle`, `time`, and
+#'   `individual_id`.
+#' @param null_family Named list of null HMM parameter sets.
+#' @param diagnostic_parameters Diagnostic HMM parameters.
+#' @param alpha Monitoring level.
+#' @param diagnostic_name Diagnostic name.
+#' @param metadata Optional metadata list.
+#'
+#' @return A `predictive_e_diagnostic` object.
+#' @export
 diagnostic_composite_envelope <- function(
     data,
     null_family,
@@ -89,6 +120,12 @@ diagnostic_composite_envelope <- function(
   diagnostic
 }
 
+#' Summarise a finite HMM parameter family
+#'
+#' @param parameter_family Named list of HMM parameter sets.
+#'
+#' @return A data frame summarising selected HMM parameters.
+#' @export
 summarise_hmm_parameter_family <- function(parameter_family) {
   parameter_family <- validate_hmm_parameter_family(parameter_family, min_size = 1L)
   do.call(

@@ -4,6 +4,22 @@ wrap_angle <- function(angle) {
   ((angle + pi) %% (2 * pi)) - pi
 }
 
+#' Create movement-HMM parameters
+#'
+#' Construct a parameter list for the built-in Gamma step-length and wrapped
+#' normal turning-angle HMM used in examples and simulations.
+#'
+#' @param initial_probs Numeric probability vector for the initial latent state.
+#' @param transition_matrix Square transition probability matrix.
+#' @param step_shape,step_rate State-dependent Gamma shape and rate parameters.
+#' @param angle_mean,angle_sd State-dependent wrapped-normal mean and standard
+#'   deviation parameters.
+#'
+#' @return A list of HMM movement parameters.
+#' @examples
+#' parameters <- create_hmm_movement_parameters()
+#' str(parameters)
+#' @export
 create_hmm_movement_parameters <- function(
     initial_probs = c(0.65, 0.35),
     transition_matrix = matrix(c(0.92, 0.08, 0.12, 0.88), nrow = 2, byrow = TRUE),
@@ -48,10 +64,30 @@ create_hmm_movement_parameters <- function(
   )
 }
 
+#' Simulate wrapped-normal angles
+#'
+#' @param n Number of angles to simulate.
+#' @param mean Circular mean.
+#' @param sd Standard deviation before wrapping.
+#'
+#' @return A numeric vector of angles in \eqn{[-\pi, \pi)}.
+#' @export
 simulate_wrapped_normal <- function(n, mean, sd) {
   wrap_angle(stats::rnorm(n = n, mean = mean, sd = sd))
 }
 
+#' Wrapped-normal density
+#'
+#' @param theta Numeric vector of angles.
+#' @param mean Circular mean.
+#' @param sd Standard deviation before wrapping.
+#' @param log Logical. Return log-density if `TRUE`.
+#' @param n_terms Number of wrapped normal series terms on each side of zero.
+#'
+#' @return A numeric vector of densities or log-densities.
+#' @examples
+#' d_wrapped_normal(0, mean = 0, sd = 1)
+#' @export
 d_wrapped_normal <- function(theta, mean, sd, log = FALSE, n_terms = 5L) {
   if (sd <= 0) {
     stop("`sd` must be positive.", call. = FALSE)
@@ -67,7 +103,11 @@ d_wrapped_normal <- function(theta, mean, sd, log = FALSE, n_terms = 5L) {
     function(k) stats::dnorm(theta + 2 * pi * k, mean = mean, sd = sd),
     numeric(length(theta))
   )
-  density <- rowSums(density_matrix)
+  density <- if (length(theta) == 1L) {
+    sum(density_matrix)
+  } else {
+    rowSums(density_matrix)
+  }
 
   if (log) {
     return(log(density))
@@ -75,6 +115,17 @@ d_wrapped_normal <- function(theta, mean, sd, log = FALSE, n_terms = 5L) {
   density
 }
 
+#' Wrapped-normal distribution function
+#'
+#' @param theta Numeric vector of angles.
+#' @param mean Circular mean.
+#' @param sd Standard deviation before wrapping.
+#' @param n_terms Number of wrapped normal series terms on each side of zero.
+#'
+#' @return A numeric vector of distribution function values clipped to `[0, 1]`.
+#' @examples
+#' p_wrapped_normal(0, mean = 0, sd = 1)
+#' @export
 p_wrapped_normal <- function(theta, mean, sd, n_terms = 8L) {
   if (sd <= 0) {
     stop("`sd` must be positive.", call. = FALSE)
@@ -93,9 +144,30 @@ p_wrapped_normal <- function(theta, mean, sd, n_terms = 8L) {
     },
     numeric(length(theta))
   )
-  pmin(pmax(rowSums(cdf_matrix), 0), 1)
+  cdf <- if (length(theta) == 1L) {
+    sum(cdf_matrix)
+  } else {
+    rowSums(cdf_matrix)
+  }
+  pmin(pmax(cdf, 0), 1)
 }
 
+#' Simulate movement from a finite-state HMM
+#'
+#' Simulate one or more independent trajectories with state-dependent Gamma
+#' step lengths and wrapped-normal turning angles.
+#'
+#' @param n_times Number of observations per individual.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param n_individuals Number of independent individuals.
+#'
+#' @return A data frame with individual id, time, latent state, step length and
+#'   turning angle.
+#' @examples
+#' set.seed(1)
+#' parameters <- create_hmm_movement_parameters()
+#' simulate_hmm_movement(5, parameters)
+#' @export
 simulate_hmm_movement <- function(n_times, parameters, n_individuals = 1L) {
   if (!is.numeric(n_times) || length(n_times) != 1L || n_times < 1L) {
     stop("`n_times` must be a positive integer.", call. = FALSE)
@@ -155,6 +227,18 @@ simulate_hmm_movement <- function(n_times, parameters, n_individuals = 1L) {
   do.call(rbind, output)
 }
 
+#' Simulate movement with residual step-angle dependence
+#'
+#' Simulate the same marginal HMM as [simulate_hmm_movement()] but introduce a
+#' Gaussian copula between step length and turning angle within each state.
+#'
+#' @param n_times Number of observations per individual.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param rho_by_state State-dependent Gaussian copula correlations.
+#' @param n_individuals Number of independent individuals.
+#'
+#' @return A simulated movement data frame.
+#' @export
 simulate_hmm_movement_copula <- function(n_times, parameters, rho_by_state, n_individuals = 1L) {
   if (!is.numeric(n_times) || length(n_times) != 1L || n_times < 1L) {
     stop("`n_times` must be a positive integer.", call. = FALSE)
@@ -228,6 +312,18 @@ simulate_hmm_movement_copula <- function(n_times, parameters, rho_by_state, n_in
   do.call(rbind, output)
 }
 
+#' Simulate movement with localized residual copula dependence
+#'
+#' @param n_times Number of observations per individual.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param rho_by_state State-dependent Gaussian copula correlations during
+#'   active times.
+#' @param active_times Logical vector or numeric time indices where dependence is
+#'   active.
+#' @param n_individuals Number of independent individuals.
+#'
+#' @return A simulated movement data frame including the active-dependence flag.
+#' @export
 simulate_hmm_movement_local_copula <- function(
     n_times,
     parameters,
@@ -338,6 +434,19 @@ sample_next_state_after_dwell <- function(current_state, transition_matrix) {
   sample.int(length(transition_probs), size = 1L, prob = transition_probs)
 }
 
+#' Simulate movement from an HSMM-like dwell-time generator
+#'
+#' Simulate trajectories with non-geometric state dwell times while retaining the
+#' same state-dependent movement emissions as the built-in HMM generator.
+#'
+#' @param n_times Number of observations per individual.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param dwell_mean,dwell_size State-dependent negative-binomial dwell-time
+#'   parameters.
+#' @param n_individuals Number of independent individuals.
+#'
+#' @return A simulated movement data frame.
+#' @export
 simulate_hsmm_movement <- function(
     n_times,
     parameters,
@@ -426,6 +535,13 @@ simulate_hsmm_movement <- function(
   do.call(rbind, output)
 }
 
+#' Compute state-dependent log-emission densities
+#'
+#' @param data Data frame with `step_length` and `turning_angle`.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#'
+#' @return A numeric matrix of log-emission densities with one column per state.
+#' @export
 hmm_movement_log_emission <- function(data, parameters) {
   required_columns <- c("step_length", "turning_angle")
   missing_columns <- setdiff(required_columns, names(data))
@@ -461,6 +577,18 @@ hmm_movement_log_emission <- function(data, parameters) {
   log_emission
 }
 
+#' Compute movement-HMM observable predictive log-density
+#'
+#' @param data Data frame with `step_length` and `turning_angle`.
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#'
+#' @return A numeric vector of one-step predictive log-densities.
+#' @examples
+#' set.seed(1)
+#' parameters <- create_hmm_movement_parameters()
+#' data <- simulate_hmm_movement(5, parameters)
+#' hmm_movement_predictive_log_density(data, parameters)
+#' @export
 hmm_movement_predictive_log_density <- function(data, parameters) {
   log_emission <- hmm_movement_log_emission(data = data, parameters = parameters)
   hmm_predictive_log_density(

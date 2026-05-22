@@ -21,3 +21,8 @@ A list containing the e-process path and signal metrics.
 \description{
 Compute predictive e-processes from log predictive densities.
 }
+\examples{
+log_p0 <- c(-1.2, -0.8, -1.0)
+log_q <- c(-1.0, -0.7, -0.9)
+compute_eprocess(log_p0, log_q)
+}

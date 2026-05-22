@@ -1,5 +1,20 @@
-# Diagnostic for angular distribution misspecification.
-
+#' Diagnostic for angular distribution misspecification
+#'
+#' Compare a null movement HMM with a diagnostic HMM using the same number of
+#' states but altered turning-angle parameters.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param null_parameters Null HMM parameters.
+#' @param angle_parameters Diagnostic HMM parameters with the same number of
+#'   states.
+#' @param alpha Monitoring level.
+#' @param time Optional time index.
+#' @param individual_id Optional individual identifier.
+#' @param diagnostic_name Diagnostic name.
+#' @param metadata Optional metadata list.
+#'
+#' @return A `predictive_e_diagnostic` object.
+#' @export
 diagnostic_angle <- function(
     data,
     null_parameters,

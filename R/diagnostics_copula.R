@@ -4,6 +4,13 @@ clip_unit_interval <- function(x, eps = 1e-8) {
   pmin(pmax(x, eps), 1 - eps)
 }
 
+#' Gaussian copula log-density
+#'
+#' @param u,v Numeric vectors with values in `[0, 1]`.
+#' @param rho Gaussian copula correlation parameter in `(-1, 1)`.
+#'
+#' @return A numeric vector of log-density values.
+#' @export
 gaussian_copula_log_density <- function(u, v, rho) {
   if (!is.numeric(rho) || length(rho) != 1L || !is.finite(rho) || abs(rho) >= 1) {
     stop("`rho` must be a single finite value in (-1, 1).", call. = FALSE)
@@ -18,6 +25,16 @@ gaussian_copula_log_density <- function(u, v, rho) {
     (rho^2 * (z_u^2 + z_v^2) - 2 * rho * z_u * z_v) / (2 * (1 - rho^2))
 }
 
+#' Sequential Rosenblatt residuals for movement HMMs
+#'
+#' Compute step PIT residuals and angle conditional PIT residuals under the
+#' observable predictive mixture implied by a fitted movement HMM.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param parameters Null HMM parameters.
+#'
+#' @return A data frame with residual features.
+#' @export
 hmm_movement_rosenblatt_residuals <- function(data, parameters) {
   required_columns <- c("step_length", "turning_angle")
   missing_columns <- setdiff(required_columns, names(data))
@@ -81,6 +98,22 @@ hmm_movement_rosenblatt_residuals <- function(data, parameters) {
   )
 }
 
+#' Diagnostic for residual step-angle dependence
+#'
+#' Build a feature-level e-process from sequential Rosenblatt residuals and a
+#' Gaussian copula diagnostic alternative.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param null_parameters Null HMM parameters.
+#' @param rho Gaussian copula correlation used by the diagnostic alternative.
+#' @param alpha Monitoring level.
+#' @param time Optional time index.
+#' @param individual_id Optional individual identifier.
+#' @param diagnostic_name Diagnostic name.
+#' @param metadata Optional metadata list.
+#'
+#' @return A `predictive_e_diagnostic` object with residual features attached.
+#' @export
 diagnostic_step_angle_dependence <- function(
     data,
     null_parameters,

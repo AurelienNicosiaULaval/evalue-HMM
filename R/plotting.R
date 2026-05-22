@@ -1,5 +1,13 @@
-# Standard plotting helpers for predictive e-process diagnostics.
-
+#' Plot a predictive e-process
+#'
+#' @param eprocess Object returned by [compute_eprocess()].
+#' @param title Plot title.
+#'
+#' @return A `ggplot` object.
+#' @examples
+#' eprocess <- compute_eprocess(c(-1, -1), c(-0.8, -0.9))
+#' plot_eprocess(eprocess)
+#' @export
 plot_eprocess <- function(eprocess, title = "Predictive e-process") {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("Package `ggplot2` is required for `plot_eprocess()`.", call. = FALSE)

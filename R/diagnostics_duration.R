@@ -189,6 +189,27 @@ hsmm_binary_switch_pmf <- function(
   pmf / sum(pmf)
 }
 
+#' Blockwise diagnostic for duration misspecification
+#'
+#' Compare the observed number of switches in a binary long-step feature within
+#' contiguous blocks to the predictive distribution under an HMM and an HSMM-like
+#' diagnostic alternative.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param null_parameters Null HMM parameters.
+#' @param dwell_mean,dwell_size HSMM-like dwell-time parameters for the
+#'   diagnostic alternative.
+#' @param step_threshold Positive threshold defining long steps.
+#' @param block_size Number of observations per block.
+#' @param n_simulations Number of simulations for the HSMM block feature law.
+#' @param pseudo_count Non-negative pseudo-count for the simulated alternative
+#'   feature distribution.
+#' @param alpha Monitoring level.
+#' @param diagnostic_name Diagnostic name.
+#' @param metadata Optional metadata list.
+#'
+#' @return A `predictive_e_diagnostic` object with block-level features.
+#' @export
 diagnostic_duration_blockwise <- function(
     data,
     null_parameters,

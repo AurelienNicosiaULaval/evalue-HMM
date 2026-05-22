@@ -15,3 +15,11 @@ A data frame summarizing the diagnostic.
 \description{
 Summarise predictive e-diagnostic results.
 }
+\examples{
+diagnostic <- make_predictive_diagnostic(
+  diagnostic_name = "toy",
+  log_p0 = c(-1.2, -0.8),
+  log_q = c(-1.0, -0.7)
+)
+summarise_predictive_diagnostic(diagnostic)
+}

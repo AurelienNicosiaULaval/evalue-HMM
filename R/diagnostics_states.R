@@ -1,5 +1,19 @@
-# Diagnostic for an insufficient number of states.
-
+#' Diagnostic for an insufficient number of states
+#'
+#' Compare a null movement HMM with a diagnostic HMM containing exactly one
+#' additional state.
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param null_parameters Null HMM parameters.
+#' @param extra_state_parameters Diagnostic HMM parameters with one extra state.
+#' @param alpha Monitoring level.
+#' @param time Optional time index.
+#' @param individual_id Optional individual identifier.
+#' @param diagnostic_name Diagnostic name.
+#' @param metadata Optional metadata list.
+#'
+#' @return A `predictive_e_diagnostic` object.
+#' @export
 diagnostic_extra_state <- function(
     data,
     null_parameters,

@@ -16,6 +16,24 @@
   exp(log_prob - normalizer)
 }
 
+#' Forward filter a finite-state HMM
+#'
+#' Run the HMM forward filter using log-emission densities and return observable
+#' predictive log-densities together with predicted and filtered state
+#' probabilities.
+#'
+#' @param log_emission Numeric matrix of log-emission densities with rows as
+#'   observations and columns as states.
+#' @param transition_matrix Square transition probability matrix.
+#' @param initial_probs Initial state probability vector.
+#'
+#' @return A list with `predicted_probs`, `filtered_probs`, and
+#'   `log_predictive_density`.
+#' @examples
+#' log_emission <- log(matrix(c(0.6, 0.4, 0.5, 0.5), nrow = 2, byrow = TRUE))
+#' transition_matrix <- matrix(c(0.9, 0.1, 0.2, 0.8), nrow = 2, byrow = TRUE)
+#' hmm_forward_filter(log_emission, transition_matrix, c(0.5, 0.5))
+#' @export
 hmm_forward_filter <- function(log_emission, transition_matrix, initial_probs) {
   log_emission <- as.matrix(log_emission)
   n_times <- nrow(log_emission)

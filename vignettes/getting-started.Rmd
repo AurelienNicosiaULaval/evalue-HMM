@@ -1,0 +1,89 @@
+---
+title: "Getting started with evalueHMM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with evalueHMM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+`evalueHMM` implements predictive e-diagnostics for hidden Markov models of movement. The basic workflow is:
+
+1. define a fitted null movement HMM;
+2. define a diagnostic predictive alternative before validation;
+3. compute observable predictive log-densities under both models;
+4. accumulate the log-density ratios as a predictive e-process.
+
+```{r setup}
+library(evalueHMM)
+```
+
+For a small reproducible example, simulate a trajectory from the built-in two-state movement HMM.
+
+```{r simulate}
+set.seed(20260522)
+
+null_parameters <- create_hmm_movement_parameters()
+validation_data <- simulate_hmm_movement(
+  n_times = 150,
+  parameters = null_parameters,
+  n_individuals = 1
+)
+
+head(validation_data)
+```
+
+A diagnostic alternative can be any predictive density fixed before seeing the validation trajectory. Here we perturb the null parameters slightly.
+
+```{r diagnostic-density}
+diagnostic_parameters <- perturb_hmm_movement_parameters(
+  parameters = null_parameters,
+  step_mean_multiplier = c(1.10, 0.95),
+  angle_sd_multiplier = c(1.10, 1.20)
+)
+
+log_p0 <- hmm_movement_predictive_log_density(
+  data = validation_data,
+  parameters = null_parameters
+)
+
+log_q <- hmm_movement_predictive_log_density(
+  data = validation_data,
+  parameters = diagnostic_parameters
+)
+```
+
+The e-process is the cumulative product of the density ratios. On the log scale, this is a cumulative sum of `log_q - log_p0`.
+
+```{r eprocess}
+eprocess <- compute_eprocess(
+  log_p0 = log_p0,
+  log_p1 = log_q,
+  alpha = 0.05,
+  time = validation_data$time
+)
+
+summarise_predictive_diagnostic(
+  make_predictive_diagnostic(
+    diagnostic_name = "perturbed_null",
+    log_p0 = log_p0,
+    log_q = log_q,
+    time = validation_data$time
+  )
+)
+```
+
+```{r plot}
+plot_eprocess(eprocess)
+```
+
+The dashed line is `log(1 / alpha)`. Crossing this threshold is evidence against the fitted null generator in the anytime-valid predictive sense described in the manuscript.

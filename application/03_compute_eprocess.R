@@ -4,8 +4,10 @@
 # fitted on the other three individuals. We also compute the population-level
 # cross-fitted average e-values across the 4 individuals.
 
-library(evalueHMM)
-
+source("R/eprocess.R")
+source("R/hmm_forward_filter.R")
+source("R/diagnostic_interface.R")
+source("R/diagnostics_localization.R")
 source("application/utils_movehmm_eprocess.R")
 
 input_data_file <- "application/data_processed/elk_prepared.csv"
@@ -37,9 +39,7 @@ diagnostics_by_fold <- list()
 
 for (val_id in individual_ids) {
   fold_models <- models_by_fold[[val_id]]
-  fold_selection <- model_selection[model_selection$validation_id == val_id, ]
-  
-  selected_null_k <- 3L
+
   null_model_name <- "K3"
   alternative_model_name <- "K4"
   

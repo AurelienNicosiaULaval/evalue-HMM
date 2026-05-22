@@ -59,6 +59,21 @@ power_tempered_log_increment <- function(log_e_increment, weights) {
   weights * log_e_increment
 }
 
+#' Localize or temper a predictive diagnostic
+#'
+#' Transform a diagnostic using predictable weights, either through the linear
+#' e-value localization `1 + w_t (E_t - 1)` or through power tempering.
+#'
+#' @param diagnostic A `predictive_e_diagnostic` object.
+#' @param weights Numeric weights in `[0, 1]`, either scalar or one per
+#'   observation.
+#' @param localization_name Label for the localized process.
+#' @param mode Either `"linear"` or `"power"`.
+#' @param alpha Monitoring level.
+#' @param metadata Optional metadata list.
+#'
+#' @return A localized `predictive_e_diagnostic` object.
+#' @export
 localize_predictive_diagnostic <- function(
     diagnostic,
     weights,
@@ -127,6 +142,13 @@ localize_predictive_diagnostic <- function(
   out
 }
 
+#' Time-window localization weights
+#'
+#' @param time Numeric time index.
+#' @param start,end Window endpoints.
+#'
+#' @return A numeric vector equal to one inside the window and zero outside.
+#' @export
 time_window_weights <- function(time, start, end) {
   if (!is.numeric(time) || any(!is.finite(time))) {
     stop("`time` must be a finite numeric vector.", call. = FALSE)
@@ -144,6 +166,15 @@ time_window_weights <- function(time, start, end) {
   as.numeric(time >= start & time <= end)
 }
 
+#' Predictive state weights from an HMM filter
+#'
+#' @param data Movement data with `step_length` and `turning_angle`.
+#' @param parameters Null HMM parameters.
+#' @param state Optional state index. If `NULL`, return all state weights.
+#'
+#' @return A matrix of predicted state probabilities, or one numeric vector if
+#'   `state` is supplied.
+#' @export
 hmm_predictive_state_weights <- function(data, parameters, state = NULL) {
   required_columns <- c("step_length", "turning_angle")
   missing_columns <- setdiff(required_columns, names(data))

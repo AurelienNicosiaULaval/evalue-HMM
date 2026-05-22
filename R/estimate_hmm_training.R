@@ -13,6 +13,22 @@
   x
 }
 
+#' Estimate movement-HMM parameters from known states
+#'
+#' Estimate the built-in movement-HMM parameters from simulated data where latent
+#' states are observed. This helper is intended for controlled simulation studies
+#' and is not a general HMM fitting routine.
+#'
+#' @param data Data frame with `individual_id`, `time`, `state`, `step_length`,
+#'   and `turning_angle`.
+#' @param n_states Number of states. If `NULL`, inferred from `data$state`.
+#' @param initial_pseudocount,transition_pseudocount Non-negative smoothing
+#'   pseudo-counts.
+#' @param min_step_variance Lower bound for within-state step-length variance.
+#' @param min_angle_sd Lower bound for within-state angle standard deviation.
+#'
+#' @return A parameter list compatible with [create_hmm_movement_parameters()].
+#' @export
 estimate_hmm_movement_oracle <- function(
     data,
     n_states = NULL,
@@ -125,6 +141,19 @@ estimate_hmm_movement_oracle <- function(
   )
 }
 
+#' Perturb movement-HMM parameters
+#'
+#' Create a nearby diagnostic parameter set by modifying step means, angle means,
+#' angle standard deviations and transition or initial probabilities.
+#'
+#' @param parameters Parameter list from [create_hmm_movement_parameters()].
+#' @param step_mean_multiplier,angle_mean_shift,angle_sd_multiplier Scalar or
+#'   state-specific perturbations.
+#' @param transition_blend,initial_blend Blend weights toward uniform transition
+#'   or initial probabilities.
+#'
+#' @return A perturbed parameter list.
+#' @export
 perturb_hmm_movement_parameters <- function(
     parameters,
     step_mean_multiplier = NULL,
@@ -179,6 +208,13 @@ perturb_hmm_movement_parameters <- function(
   )
 }
 
+#' Summarise parameter error for simulated HMMs
+#'
+#' @param estimated_parameters Estimated parameter list.
+#' @param true_parameters True parameter list.
+#'
+#' @return A one-row data frame of error summaries.
+#' @export
 summarise_hmm_parameter_error <- function(estimated_parameters, true_parameters) {
   estimated_step_mean <- estimated_parameters$step_shape / estimated_parameters$step_rate
   true_step_mean <- true_parameters$step_shape / true_parameters$step_rate

@@ -28,7 +28,6 @@ The `manuscript_outputs/` directory is ignored by Git because PDFs are generated
 
 Remaining visible placeholders:
 
-- author information;
 - acknowledgements.
 
 Remaining reproducibility step:

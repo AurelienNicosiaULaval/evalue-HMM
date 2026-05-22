@@ -93,6 +93,22 @@ log_weighted_sum_exp <- function(log_values, weights) {
   normalizer + log(sum(weights * exp(log_values - normalizer)))
 }
 
+#' Predictable mixture of diagnostic e-increments
+#'
+#' Combine diagnostics by a row-wise weighted average of e-increments. The
+#' weights must be fixed or predictable and each row must have total mass no
+#' larger than one.
+#'
+#' @param diagnostics List of `predictive_e_diagnostic` objects with matching
+#'   time and individual identifiers.
+#' @param weights Optional vector of diagnostic weights or matrix with one row
+#'   per observation.
+#' @param diagnostic_name Diagnostic name for the mixture.
+#' @param alpha Monitoring level.
+#' @param metadata Optional metadata list.
+#'
+#' @return A combined `predictive_e_diagnostic` object.
+#' @export
 diagnostic_mixture <- function(
     diagnostics,
     weights = NULL,
@@ -134,6 +150,21 @@ diagnostic_mixture <- function(
   diagnostic
 }
 
+#' Predictable switch between diagnostics
+#'
+#' Select one component diagnostic at each time using only previous log
+#' e-increments over a lookback window.
+#'
+#' @param diagnostics List of `predictive_e_diagnostic` objects with matching
+#'   time and individual identifiers.
+#' @param lookback Positive integer lookback window.
+#' @param initial_choice Initial component index.
+#' @param diagnostic_name Diagnostic name for the switched process.
+#' @param alpha Monitoring level.
+#' @param metadata Optional metadata list.
+#'
+#' @return A combined `predictive_e_diagnostic` object.
+#' @export
 diagnostic_switch <- function(
     diagnostics,
     lookback = 30L,

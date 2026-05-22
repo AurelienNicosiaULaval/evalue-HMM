@@ -1,0 +1,90 @@
+url: https://AurelienNicosiaULaval.github.io/predictive_e_diagnostics_hmm/
+destination: pkgdown
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  light-switch: true
+
+home:
+  title: evalueHMM
+  description: Predictive e-diagnostics for hidden Markov models of animal movement.
+  links:
+  - text: Source repository
+    href: https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Getting started
+        href: articles/getting-started.html
+      - text: Diagnostic catalog
+        href: articles/diagnostic-catalog.html
+      - text: Reproducibility guide
+        href: articles/reproducibility.html
+
+reference:
+- title: E-process core
+  contents:
+  - compute_eprocess
+  - make_predictive_diagnostic
+  - summarise_predictive_diagnostic
+  - plot_eprocess
+- title: Simulation and densities
+  contents:
+  - create_hmm_movement_parameters
+  - simulate_hmm_movement
+  - simulate_hmm_movement_copula
+  - simulate_hmm_movement_local_copula
+  - simulate_hsmm_movement
+  - simulate_hmm_movement_ar_angles
+  - simulate_wrapped_normal
+  - d_wrapped_normal
+  - p_wrapped_normal
+  - hmm_forward_filter
+  - hmm_predictive_log_density
+  - hmm_movement_log_emission
+  - hmm_movement_predictive_log_density
+- title: Diagnostics
+  contents:
+  - diagnostic_extra_state
+  - diagnostic_angle
+  - diagnostic_step_angle_dependence
+  - diagnostic_duration_blockwise
+  - diagnostic_long_horizon_straightness
+  - diagnostic_composite_envelope
+- title: Diagnostic combinations and localization
+  contents:
+  - diagnostic_mixture
+  - diagnostic_switch
+  - localize_predictive_diagnostic
+  - time_window_weights
+  - hmm_predictive_state_weights
+- title: Feature and composite helpers
+  contents:
+  - gaussian_copula_log_density
+  - hmm_movement_rosenblatt_residuals
+  - compute_block_straightness
+  - simulate_block_straightness_values
+  - fit_block_straightness_laws
+  - hmm_family_predictive_log_density
+  - hmm_composite_envelope_log_density
+  - summarise_hmm_parameter_family
+- title: Simulation-study helpers
+  contents:
+  - estimate_hmm_movement_oracle
+  - perturb_hmm_movement_parameters
+  - summarise_hmm_parameter_error
+
+articles:
+- title: Vignettes
+  navbar: ~
+  contents:
+  - getting-started
+  - diagnostic-catalog
+  - reproducibility

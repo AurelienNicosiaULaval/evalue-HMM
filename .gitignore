@@ -31,6 +31,9 @@ results/application_figures/*
 !results/application_figures/.gitkeep
 manuscript_outputs/*
 !manuscript_outputs/.gitkeep
+pkgdown/
+*.Rcheck/
+*.tar.gz
 
 # LaTeX build artifacts
 *.aux
@@ -42,6 +45,7 @@ manuscript_outputs/*
 *.out
 *.synctex.gz
 *.toc
+/*.pdf
 
 # Quarto outputs
 /.quarto/

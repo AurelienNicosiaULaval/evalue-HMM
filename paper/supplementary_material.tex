@@ -1,5 +1,5 @@
 \RequirePackage{amsthm}
-\documentclass[pdflatex,sn-basic,referee,lineno]{sn-jnl}
+\documentclass[pdflatex,sn-basic]{sn-jnl}
 
 \usepackage{lmodern}
 \usepackage{amssymb}
@@ -9,6 +9,8 @@
 \usepackage{manyfoot}
 \usepackage{booktabs}
 \usepackage{enumitem}
+\geometry{reset,left=2cm,right=2cm,top=2cm,bottom=2cm,bindingoffset=0cm}
+
 
 \begin{document}
 
@@ -54,7 +56,7 @@ S12 & Supplement & Composite envelopes are conservative and optional for the fir
 To ensure the simulation results can be understood independently, we briefly outline the data-generating processes (DGPs) used in the main scenarios. Von Mises distributions in the simulations are parametrized through circular standard deviations (sd); the corresponding concentration parameters $\kappa$ were obtained by numerical inversion of the circular variance formula $V = 1 - I_1(\kappa)/I_0(\kappa)$, where $I_p$ denotes the modified Bessel function of order $p$. All parameters are specified on the natural scale.
 
 \begin{itemize}
-    \item \textbf{S1 (Calibration)}: A 2-state HMM with initial probabilities $(0.5, 0.5)$ and transition matrix $\Gamma$ with $\Gamma(1,1)=0.8$, $\Gamma(2,2)=0.7$. State 1 (encamped) has step lengths drawn from $\text{Gamma}(\text{shape}=2, \text{rate}=0.5)$ and turning angles from $\text{von Mises}(\mu=0, \text{sd}=0.5)$. State 2 (exploratory) has step lengths $\text{Gamma}(10, 2)$ and turning angles $\text{von Mises}(\mu=0, \text{sd}=2)$. The diagnostic $q_t$ is the exact null density, i.e.\ the same HMM \emph{(oracle)}.
+    \item \textbf{S1 (Calibration)}: A 2-state HMM with initial probabilities $(0.5, 0.5)$ and transition matrix $\Gamma$ with $\Gamma(1,1)=0.8$, $\Gamma(2,2)=0.7$. State 1 (encamped) has step lengths drawn from $\text{Gamma}(\text{shape}=2, \text{rate}=0.5)$ and turning angles from $\text{von Mises}(\mu=0, \text{sd}=0.5)$. State 2 (exploratory) has step lengths $\text{Gamma}(10, 2)$ and turning angles $\text{von Mises}(\mu=0, \text{sd}=2)$. The diagnostic $q_t$ is an alternative 2-state HMM with slightly different parameters (e.g., transition and state-dependent parameters are perturbed relative to the null generator $p_0$).
     \item \textbf{S3 (Missing state)}: The true DGP is a 3-state HMM with an intermediate speed state, but the null model is restricted to $K=2$. True transition matrix $\Gamma$: row 1 $(0.91, 0.06, 0.03)$, row 2 $(0.08, 0.87, 0.05)$, row 3 $(0.08, 0.10, 0.82)$. Step shapes $(2.0, 7.5, 4.0)$, rates $(3.0, 2.0, 1.2)$, angle means $(0, 0, 0.6)$, angle SDs $(1.6, 0.35, 0.75)$. The diagnostic $q_t$ uses the \emph{true} 3-state DGP parameters \emph{(oracle diagnostic)}.
     \item \textbf{S4 (Angular misspecification)}: The true DGP has step shapes $(2.0, 7.0)$, rates $(3.0, 2.0)$, and angle SDs $(1.8, 0.25)$. The null model is misspecified with angle SDs $(0.85, 0.30)$ and state 2 centered at $\mu=0.25$ rather than $0$. The diagnostic $q_t$ is a fixed, manually chosen diffuse-angle alternative \emph{(fixed alternative)}.
     \item \textbf{S5 (Copula dependence)}: The true DGP includes a Gaussian copula with correlation $\rho = 0.6$ between step lengths and turning angles within each state, violating the conditional independence assumption of standard HMMs. The copula diagnostic uses a fixed target correlation $\rho_q = 0.55$ \emph{(fixed alternative)}.
@@ -68,14 +70,14 @@ Future work could further characterize diagnostic sensitivity by exploring weake
 
 \subsection{S2: train/validation with estimated parameters}
 
-Scenario S2 compares known parameters, oracle-state estimated parameters evaluated under the true generator and oracle-state estimated parameters evaluated under the fitted generator. At $\alpha=0.05$, the signal rates are $0.057$, $0.053$ and $0.023$, respectively. These results are compatible with the split-validation interpretation, but the estimator uses simulated latent states. For that reason, S2 is not used as a main article result.
+Scenario S2 compares known parameters, oracle-state estimated parameters evaluated under the true generator and oracle-state estimated parameters evaluated under the fitted generator. At $\alpha=0.05$, the crossing rates are $0.057$, $0.053$ and $0.023$, respectively. These results are compatible with the split-validation interpretation, but the estimator uses simulated latent states. For that reason, S2 is not used as a main article result.
 
 \begin{table}[h]
 \centering
 \footnotesize
 \begin{tabular}{@{}lrrr@{}}
 \toprule
-Setting & Signal rate & Monte Carlo SE & Mean final log e-value \\
+Setting & Crossing rate & Monte Carlo SE & Mean final log e-value \\
 \midrule
 Known parameters, true generator & 0.057 & 0.013 & -23.868 \\
 Oracle-state estimate, true generator & 0.053 & 0.013 & -23.885 \\
@@ -95,7 +97,7 @@ Scenario S9 demonstrates the consequence of multiplying diagnostics computed in 
 \footnotesize
 \begin{tabular}{@{}lrrr@{}}
 \toprule
-Method & Status & Signal rate & Signal rate minus $\alpha$ \\
+Method & Status & Crossing rate & Crossing rate minus $\alpha$ \\
 \midrule
 Single e-process & Valid & 0.030 & -0.020 \\
 Weighted average of two copies & Valid & 0.030 & -0.020 \\
@@ -109,14 +111,14 @@ Naive product of three copies & Not valid by default & 0.215 & 0.165 \\
 
 \subsection{S10: blockwise long-horizon straightness}
 
-Scenario S10 uses block straightness, defined as net displacement divided by total path length, to detect a long-horizon failure generated by autocorrelated turning angles. At $\alpha=0.05$, the signal rate is $0.036$ under the HMM null and $0.796$ under the long-horizon alternative. This scenario supports the blockwise theory but is kept in the supplement because it is a more advanced extension.
+Scenario S10 uses block straightness, defined as net displacement divided by total path length, to detect a long-horizon failure generated by autocorrelated turning angles. At $\alpha=0.05$, the crossing rate is $0.036$ under the HMM null and $0.796$ under the long-horizon alternative. This scenario supports the blockwise theory but is kept in the supplement because it is a more advanced extension.
 
 \begin{table}[h]
 \centering
 \footnotesize
 \begin{tabular}{@{}lrrrr@{}}
 \toprule
-Generator & Signal rate & Monte Carlo SE & Mean final log e-value & Mean straightness \\
+Generator & Crossing rate & Monte Carlo SE & Mean final log e-value & Mean straightness \\
 \midrule
 HMM null & 0.036 & 0.012 & -4.909 & 0.496 \\
 Autocorrelated-angle alternative & 0.796 & 0.025 & 4.639 & 0.347 \\
@@ -128,14 +130,14 @@ Autocorrelated-angle alternative & 0.796 & 0.025 & 4.639 & 0.347 \\
 
 \subsection{S11: individual validation and cross-fitted averages}
 
-Scenario S11 studies validation by individuals. The weighted average of final individual e-values is conservative under the true and fitted null settings, with signal rates $0.000$ and $0.004$ at $\alpha=0.05$. The exploratory scan over any individual is not a globally valid e-value and crosses at rates $0.304$ and $0.228$ under the two null settings. Under a single failed individual, the cross-fitted average crosses at rate $0.996$ and the individual scan crosses at rate $1.000$.
+Scenario S11 studies validation by individuals. The weighted average of final individual e-values is conservative under the true and fitted null settings, with crossing rates $0.000$ and $0.004$ at $\alpha=0.05$. The exploratory scan over any individual is not a globally valid e-value and crosses at rates $0.304$ and $0.228$ under the two null settings. Under a single failed individual, the cross-fitted average crosses at rate $0.996$ and the individual scan crosses at rate $1.000$.
 
 \begin{table}[h]
 \centering
 \footnotesize
 \begin{tabular}{@{}llrr@{}}
 \toprule
-Scenario & Method & Status & Signal rate \\
+Scenario & Method & Status & Crossing rate \\
 \midrule
 True null & Cross-fitted final average & Valid final e-value & 0.000 \\
 True null & Any individual scan & Exploratory & 0.304 \\
@@ -151,14 +153,14 @@ Single failed individual & Any individual scan & Exploratory & 1.000 \\
 
 \subsection{S12: finite-family composite envelope}
 
-Scenario S12 studies a conservative envelope over a finite family of three HMM null generators. It is important to note that the practical use of the composite envelope (Proposition 17) is primarily intended for finite or compactly restricted families. Continuous envelopes of unbounded parameter families for densities such as Gamma or von Mises can become numerically unstable or computationally prohibitive. The center-only denominator is not uniform over the family and gives a false signal rate of $0.980$ when the true generator is the diffuse-angle null. The composite envelope gives signal rate $0.000$ at $\alpha=0.05$ for each generator in the finite family. The scenario illustrates uniform validity and its cost in conservatism.
+Scenario S12 studies a conservative envelope over a finite family of three HMM null generators. It is important to note that the practical use of the composite envelope (Proposition 17) is primarily intended for finite or compactly restricted families. Continuous envelopes of unbounded parameter families for densities such as Gamma or von Mises can become numerically unstable or computationally prohibitive. The center-only denominator is not uniform over the family and gives a crossing rate of $0.980$ when the true generator is the diffuse-angle null. The composite envelope gives crossing rate $0.000$ at $\alpha=0.05$ for each generator in the finite family. The scenario illustrates uniform validity and its cost in conservatism.
 
 \begin{table}[h]
 \centering
 \footnotesize
 \begin{tabular}{@{}llrr@{}}
 \toprule
-Generator & Method & Status & Signal rate \\
+Generator & Method & Status & Crossing rate \\
 \midrule
 Center null & Oracle true null & Valid for known generator & 0.020 \\
 Center null & Center-only denominator & Not uniform over family & 0.020 \\

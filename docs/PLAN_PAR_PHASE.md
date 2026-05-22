@@ -235,14 +235,14 @@ Critère de réussite :
 
 Objectif : démontrer l'utilité du cadre sur un jeu de données de mouvement réel, public et reproductible.
 
-Statut : première application reproductible complétée avec `moveHMM::elk_data`. L'individu `elk-115` est tenu hors entraînement, les autres individus servent à ajuster les HMM `K = 2, 3, 4`, et le modèle nul est sélectionné par BIC.
+Statut : première application reproductible complétée avec `moveHMM::elk_data`. Une validation Leave-One-Animal-Out tient chaque individu hors entraînement à tour de rôle ; les trois autres individus servent à ajuster les HMM `K = 2, 3, 4`. Le modèle nul est ensuite fixé à `K = 3` pour conserver une comparaison commune entre les quatre plis.
 
 Tâches :
 
 - Identifier des jeux de données candidats dans les écosystèmes `moveHMM` et `momentuHMM`. Complété pour la première version.
 - Documenter la source, les variables disponibles, le nombre d'individus et la qualité temporelle. Complété pour la première application.
 - Choisir un dataset simple plutôt qu'une application trop complexe. Complété : `moveHMM::elk_data`.
-- Définir un split train/validation, préférablement par individus si plusieurs individus sont disponibles. Complété : `elk-115` en validation.
+- Définir un split train/validation, préférablement par individus si plusieurs individus sont disponibles. Complété : protocole Leave-One-Animal-Out sur les quatre individus.
 - Prétraiter les trajectoires. Complété : `application/01_preprocess.R`.
 - Construire longueurs de pas, angles de virage, identifiants, périodes et covariables prédictibles. Complété.
 - Ajuster le HMM nul et les alternatives sur train seulement. Complété : `application/02_fit_hmm.R`.

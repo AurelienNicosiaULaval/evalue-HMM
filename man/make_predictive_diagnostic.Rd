@@ -38,3 +38,11 @@ A list of class \code{predictive_e_diagnostic}.
 \description{
 Common interface for predictive e-diagnostics.
 }
+\examples{
+diagnostic <- make_predictive_diagnostic(
+  diagnostic_name = "toy",
+  log_p0 = c(-1.2, -0.8, -1.0),
+  log_q = c(-1.0, -0.7, -0.9)
+)
+summarise_predictive_diagnostic(diagnostic)
+}

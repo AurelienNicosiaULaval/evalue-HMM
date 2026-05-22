@@ -1,8 +1,12 @@
 ^evalue-HMM\.Rproj$
 ^\.Rproj\.user$
+^\.github$
 ^renv$
 ^renv\.lock$
 ^\.python-version$
+^_pkgdown\.yml$
+^pkgdown$
+^tools$
 ^application$
 ^simulations$
 ^results$
@@ -12,3 +16,11 @@
 ^plan_travail_predictive_e_diagnostics_hmm\.md$
 ^manuscript_outputs$
 ^\.DS_Store$
+^README\.Rmd$
+^cran-comments\.md$
+^.*\.aux$
+^.*\.log$
+^.*\.out$
+^.*\.pdf$
+^sn-basic\.bst$
+^sn-jnl\.cls$

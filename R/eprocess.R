@@ -6,6 +6,10 @@
 #' @param time Numeric vector. Time indices.
 #'
 #' @return A list containing the e-process path and signal metrics.
+#' @examples
+#' log_p0 <- c(-1.2, -0.8, -1.0)
+#' log_q <- c(-1.0, -0.7, -0.9)
+#' compute_eprocess(log_p0, log_q)
 #' @export
 compute_eprocess <- function(log_p0, log_p1, alpha = 0.05, time = seq_along(log_p0)) {
   if (!is.numeric(log_p0) || !is.numeric(log_p1)) {

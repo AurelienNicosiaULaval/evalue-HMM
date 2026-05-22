@@ -1,72 +1,164 @@
-# Predictive E-Diagnostics for Hidden Markov Models of Animal Movement
+<img src="man/figures/logo.png" align="right" height="170" alt="evalueHMM hex logo" />
 
-This repository contains the R package, simulation code, and real-data application for the paper:
-> **Predictive E-Diagnostics for Hidden Markov Models of Animal Movement**
-> Aurélien Nicosia (Université Laval)
+# evalueHMM
 
-## Overview
+[![R-CMD-check](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/actions/workflows/pkgdown.yaml)
+[![Codecov test coverage](https://codecov.io/gh/AurelienNicosiaULaval/predictive_e_diagnostics_hmm/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AurelienNicosiaULaval/predictive_e_diagnostics_hmm)
+[![License: GPL-3](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 
-Hidden Markov models (HMMs) are widely used to analyze animal movement trajectories by partitioning them into discrete behavioral states. Standard diagnostic workflows (such as AIC/BIC, decoded state paths, or pseudo-residuals) often fail to provide a sequentially valid account of model fit, or they rely on reconstructions of latent states rather than observable data.
+`evalueHMM` implements predictive e-diagnostics for hidden Markov models of animal movement. It provides tools for observable predictive densities, e-process construction, diagnostic alternatives, predictable mixtures, switching, localization, feature-level diagnostics and blockwise diagnostics.
 
-This project implements a framework for **predictive e-diagnostics**. By treating a fitted HMM as a sequential generator of validation data, we define e-processes (nonnegative supermartingales) that evaluate model goodness-of-fit against targeted alternatives. 
+The repository is both:
 
-This repository is structured as both a reproducible research directory and an R package (`evalueHMM`).
+1. an installable R package;
+2. a reproducible research compendium for the manuscript “Predictive e-diagnostics for multi-state movement models”.
 
-## Repository Structure
+## Installation
 
-```text
-.
-├── DESCRIPTION                 # R package metadata
-├── NAMESPACE                   # R package namespace exports
-├── R/                          # Core package functions (filtering, e-processes, diagnostics)
-├── simulations/                # Simulation scripts for scenarios S1 to S12
-├── application/                # Empirical application on elk movement data (LOAO validation)
-├── results/                    # Output directories for generated tables and figures (ignored by Git)
-└── paper/                      # LaTeX source files for the manuscript and supplementary material
+Install the development version from GitHub:
+
+```r
+install.packages("remotes")
+remotes::install_github("AurelienNicosiaULaval/predictive_e_diagnostics_hmm")
 ```
 
-## Installation & Setup
+To clone the research repository with SSH:
 
-To reproduce the environment and dependencies exactly as used in the paper, we use `renv`.
+```bash
+git clone git@github.com:AurelienNicosiaULaval/predictive_e_diagnostics_hmm.git
+cd predictive_e_diagnostics_hmm
+```
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/AurelienNicosiaULaval/predictive_e_diagnostics_hmm.git
-   cd predictive_e_diagnostics_hmm
-   ```
+Restore the project environment:
 
-2. Open R and restore the package library:
-   ```r
-   renv::restore()
-   ```
+```r
+renv::restore()
+```
 
-## Running Simulations
+## Quick start
 
-The simulation scenarios S1 to S12 presented in the main text and supplementary material can be run sequentially using:
+```r
+library(evalueHMM)
+
+set.seed(20260522)
+
+null_parameters <- create_hmm_movement_parameters()
+validation_data <- simulate_hmm_movement(
+  n_times = 150,
+  parameters = null_parameters
+)
+
+diagnostic_parameters <- perturb_hmm_movement_parameters(
+  parameters = null_parameters,
+  angle_sd_multiplier = c(1.2, 1.4)
+)
+
+log_p0 <- hmm_movement_predictive_log_density(
+  data = validation_data,
+  parameters = null_parameters
+)
+
+log_q <- hmm_movement_predictive_log_density(
+  data = validation_data,
+  parameters = diagnostic_parameters
+)
+
+diagnostic <- make_predictive_diagnostic(
+  diagnostic_name = "angle_perturbation",
+  log_p0 = log_p0,
+  log_q = log_q,
+  time = validation_data$time
+)
+
+summarise_predictive_diagnostic(diagnostic)
+plot_eprocess(compute_eprocess(log_p0, log_q))
+```
+
+## Main package features
+
+- HMM filtering and observable predictive log-densities.
+- Predictive e-process construction and S3 diagnostic summaries.
+- Simulated movement HMM and HSMM-like generators for reproducible examples.
+- Full-density diagnostics for state-number and angular misspecification.
+- Feature-level diagnostics for residual step-angle dependence.
+- Blockwise duration and long-horizon straightness diagnostics.
+- Predictable diagnostic mixtures, switching and localization.
+- Conservative finite-family composite-null envelopes.
+
+## Vignettes and online documentation
+
+The package includes vignettes for:
+
+- getting started with predictive e-diagnostics;
+- using the diagnostic catalog;
+- reproducing package checks and manuscript workflows.
+
+Build the local documentation site with:
+
+```r
+pkgdown::build_site()
+```
+
+When GitHub Pages is enabled, the online site is configured for
+`AurelienNicosiaULaval.github.io/predictive_e_diagnostics_hmm`.
+
+## Research compendium
+
+The manuscript-scale simulations and real-data application are intentionally kept outside the package build.
+
+Run all simulation scenarios:
+
 ```bash
 Rscript simulations/run_all_simulations.R
 ```
-Individual scenario scripts can also be executed independently (e.g., `Rscript simulations/03_underfit_states.R`). Tables and figures will be saved in `results/simulation_tables/` and `results/simulation_figures/`.
 
-## Real-Data Application
+Run the elk application:
 
-The empirical application evaluates a 3-state HMM on elk movement data from the `moveHMM` package under a Leave-One-Animal-Out (LOAO) validation protocol.
-
-To run the full application pipeline and generate the paper figures:
 ```bash
 Rscript application/run_application.R
 ```
-Generated plots are written to `results/application_figures/` and copied to `paper/figures/`.
 
-## Manuscript Compilation
+Compile the manuscript:
 
-The LaTeX manuscript and supplementary material can be compiled using:
 ```bash
 cd paper
 pdflatex predictive_e_diagnostics_hmm_improved.tex
+pdflatex predictive_e_diagnostics_hmm_improved.tex
 pdflatex supplementary_material.tex
+pdflatex supplementary_material.tex
+```
+
+Generated research outputs are written to `results/`, `application/data_processed/`, `paper/figures/` and `manuscript_outputs/`.
+
+## Package development
+
+Run the package checks:
+
+```bash
+R CMD build --no-build-vignettes .
+R CMD check --no-manual --no-build-vignettes evalueHMM_0.1.0.tar.gz
+```
+
+Run tests from R:
+
+```r
+testthat::test_local()
+```
+
+Regenerate documentation:
+
+```r
+roxygen2::roxygenise()
+```
+
+Regenerate the hex logo:
+
+```bash
+Rscript tools/make-logo.R
 ```
 
 ## License
 
-This project is licensed under the GPL-3 License.
+This package is licensed under GPL-3.
